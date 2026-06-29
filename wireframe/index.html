@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Reply Anywhere — Wireframe</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23116490'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='42' fill='white'%3ER%3C/text%3E%3C/svg%3E">
+
+<link rel="stylesheet" href="../shared/tokens.css">
+<link rel="stylesheet" href="../shared/components.css">
+<link rel="stylesheet" href="../shared/service-menu.css">
+
+<style>
+/* ─────────────────────────────────────────────────────────────────
+   WIREFRAME styles — intentionally lo-fi & grayscale.
+   No brand colors here: violet / SF styling lands at the Design stage
+   (see BRIEF.md §6–7). This page is about STRUCTURE & CONTENT ORDER.
+   ─────────────────────────────────────────────────────────────── */
+:root {
+  --wf-ink:    #2b3138;
+  --wf-mut:    #6b747d;
+  --wf-faint:  #aab2ba;
+  --wf-line:   #c7ced4;
+  --wf-fill:   #e4e8ec;
+  --wf-fill-2: #eef1f4;
+  --wf-page:   #dfe3e7;
+  --wf-note:   #7c5cff;   /* annotations only — ties to the future brand violet */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--wf-page);
+  color: var(--wf-ink);
+  -webkit-font-smoothing: antialiased;
+  padding: 40px 20px 140px;
+  line-height: 1.5;
+}
+
+.wf {
+  max-width: 1160px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid var(--wf-line);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(20,30,40,.12);
+}
+
+/* legend banner */
+.wf-legend {
+  display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center;
+  padding: 14px 24px; background: #2b3138; color: #fff;
+  font-size: 12.5px; letter-spacing: .01em;
+}
+.wf-legend strong { font-weight: 700; }
+.wf-legend .dot { color: var(--wf-note); font-weight: 700; }
+.wf-legend span.muted { color: #aab2ba; }
+
+/* section scaffold */
+.sec { position: relative; padding: 40px 56px; border-bottom: 1px dashed var(--wf-line); }
+.sec:last-child { border-bottom: none; }
+.sec__tag {
+  position: absolute; top: 0; left: 0;
+  font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--wf-mut); background: var(--wf-fill-2);
+  padding: 6px 10px; border-bottom-right-radius: 6px;
+  border-right: 1px solid var(--wf-line); border-bottom: 1px solid var(--wf-line);
+}
+.note {
+  font: 400 12.5px/1.45 ui-sans-serif, system-ui, sans-serif;
+  color: var(--wf-note); margin-top: 10px;
+  padding-left: 12px; border-left: 2px solid var(--wf-note);
+}
+.note b { font-weight: 700; }
+
+/* placeholder atoms */
+.ph        { background: var(--wf-fill); border-radius: 4px; }
+.ph-soft   { background: var(--wf-fill-2); border: 1px dashed var(--wf-line); border-radius: 6px; }
+.bar       { height: 12px; background: var(--wf-fill); border-radius: 3px; }
+.bar.lg    { height: 18px; }
+.bar.title { height: 30px; background: var(--wf-line); }
+.bar.w30 { width: 30%; } .bar.w40 { width: 40%; } .bar.w50 { width: 50%; }
+.bar.w60 { width: 60%; } .bar.w70 { width: 70%; } .bar.w80 { width: 80%; } .bar.w90 { width: 90%; }
+.stack > * + * { margin-top: 10px; }
+
+.eyebrow {
+  font: 600 11px/1 ui-monospace, monospace; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--wf-faint); margin-bottom: 14px;
+}
+.h-real { font-size: 30px; font-weight: 800; letter-spacing: -.02em; color: var(--wf-ink); line-height: 1.12; }
+.sub-real { font-size: 15px; color: var(--wf-mut); max-width: 46ch; }
+.lbl { font: 600 11px/1 ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--wf-faint); }
+
+.btn-wf {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
+  border: 1.5px solid var(--wf-ink); color: var(--wf-ink); background: transparent;
+}
+.btn-wf.solid { background: var(--wf-ink); color: #fff; }
+.row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+/* image / screenshot box */
+.imgbox {
+  position: relative; background:
+    repeating-linear-gradient(45deg, var(--wf-fill-2) 0 14px, var(--wf-fill) 14px 28px);
+  border: 1px dashed var(--wf-line); border-radius: 8px;
+  display: grid; place-items: center; min-height: 220px; text-align: center; padding: 16px;
+}
+.imgbox .lbl { color: var(--wf-mut); }
+
+/* ── 02 nav ── */
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.nav__logo { width: 150px; height: 38px; display: grid; place-items: center;
+  border: 1.5px dashed var(--wf-line); border-radius: 6px; color: var(--wf-faint);
+  font: 600 11px/1 ui-monospace, monospace; letter-spacing: .1em; }
+.nav__links { display: flex; gap: 22px; }
+.nav__links span { font-size: 13.5px; color: var(--wf-mut); font-weight: 500; }
+
+/* hero grid */
+.hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+
+/* logo strip */
+.logos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 14px; }
+.logo-cell { height: 64px; display: grid; place-items: center; gap: 4px;
+  border: 1px dashed var(--wf-line); border-radius: 8px; background: var(--wf-fill-2); }
+.logo-cell b { font-size: 14px; color: var(--wf-ink); }
+.logo-cell em { font-style: normal; font: 600 10px/1 ui-monospace, monospace; color: var(--wf-faint); letter-spacing: .08em; }
+
+/* differentiator compare */
+.cmp { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: stretch; margin-top: 8px; }
+.cmp__col { border: 1px solid var(--wf-line); border-radius: 10px; padding: 22px; background: var(--wf-fill-2); }
+.cmp__col.win { border-color: var(--wf-ink); border-width: 1.5px; background: #fff; }
+.cmp__h { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.cmp__sub { font-size: 12.5px; color: var(--wf-mut); margin-bottom: 14px; }
+.cmp li { list-style: none; font-size: 13px; color: var(--wf-ink); padding: 6px 0 6px 22px; position: relative; }
+.cmp li::before { content: "✓"; position: absolute; left: 0; color: var(--wf-mut); font-weight: 700; }
+.cmp li.no::before { content: "✕"; color: var(--wf-faint); }
+.cmp li.no { color: var(--wf-faint); }
+.cmp__vs { align-self: center; font: 700 12px/1 ui-monospace, monospace; color: var(--wf-faint); }
+
+/* 3-up grids */
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 8px; }
+.card { border: 1px solid var(--wf-line); border-radius: 10px; padding: 22px; background: #fff; }
+.card .icn { width: 40px; height: 40px; border-radius: 8px; background: var(--wf-fill); margin-bottom: 14px; display:grid; place-items:center; color: var(--wf-faint); font: 700 16px/1 ui-monospace, monospace; }
+
+/* channels chips */
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.chip-wf { font-size: 12.5px; color: var(--wf-ink); border: 1px solid var(--wf-line);
+  background: var(--wf-fill-2); border-radius: 999px; padding: 8px 14px; }
+
+/* case cards */
+.cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 8px; }
+.case { border: 1px solid var(--wf-line); border-radius: 10px; overflow: hidden; background: #fff; }
+.case__logo { height: 70px; display: grid; place-items: center; background: var(--wf-fill-2); border-bottom: 1px dashed var(--wf-line); font-weight: 700; }
+.case__body { padding: 18px; }
+
+/* form */
+.form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 620px; margin-top: 8px; }
+.field { grid-column: span 1; }
+.field.full { grid-column: span 2; }
+.field .lbl { display: block; margin-bottom: 6px; }
+.field .inp { height: 40px; border: 1px solid var(--wf-line); border-radius: 6px; background: var(--wf-fill-2); }
+.field .inp.area { height: 84px; }
+
+/* footer */
+.foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 24px; padding: 36px 56px; background: #2b3138; color: #cdd4da; }
+.foot .lbl { color: #79838d; margin-bottom: 12px; display: block; }
+.foot .bar { background: #424b54; }
+.foot__brand { font-weight: 800; color: #fff; font-size: 18px; }
+
+@media (max-width: 860px) {
+  .sec { padding: 36px 28px; }
+  .hero, .cmp, .grid-3, .cases, .form, .foot { grid-template-columns: 1fr; }
+  .cmp__vs { display: none; }
+  .nav__links { display: none; }
+  .logos { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<main class="wf">
+
+  <!-- legend -->
+  <div class="wf-legend">
+    <strong>Reply Anywhere — Wireframe</strong>
+    <span class="muted">Stage 01 · lo-fi structure</span>
+    <span><span class="dot">▍</span> violet notes = decisions / open questions → see BRIEF.md</span>
+    <span class="muted">Grayscale on purpose — branding &amp; visuals come at the Design stage.</span>
+  </div>
+
+  <!-- 01 · NAV -->
+  <section class="sec">
+    <span class="sec__tag">01 · Nav</span>
+    <div class="nav">
+      <div class="nav__logo">LOGO</div>
+      <nav class="nav__links">
+        <span>Features</span><span>Channels</span><span>Cases</span><span>Pricing?</span><span>Contact</span>
+      </nav>
+      <span class="btn-wf solid">Request a demo</span>
+    </div>
+    <p class="note">Simple gominga-style top bar. Logo (real mark TBD — <b>BRIEF §10</b>). “Pricing” optional — confirm with client.</p>
+  </section>
+
+  <!-- 02 · HERO -->
+  <section class="sec">
+    <span class="sec__tag">02 · Hero</span>
+    <div class="hero">
+      <div class="stack">
+        <div class="eyebrow">Eyebrow · A Semantic Force product</div>
+        <div class="h-real">Reply to every review &amp; message — anywhere your customers are</div>
+        <p class="sub-real">One inbox for reviews, ratings, questions and social messages across marketplaces, app stores, maps and social networks. (Headline/sub = adapted from gominga.)</p>
+        <div class="row" style="margin-top:6px">
+          <span class="btn-wf solid">Request a demo</span>
+          <span class="btn-wf">See it live →</span>
+        </div>
+      </div>
+      <div class="imgbox">
+        <span class="lbl">Hero visual<br>product screenshot / live dashboard<br>(from Tanya — BRIEF §10)</span>
+      </div>
+    </div>
+    <p class="note"><b>Primary message:</b> reply <i>anywhere</i> = reviews <b>+ social</b> in one place. Copy adapted from gominga, not copied verbatim. CTA → demo (the only conversion goal for v1).</p>
+  </section>
+
+  <!-- 03 · CUSTOMER LOGOS -->
+  <section class="sec">
+    <span class="sec__tag">03 · Social proof</span>
+    <div class="bar title w40"></div>
+    <div class="lbl" style="margin-top:8px">“Brands that reply with us” / “Trusted by”</div>
+    <div class="logos">
+      <div class="logo-cell"><b>Ajax Systems</b><em>confirmed</em></div>
+      <div class="logo-cell"><b>Samsung</b><em>confirmed</em></div>
+      <div class="logo-cell"><b>Logo 3</b><em>TBD</em></div>
+    </div>
+    <p class="note">3 logos to start (<b>BRIEF §9</b>). Ajax + Samsung confirmed; 3rd TBD (LG / Teleperformance brands — Philips, Huawei, Sony).</p>
+  </section>
+
+  <!-- 04 · DIFFERENTIATOR -->
+  <section class="sec">
+    <span class="sec__tag">04 · Why Reply Anywhere</span>
+    <div class="h-real" style="font-size:24px; margin-bottom:6px">Not just reviews. Reviews <em>and</em> social.</div>
+    <div class="cmp">
+      <div class="cmp__col">
+        <div class="cmp__h">Review-only tools</div>
+        <div class="cmp__sub">e.g. typical review managers</div>
+        <ul class="cmp">
+          <li>Marketplace reviews</li>
+          <li>App-store reviews</li>
+          <li>Maps reviews</li>
+          <li class="no">Social comments</li>
+          <li class="no">Direct messages</li>
+        </ul>
+      </div>
+      <div class="cmp__vs">VS</div>
+      <div class="cmp__col win">
+        <div class="cmp__h">Reply Anywhere</div>
+        <div class="cmp__sub">built on Semantic Force</div>
+        <ul class="cmp">
+          <li>Marketplace reviews</li>
+          <li>App-store &amp; maps reviews</li>
+          <li>Social comments (IG, TikTok…)</li>
+          <li>Direct messages &amp; DMs</li>
+          <li>50+ channels, 500+ e-commerce</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note"><b>Core wedge vs gominga (BRIEF §4).</b> gominga = reviews only; we add social/messaging out of the box. Keep the comparison fair (don’t name the competitor on the live page).</p>
+  </section>
+
+  <!-- 05 · FEATURES -->
+  <section class="sec">
+    <span class="sec__tag">05 · Capabilities</span>
+    <div class="bar title w50"></div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="icn">▣</div>
+        <div class="bar lg w80"></div>
+        <div class="stack" style="margin-top:12px"><div class="bar w90"></div><div class="bar w70"></div></div>
+        <div class="lbl" style="margin-top:14px">All channels in one inbox</div>
+      </div>
+      <div class="card">
+        <div class="icn">◐</div>
+        <div class="bar lg w70"></div>
+        <div class="stack" style="margin-top:12px"><div class="bar w90"></div><div class="bar w60"></div></div>
+        <div class="lbl" style="margin-top:14px">AI listening &amp; prioritization</div>
+      </div>
+      <div class="card">
+        <div class="icn">⤷</div>
+        <div class="bar lg w80"></div>
+        <div class="stack" style="margin-top:12px"><div class="bar w90"></div><div class="bar w70"></div></div>
+        <div class="lbl" style="margin-top:14px">Templates, auto-replies &amp; media</div>
+      </div>
+    </div>
+    <p class="note">3 feature blocks — copy adapted from gominga + SF HelpDesk (AI routing, templates, rich-media replies, segmentation, CRM). Add a 2nd row only if needed.</p>
+  </section>
+
+  <!-- 06 · CHANNELS -->
+  <section class="sec">
+    <span class="sec__tag">06 · Channel coverage</span>
+    <div class="bar title w40"></div>
+    <div class="lbl" style="margin-top:8px">Everywhere your customers talk</div>
+    <div class="chips">
+      <span class="chip-wf">Marketplaces</span>
+      <span class="chip-wf">App Store</span>
+      <span class="chip-wf">Google Play</span>
+      <span class="chip-wf">Google Maps</span>
+      <span class="chip-wf">Review sites</span>
+      <span class="chip-wf">Instagram — comments + DM</span>
+      <span class="chip-wf">Facebook Messenger</span>
+      <span class="chip-wf">WhatsApp</span>
+      <span class="chip-wf">TikTok</span>
+      <span class="chip-wf">+ 500 e-commerce platforms</span>
+    </div>
+    <p class="note">This block is the proof behind §04. Steal the “All Platforms” idea from gominga but lead with social. Final list pulled from SF HelpDesk.</p>
+  </section>
+
+  <!-- 07 · CASES -->
+  <section class="sec">
+    <span class="sec__tag">07 · Examples / Cases</span>
+    <div class="bar title w40"></div>
+    <div class="cases">
+      <div class="case">
+        <div class="case__logo">Ajax Systems</div>
+        <div class="case__body stack"><div class="bar w90"></div><div class="bar w70"></div><div class="lbl" style="margin-top:6px">Read case →</div></div>
+      </div>
+      <div class="case">
+        <div class="case__logo">Samsung</div>
+        <div class="case__body stack"><div class="bar w90"></div><div class="bar w60"></div><div class="lbl" style="margin-top:6px">Read case →</div></div>
+      </div>
+      <div class="case">
+        <div class="case__logo" style="color:var(--wf-faint)">Case 3 — TBD</div>
+        <div class="case__body stack"><div class="bar w80"></div><div class="bar w50"></div><div class="lbl" style="margin-top:6px">Read case →</div></div>
+      </div>
+    </div>
+    <p class="note">gominga has ~10 success stories; we ship <b>3</b> (BRIEF §5/§9). Could link out or stay inline — confirm depth. Live Ajax dashboard from Tanya can power the strongest one.</p>
+  </section>
+
+  <!-- 08 · DEMO / CONTACT -->
+  <section class="sec">
+    <span class="sec__tag">08 · Demo / Contact</span>
+    <div class="hero">
+      <div class="stack">
+        <div class="h-real" style="font-size:24px">Request a demo</div>
+        <p class="sub-real">Short form — gominga style. Goal of the whole landing.</p>
+        <div class="form">
+          <div class="field"><span class="lbl">Name</span><div class="inp"></div></div>
+          <div class="field"><span class="lbl">Company</span><div class="inp"></div></div>
+          <div class="field"><span class="lbl">Email</span><div class="inp"></div></div>
+          <div class="field"><span class="lbl">Country</span><div class="inp"></div></div>
+          <div class="field full"><span class="lbl">Message (optional)</span><div class="inp area"></div></div>
+          <div class="field full"><span class="btn-wf solid">Request a demo</span></div>
+        </div>
+      </div>
+      <div class="imgbox"><span class="lbl">Optional side visual<br>or testimonial quote</span></div>
+    </div>
+    <p class="note">Keep it minimal (Name / Company / Email / Country + consent). One clear CTA. Wire to the same backend as the SF demo form later.</p>
+  </section>
+
+  <!-- 09 · FOOTER -->
+  <div class="foot">
+    <div>
+      <div class="foot__brand">Reply&nbsp;Anywhere</div>
+      <div class="stack" style="margin-top:12px"><div class="bar w80"></div><div class="bar w50"></div></div>
+      <div class="lbl" style="margin-top:14px; color:#79838d">A Semantic Force product</div>
+    </div>
+    <div><span class="lbl">Product</span><div class="stack"><div class="bar w70"></div><div class="bar w60"></div><div class="bar w80"></div></div></div>
+    <div><span class="lbl">Company</span><div class="stack"><div class="bar w60"></div><div class="bar w70"></div><div class="bar w50"></div></div></div>
+    <div><span class="lbl">Legal</span><div class="stack"><div class="bar w60"></div><div class="bar w50"></div></div></div>
+  </div>
+
+</main>
+
+<!-- chip config — keep identical across all preview pages -->
+<script>
+  window.PREVIEW_PROJECT_NAME = "Reply Anywhere";
+  window.PREVIEW_DEFAULT_VERSION = "wireframe";
+  window.PREVIEW_VERSIONS = [
+    { id: "brief",     label: "Brief",     desc: "Client brief — source of truth", path: "brief/" },
+    { id: "wireframe", label: "Wireframe", desc: "Lo-fi structure of the landing", path: "wireframe/" },
+    { id: "uikit",     label: "UI Kit",    desc: "Tokens & components reference",  path: "uikit/" },
+    { id: "launcher",  label: "Launcher",  desc: "Index of all preview versions",  path: "" }
+  ];
+</script>
+<script defer src="../shared/service-menu.js"></script>
+</body>
+</html>

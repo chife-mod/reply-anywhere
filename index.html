@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Reply Anywhere — Preview Dashboard</title>
+
+<!--
+  Favicon: studio-blue square with brand initial. Only the letter changes
+  per project (R); the fill color stays locked.
+-->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23116490'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='42' fill='white'%3ER%3C/text%3E%3C/svg%3E">
+
+<link rel="stylesheet" href="shared/service-menu.css">
+
+<style>
+/* ─────────────────────────────────────────────────────────────────
+   Launcher palette — studio-fixed. Don't repaint per project.
+   Brand expression lives inside concept pages, not in the launcher.
+   ─────────────────────────────────────────────────────────────── */
+:root {
+  --brand-blue:       #116490;
+  --brand-blue-dark:  #0d4f72;
+  --brand-blue-light: #9FBACD;
+  --brand-blue-pale:  #e8f2f7;
+
+  --bg-top:    #0a1219;
+  --bg-bottom: #1e2a35;
+  --charcoal:  #1e2a35;
+  --white:     #fff;
+  --border:    #d8e5ed;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Reset + base
+   ─────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: var(--charcoal);
+  color: var(--white);
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+}
+
+.launcher {
+  flex: 1;
+  max-width: 1080px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 32px 120px;          /* logo sticks to viewport top */
+}
+
+/* ─── Logo (top-left, h=88px, attached to top edge) ───────────── */
+
+.launcher__logo {
+  display: block;
+  height: 88px;
+  margin-bottom: 64px;
+}
+.launcher__logo img {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+/* ─── Header (2:1 grid — title + subtitle in right column) ───── */
+
+.launcher__header {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 48px;
+  align-items: end;
+  margin-bottom: 64px;
+}
+
+.launcher__eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--brand-blue-light);
+  margin-bottom: 20px;
+}
+
+.launcher__title {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.launcher__subtitle {
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+@media (max-width: 760px) {
+  .launcher__header {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+}
+
+/* ─── Version cards grid ──────────────────────────────────────── */
+
+.launcher__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 64px;
+}
+
+.version-card {
+  display: block;
+  padding: 28px 28px 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 240ms ease, background 240ms ease, border-color 240ms ease;
+}
+
+.version-card:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.version-card__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brand-blue-light);
+  margin-bottom: 16px;
+}
+
+.version-card__tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.version-card__title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.version-card__desc {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 20px;
+}
+
+.version-card__cta {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.version-card__cta::after {
+  content: "→";
+  transition: transform 200ms ease;
+  display: inline-block;
+}
+
+.version-card:hover .version-card__cta::after {
+  transform: translateX(4px);
+}
+
+.version-card[data-status="planned"] {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+.version-card[data-status="planned"] .version-card__cta::after {
+  content: "·";
+}
+
+/* ─── Section heading ────────────────────────────────────────── */
+
+.launcher__section-title {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 80px 0 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ─── Resources strip ────────────────────────────────────────── */
+
+.launcher__resources {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.resource-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+
+.resource-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-1px);
+}
+
+.resource-card[data-status="pending"] {
+  opacity: 0.5;
+}
+
+.resource-card__icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 7px;
+  color: var(--brand-blue-light);
+}
+
+.resource-card__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.resource-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.resource-card__label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+
+.resource-card__sub {
+  display: block;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.02em;
+}
+
+.resource-card__arrow {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.3);
+  transition: transform 200ms ease, color 200ms ease;
+}
+
+.resource-card:hover .resource-card__arrow {
+  color: var(--brand-blue-light);
+  transform: translateX(2px);
+}
+
+/* ─── Project stages ─────────────────────────────────────────── */
+
+.stage-track {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stage {
+  position: relative;
+  padding: 18px 18px 16px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+.stage[data-status="done"] {
+  background: rgba(79, 197, 156, 0.05);
+  border-color: rgba(79, 197, 156, 0.22);
+}
+
+.stage[data-status="active"] {
+  background: rgba(159, 186, 205, 0.08);
+  border-color: rgba(159, 186, 205, 0.38);
+}
+
+.stage__index {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.4);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 10px;
+}
+
+.stage[data-status="done"]   .stage__index { color: #4fc59c; }
+.stage[data-status="active"] .stage__index { color: var(--brand-blue-light); }
+
+.stage__name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--white);
+  letter-spacing: -0.005em;
+  margin-bottom: 14px;
+  line-height: 1.25;
+}
+
+.stage[data-status="pending"] .stage__name { color: rgba(255, 255, 255, 0.55); }
+
+.stage__progress {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.stage__progress span {
+  display: block;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  transition: width 600ms ease;
+}
+
+.stage[data-status="done"]   .stage__progress span { background: #4fc59c; }
+.stage[data-status="active"] .stage__progress span { background: var(--brand-blue-light); }
+
+.stage__status {
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+.stage[data-status="done"]   .stage__status { color: rgba(79, 197, 156, 0.9); }
+.stage[data-status="active"] .stage__status { color: rgba(159, 186, 205, 0.92); }
+
+@media (max-width: 760px) {
+  .stage-track { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .stage-track { grid-template-columns: 1fr; }
+}
+
+/* ─── Meta + footer ──────────────────────────────────────────── */
+
+.launcher__meta {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px 40px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.launcher__meta-block dt {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 6px;
+}
+
+.launcher__meta-block dd a {
+  color: var(--brand-blue-light);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 200ms ease;
+}
+
+.launcher__meta-block dd a:hover {
+  border-bottom-color: var(--brand-blue-light);
+}
+
+.launcher__footer {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.02em;
+  margin-top: 56px;
+}
+</style>
+</head>
+<body>
+
+<!--
+  Per-page chip config — feeds shared/service-menu.js.
+  Edit VERSIONS as you add/remove preview folders.
+-->
+<script>
+  window.PREVIEW_PROJECT_NAME = "Reply Anywhere";
+  window.PREVIEW_DEFAULT_VERSION = "wireframe";
+  window.PREVIEW_VERSIONS = [
+    { id: "brief",     label: "Brief",     desc: "Client brief — source of truth", path: "brief/" },
+    { id: "wireframe", label: "Wireframe", desc: "Lo-fi structure of the landing", path: "wireframe/" },
+    { id: "uikit",     label: "UI Kit",    desc: "Tokens & components reference",  path: "uikit/" },
+    { id: "launcher",  label: "Launcher",  desc: "Index of all preview versions",  path: "" }
+    // Design & Front-end stages are launcher tiles only (not built yet) — chip stays short.
+  ];
+</script>
+
+<main class="launcher">
+
+  <!-- Replace assets/logo.svg with the project's brand mark.
+       Keeps height: 88px, so any aspect ratio fits the slot. -->
+  <a class="launcher__logo" href="./" aria-label="Reply Anywhere">
+    <img src="assets/logo.svg" alt="Reply Anywhere">
+  </a>
+
+  <header class="launcher__header">
+    <div class="launcher__header-main">
+      <span class="launcher__eyebrow">Semantic Force · Internal Preview</span>
+      <h1 class="launcher__title">Landing Design Process</h1>
+    </div>
+    <p class="launcher__subtitle">
+      Standalone landing for Reply Anywhere — Semantic Force's omnichannel tool for replying to reviews &amp; messages across marketplaces, maps, app stores and social. Positioned against gominga.
+    </p>
+  </header>
+
+  <!-- ── Version cards ─────────────────────────────────────────
+       Add a card per concept/version. Statuses:
+         (default)         — interactive
+         data-status="planned" — dimmed, not clickable yet
+  -->
+  <div class="launcher__grid">
+    <a class="version-card" href="brief/">
+      <span class="version-card__tag">Reference · Source of truth</span>
+      <h2 class="version-card__title">Client Brief</h2>
+      <p class="version-card__desc">
+        Scope, content plan, customer logos, style references (SF · SF Group · M360) and open questions — distilled from the client meeting and the brief email. Target: www.replyanywhere.com.
+      </p>
+      <span class="version-card__cta">Open</span>
+    </a>
+
+    <a class="version-card" href="wireframe/">
+      <span class="version-card__tag">Stage 01 · In progress</span>
+      <h2 class="version-card__title">Wireframe</h2>
+      <p class="version-card__desc">
+        Lo-fi structure of the Reply Anywhere landing — section order, hero, customer logos, feature blocks, channel coverage, 3 cases and the demo CTA. Grayscale, content-first, no branding yet.
+      </p>
+      <span class="version-card__cta">Open</span>
+    </a>
+
+    <a class="version-card" data-status="planned" href="#">
+      <span class="version-card__tag">Stage 02 · Planned</span>
+      <h2 class="version-card__title">Design</h2>
+      <p class="version-card__desc">
+        High-fidelity visual design in Semantic Force style — violet brand palette, real copy, product screenshots and motion. Starts after the wireframe is approved.
+      </p>
+      <span class="version-card__cta">Soon</span>
+    </a>
+
+    <a class="version-card" data-status="planned" href="#">
+      <span class="version-card__tag">Stage 03 · Planned</span>
+      <h2 class="version-card__title">Front-end</h2>
+      <p class="version-card__desc">
+        Production build — responsive + animated, same stack as other SF landings. Starts after design sign-off.
+      </p>
+      <span class="version-card__cta">Soon</span>
+    </a>
+
+    <a class="version-card" href="uikit/">
+      <span class="version-card__tag">Foundations</span>
+      <h2 class="version-card__title">UI Kit</h2>
+      <p class="version-card__desc">
+        Visual source of truth — tokens, type scale, components, states, motion. Edit shared/tokens.css or shared/components.css and every page picks it up.
+      </p>
+      <span class="version-card__cta">Open</span>
+    </a>
+  </div>
+
+  <h2 class="launcher__section-title">Resources</h2>
+  <div class="launcher__resources">
+
+    <a class="resource-card" href="brief/">
+      <span class="resource-card__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 2h8l4 4v16H6V2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M14 2v4h4M9 13h6M9 17h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="resource-card__body">
+        <span class="resource-card__label">Client brief</span>
+        <span class="resource-card__sub">rendered from BRIEF.md — scope, content, style</span>
+      </span>
+      <span class="resource-card__arrow" aria-hidden="true">→</span>
+    </a>
+
+    <a class="resource-card" href="https://gominga.com/" target="_blank" rel="noopener">
+      <span class="resource-card__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M3 12h18M12 3c2.6 2.6 2.6 15.4 0 18M12 3c-2.6 2.6-2.6 15.4 0 18" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </span>
+      <span class="resource-card__body">
+        <span class="resource-card__label">Competitor reference</span>
+        <span class="resource-card__sub">gominga.com — structure &amp; copy source</span>
+      </span>
+      <span class="resource-card__arrow" aria-hidden="true">↗</span>
+    </a>
+
+    <a class="resource-card" href="https://semanticforce.ai/products/omnichannel-helpdesk" target="_blank" rel="noopener">
+      <span class="resource-card__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="resource-card__body">
+        <span class="resource-card__label">Parent product</span>
+        <span class="resource-card__sub">SF Omnichannel HelpDesk — style &amp; content</span>
+      </span>
+      <span class="resource-card__arrow" aria-hidden="true">↗</span>
+    </a>
+
+    <a class="resource-card" data-status="pending" href="#">
+      <span class="resource-card__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </span>
+      <span class="resource-card__body">
+        <span class="resource-card__label">Repository</span>
+        <span class="resource-card__sub">not created yet</span>
+      </span>
+      <span class="resource-card__arrow" aria-hidden="true">·</span>
+    </a>
+
+  </div>
+
+  <h2 class="launcher__section-title">Project stages</h2>
+  <ol class="stage-track">
+    <li class="stage" data-status="active">
+      <div class="stage__index">01</div>
+      <div class="stage__name">Wireframe</div>
+      <div class="stage__progress"><span style="width: 60%"></span></div>
+      <div class="stage__status">In progress</div>
+    </li>
+    <li class="stage" data-status="pending">
+      <div class="stage__index">02</div>
+      <div class="stage__name">Design</div>
+      <div class="stage__progress"><span style="width: 0%"></span></div>
+      <div class="stage__status">Not started</div>
+    </li>
+    <li class="stage" data-status="pending">
+      <div class="stage__index">03</div>
+      <div class="stage__name">Front-end</div>
+      <div class="stage__progress"><span style="width: 0%"></span></div>
+      <div class="stage__status">Not started</div>
+    </li>
+  </ol>
+
+  <dl class="launcher__meta">
+    <div class="launcher__meta-block">
+      <dt>Stack</dt>
+      <dd>HTML · CSS · vanilla JS — same stack as other SF landings</dd>
+    </div>
+    <div class="launcher__meta-block">
+      <dt>Documentation</dt>
+      <dd>
+        <a href="brief/">Client Brief</a>
+      </dd>
+    </div>
+    <div class="launcher__meta-block">
+      <dt>Production target</dt>
+      <dd><a href="https://www.replyanywhere.com" target="_blank" rel="noopener">www.replyanywhere.com</a></dd>
+    </div>
+  </dl>
+
+  <p class="launcher__footer">
+    Internal preview · not for public distribution · © 2026 Semantic Force
+  </p>
+</main>
+
+<script defer src="shared/service-menu.js"></script>
+</body>
+</html>

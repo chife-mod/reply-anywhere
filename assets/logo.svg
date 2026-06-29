@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PLACEHOLDER WORDMARK for Reply Anywhere (internal preview only).
+  The real brand logo is not yet available (see BRIEF.md §10 — logo TBD).
+  Replace assets/logo.svg with the official mark before any client-facing use.
+  Violet accent previews the product's brand color (Desk module = violet).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 88" role="img" aria-label="Reply Anywhere (placeholder)">
+  <!-- reply / speech-bubble glyph -->
+  <g>
+    <rect x="2" y="14" width="60" height="46" rx="14" fill="none" stroke="#9B8CFF" stroke-width="3"/>
+    <path d="M18 60 L18 74 L34 60 Z" fill="#9B8CFF"/>
+    <path d="M16 30 H48 M16 40 H40" stroke="#9B8CFF" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <!-- wordmark -->
+  <text x="82" y="55" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="34" font-weight="700" letter-spacing="-0.01em">
+    <tspan fill="#ffffff">Reply</tspan><tspan fill="#9B8CFF"> Anywhere</tspan>
+  </text>
+  <!-- placeholder hint -->
+  <text x="83" y="74" font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+        font-size="9" fill="#6b7c8d" letter-spacing="0.08em">PLACEHOLDER · replace assets/logo.svg</text>
+</svg>

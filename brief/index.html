@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Reply Anywhere — Client Brief</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23116490'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='42' fill='white'%3ER%3C/text%3E%3C/svg%3E">
+
+<link rel="stylesheet" href="../shared/tokens.css">
+<link rel="stylesheet" href="../shared/service-menu.css">
+
+<style>
+/* ─────────────────────────────────────────────────────────────────
+   Brief viewer — renders ../BRIEF.md (single source of truth) into the
+   dashboard's dark theme. Violet accents preview the product brand.
+   ─────────────────────────────────────────────────────────────── */
+:root {
+  --bg-top:    #0a1219;
+  --bg-bottom: #1e2a35;
+  --ink:       #e8edf2;
+  --mut:       rgba(232,237,242,.62);
+  --line:      rgba(255,255,255,.10);
+  --panel:     rgba(255,255,255,.03);
+  --violet:    #9B8CFF;
+  --violet-dp: #7C5CFF;
+  --good:      #4fc59c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  color: var(--ink);
+  min-height: 100vh;
+}
+.wrap { max-width: 880px; margin: 0 auto; padding: 40px 28px 140px; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 30px; }
+.topbar a.back {
+  font-size: 13px; color: var(--mut); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px;
+  transition: border-color .2s ease, color .2s ease;
+}
+.topbar a.back:hover { color: var(--ink); border-color: rgba(255,255,255,.25); }
+.topbar .badge {
+  font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--violet);
+  border: 1px solid rgba(155,140,255,.35); border-radius: 999px; padding: 7px 12px;
+}
+.topbar a.raw { font-size: 12px; color: var(--mut); text-decoration: none; border-bottom: 1px dashed var(--line); }
+.topbar a.raw:hover { color: var(--violet); }
+
+/* rendered markdown */
+.doc { font-size: 15px; line-height: 1.65; }
+.doc h1 { font-size: 30px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; margin: 4px 0 18px; }
+.doc h2 {
+  font-size: 21px; font-weight: 700; letter-spacing: -.01em; margin: 42px 0 14px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--line);
+}
+.doc h2::before { content: ""; }
+.doc h3 { font-size: 16px; font-weight: 700; margin: 26px 0 10px; color: var(--violet); }
+.doc p { margin: 12px 0; color: var(--ink); }
+.doc a { color: var(--violet); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .2s; }
+.doc a:hover { border-bottom-color: var(--violet); }
+.doc strong { color: #fff; font-weight: 700; }
+.doc em { color: var(--mut); }
+.doc ul, .doc ol { margin: 12px 0 12px 22px; }
+.doc li { margin: 7px 0; }
+.doc li::marker { color: var(--violet); }
+.doc hr { border: none; border-top: 1px solid var(--line); margin: 36px 0; }
+
+.doc blockquote {
+  margin: 18px 0; padding: 14px 18px;
+  background: var(--panel); border-left: 3px solid var(--violet-dp); border-radius: 0 8px 8px 0;
+  color: var(--mut);
+}
+.doc blockquote strong { color: var(--violet); }
+
+.doc code {
+  font: 500 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: rgba(255,255,255,.06); padding: 2px 6px; border-radius: 5px; color: #d9d2ff;
+}
+.doc pre {
+  background: rgba(0,0,0,.30); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px 18px; overflow-x: auto; margin: 16px 0;
+}
+.doc pre code { background: none; padding: 0; color: var(--mut); }
+
+.doc table {
+  width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14px;
+  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+}
+.doc th, .doc td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+.doc th { background: rgba(255,255,255,.04); font-weight: 600; font-size: 12.5px; letter-spacing: .02em; }
+.doc tr:last-child td { border-bottom: none; }
+.doc td:first-child { white-space: nowrap; color: var(--mut); }
+
+/* task list checkboxes */
+.doc input[type="checkbox"] { margin-right: 8px; accent-color: var(--violet-dp); }
+.doc del { color: rgba(232,237,242,.4); }
+
+.loading { color: var(--mut); font-size: 14px; padding: 40px 0; }
+.err { color: #ff9b9b; font-size: 14px; padding: 24px; border: 1px solid rgba(255,155,155,.3); border-radius: 10px; background: rgba(255,80,80,.06); }
+.err code { background: rgba(0,0,0,.3); padding: 2px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="../">← Dashboard</a>
+    <span class="badge">Client Brief · source of truth</span>
+    <a class="raw" href="../BRIEF.md" target="_blank" rel="noopener">raw .md ↗</a>
+  </div>
+
+  <article class="doc" id="doc">
+    <p class="loading">Loading BRIEF.md…</p>
+  </article>
+</div>
+
+<!-- chip config — keep identical across all preview pages -->
+<script>
+  window.PREVIEW_PROJECT_NAME = "Reply Anywhere";
+  window.PREVIEW_DEFAULT_VERSION = "brief";
+  window.PREVIEW_VERSIONS = [
+    { id: "brief",     label: "Brief",     desc: "Client brief — source of truth", path: "brief/" },
+    { id: "wireframe", label: "Wireframe", desc: "Lo-fi structure of the landing", path: "wireframe/" },
+    { id: "uikit",     label: "UI Kit",    desc: "Tokens & components reference",  path: "uikit/" },
+    { id: "launcher",  label: "Launcher",  desc: "Index of all preview versions",  path: "" }
+  ];
+</script>
+<script defer src="../shared/service-menu.js"></script>
+
+<!-- markdown renderer -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  (function () {
+    var target = document.getElementById('doc');
+    fetch('../BRIEF.md', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(function (md) {
+        if (window.marked) {
+          marked.setOptions({ gfm: true, breaks: false });
+          target.innerHTML = marked.parse(md);
+        } else {
+          target.innerHTML = '<pre><code></code></pre>';
+          target.querySelector('code').textContent = md;
+        }
+        // open external links in new tab
+        target.querySelectorAll('a[href^="http"]').forEach(function (a) {
+          a.target = '_blank'; a.rel = 'noopener';
+        });
+      })
+      .catch(function (e) {
+        target.innerHTML = '<div class="err">Не удалось загрузить <code>BRIEF.md</code> (' + e.message +
+          ').<br>Открой через локальный сервер или GitHub Pages — <code>fetch</code> не работает с <code>file://</code>.' +
+          '<br>Прямая ссылка: <a href="../BRIEF.md">../BRIEF.md</a></div>';
+      });
+  })();
+</script>
+</body>
+</html>

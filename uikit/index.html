@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Reply Anywhere — UI Kit</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234B6CFF'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='42' fill='white'%3ER%3C/text%3E%3C/svg%3E">
+
+<!-- Single source of truth: tokens + components -->
+<link rel="stylesheet" href="../shared/tokens.css">
+<link rel="stylesheet" href="../shared/components.css">
+<link rel="stylesheet" href="../shared/service-menu.css">
+
+<style>
+/* ════════════════════════════════════════════════════════════════
+   UI KIT — page-specific layout. All component styling lives in
+   shared/components.css. Tokens come from shared/tokens.css.
+   ──────────────────────────────────────────────────────────── */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.4;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: var(--space-12) var(--space-6) 120px;
+}
+
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  padding: 1px 5px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Page header ──────────────────────────────────────────── */
+
+.lib {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+.lib__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--color-border-light);
+}
+.lib__header h1 {
+  font-size: var(--text-h2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.lib__header p {
+  font-size: var(--text-small);
+  color: var(--color-mute);
+  max-width: 640px;
+}
+
+/* ─── Two-column layout: sticky sidebar + content ──────────── */
+
+.lib__layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--space-12);
+  align-items: flex-start;
+}
+.lib__sidebar { position: sticky; top: var(--space-8); }
+.lib__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+/* ─── Filter nav ───────────────────────────────────────────── */
+
+.lib-nav { display: flex; flex-direction: column; gap: 2px; }
+.lib-nav__heading {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-mute);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-1);
+}
+.lib-nav__item {
+  text-align: left;
+  padding: 10px var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-ink);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+  white-space: nowrap;
+}
+.lib-nav__item:hover { background: var(--color-border-light); }
+.lib-nav__item.is-active {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+.lib-nav__divider {
+  height: 1px;
+  background: var(--color-border-light);
+  margin: var(--space-2) var(--space-3);
+}
+
+/* ─── Filter behavior ──────────────────────────────────────── */
+
+.lib[data-filter]              .lib-section { display: none; }
+.lib[data-filter="all"]        .lib-section,
+.lib[data-filter="colors"]     .lib-section[data-category="colors"],
+.lib[data-filter="typography"] .lib-section[data-category="typography"],
+.lib[data-filter="spacing"]    .lib-section[data-category="spacing"],
+.lib[data-filter="effects"]    .lib-section[data-category="effects"],
+.lib[data-filter="components"] .lib-section[data-category="components"],
+.lib[data-filter="states"]     .lib-section[data-category="states"],
+.lib[data-filter="motion"]     .lib-section[data-category="motion"] {
+  display: flex;
+}
+
+/* ─── Section block ────────────────────────────────────────── */
+
+.lib-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.lib-section__head { display: flex; flex-direction: column; gap: var(--space-1); }
+.lib-section__title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-mute);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.lib-section__heading {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--color-ink);
+}
+
+/* ─── Showcase rows / grids ────────────────────────────────── */
+
+.showcase {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: flex-end;
+}
+.showcase--grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+.showcase--grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-3); }
+
+@media (max-width: 880px) {
+  .showcase--grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .showcase--grid-6 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ─── Color swatches ───────────────────────────────────────── */
+
+.swatch { display: flex; flex-direction: column; gap: var(--space-2); }
+.swatch__chip {
+  width: 100%;
+  height: 80px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
+}
+.swatch__meta { display: flex; flex-direction: column; gap: 2px; }
+.swatch__name { font-size: 12px; font-weight: 600; color: var(--color-ink); }
+.swatch__token {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-mute);
+}
+
+/* ─── Type sample rows ─────────────────────────────────────── */
+
+.type-row {
+  display: grid;
+  grid-template-columns: 120px 80px 1fr;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+.type-row:last-child { border-bottom: 0; }
+.type-row__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.type-row__size {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-mute);
+}
+.type-row__sample { color: var(--color-ink); }
+
+/* ─── Spacing visual ───────────────────────────────────────── */
+
+.space-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+}
+.space-row__bar {
+  height: 16px;
+  background: var(--color-accent);
+  border-radius: 2px;
+}
+.space-row__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-mute);
+  min-width: 140px;
+}
+
+/* ─── Demo tiles for radii / shadows ───────────────────────── */
+
+.demo-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.demo-tile__box {
+  width: 100%;
+  height: 80px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+}
+.demo-tile__box--shadow { border: 0; }
+.demo-tile__caption {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-mute);
+}
+
+/* ─── States section — locked button states ───────────────── */
+
+.state-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+.state-row:last-child { border-bottom: 0; }
+.state-row__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+/* Force visual states for static demo (matches the rules in components.css) */
+.btn[data-state="hover"].btn--primary {
+  background: var(--color-accent-deep);
+  transform: translateY(-1px);
+}
+.btn[data-state="active"].btn--primary {
+  background: var(--color-accent-deep);
+  transform: translateY(0);
+}
+.btn[data-state="focus"] {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ─── Motion section — animation primitives ────────────────── */
+
+.motion-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 200px;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+.motion-row:last-child { border-bottom: 0; }
+.motion-row__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.motion-row__demo {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.motion-row__caption {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-mute);
+}
+
+.demo-dot {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+.demo-box {
+  width: 60px; height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+}
+
+@keyframes demo-pulse {
+  0%, 100% { transform: scale(0.85); opacity: 0.6; }
+  50%      { transform: scale(1.15); opacity: 1; }
+}
+@keyframes demo-fade-in {
+  0%   { opacity: 0; }
+  60%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+@keyframes demo-scale-fade {
+  0%   { opacity: 0; transform: scale(0.85); }
+  60%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes demo-slide-up {
+  0%   { opacity: 0; transform: translateY(12px); }
+  60%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes demo-shimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+.anim--pulse      { animation: demo-pulse      2.4s ease-in-out infinite; }
+.anim--fade-in    { animation: demo-fade-in    2s   ease-out         infinite; }
+.anim--scale-fade { animation: demo-scale-fade 2s   var(--ease-back) infinite; }
+.anim--slide-up   { animation: demo-slide-up   2s   var(--ease-out)  infinite; }
+.anim--shimmer {
+  width: 200px; height: 16px; border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--color-border-light) 0%, var(--color-paper) 50%, var(--color-border-light) 100%);
+  background-size: 400px 100%;
+  animation: demo-shimmer 1.6s linear infinite;
+}
+
+/* ─── Mobile: collapse sidebar ─────────────────────────────── */
+
+@media (max-width: 880px) {
+  .lib__layout { grid-template-columns: 1fr; gap: var(--space-6); }
+  .lib__sidebar { position: static; }
+  .lib-nav { flex-direction: row; flex-wrap: wrap; gap: var(--space-1); }
+  .lib-nav__heading { display: none; }
+  .lib-nav__divider { display: none; }
+  .lib-nav__item { padding: var(--space-2) var(--space-3); }
+}
+</style>
+</head>
+<body>
+
+<main class="lib" data-filter="components">
+
+<header class="lib__header">
+  <h1>Reply Anywhere — UI Kit</h1>
+  <p>Visual source of truth for design tokens and reusable components. Edit a token in <code>shared/tokens.css</code> or a class in <code>shared/components.css</code> — every page in the project picks it up.</p>
+</header>
+
+<div class="lib__layout">
+
+  <aside class="lib__sidebar">
+    <nav class="lib-nav" aria-label="Library filter">
+      <span class="lib-nav__heading">Filter</span>
+      <button class="lib-nav__item" data-filter="all"        type="button">All</button>
+      <div class="lib-nav__divider"></div>
+      <button class="lib-nav__item" data-filter="colors"     type="button">Colors</button>
+      <button class="lib-nav__item" data-filter="typography" type="button">Typography</button>
+      <button class="lib-nav__item" data-filter="spacing"    type="button">Spacing</button>
+      <button class="lib-nav__item" data-filter="effects"    type="button">Effects</button>
+      <div class="lib-nav__divider"></div>
+      <button class="lib-nav__item is-active" data-filter="components" type="button">Components</button>
+      <button class="lib-nav__item" data-filter="states"     type="button">States</button>
+      <button class="lib-nav__item" data-filter="motion"     type="button">Motion</button>
+    </nav>
+  </aside>
+
+  <div class="lib__content">
+
+  <!-- ════════════════════════════════════════════════════════
+       COLORS
+       ════════════════════════════════════════════════════════ -->
+  <section class="lib-section" data-category="colors">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Tokens · Colors</span>
+      <h2 class="lib-section__heading">Palette</h2>
+    </div>
+    <div class="showcase showcase--grid-6">
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-accent)"></div><div class="swatch__meta"><span class="swatch__name">Accent</span><span class="swatch__token">--color-accent</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-accent-deep)"></div><div class="swatch__meta"><span class="swatch__name">Accent deep</span><span class="swatch__token">--color-accent-deep</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-accent-soft)"></div><div class="swatch__meta"><span class="swatch__name">Accent soft</span><span class="swatch__token">--color-accent-soft</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-ink)"></div><div class="swatch__meta"><span class="swatch__name">Ink</span><span class="swatch__token">--color-ink</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-mute)"></div><div class="swatch__meta"><span class="swatch__name">Mute</span><span class="swatch__token">--color-mute</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-paper)"></div><div class="swatch__meta"><span class="swatch__name">Paper</span><span class="swatch__token">--color-paper</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-divider)"></div><div class="swatch__meta"><span class="swatch__name">Divider</span><span class="swatch__token">--color-divider</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-success-bg)"></div><div class="swatch__meta"><span class="swatch__name">Success bg</span><span class="swatch__token">--color-success-bg</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-success-fg)"></div><div class="swatch__meta"><span class="swatch__name">Success fg</span><span class="swatch__token">--color-success-fg</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-violet-bg)"></div><div class="swatch__meta"><span class="swatch__name">Violet bg</span><span class="swatch__token">--color-violet-bg</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-warn-bg)"></div><div class="swatch__meta"><span class="swatch__name">Warn bg</span><span class="swatch__token">--color-warn-bg</span></div></div>
+      <div class="swatch"><div class="swatch__chip" style="background:var(--color-warn-fg)"></div><div class="swatch__meta"><span class="swatch__name">Warn fg</span><span class="swatch__token">--color-warn-fg</span></div></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       TYPOGRAPHY
+       ════════════════════════════════════════════════════════ -->
+  <section class="lib-section" data-category="typography">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Tokens · Typography</span>
+      <h2 class="lib-section__heading">Type scale (6 steps)</h2>
+    </div>
+    <div>
+      <div class="type-row">
+        <span class="type-row__label">Display</span>
+        <span class="type-row__size">56 / 700</span>
+        <span class="type-row__sample" style="font-size:56px;font-weight:700;line-height:0.95;letter-spacing:-0.02em;">The quick brown fox.</span>
+      </div>
+      <div class="type-row">
+        <span class="type-row__label">H2</span>
+        <span class="type-row__size">32 / 600</span>
+        <span class="type-row__sample" style="font-size:32px;font-weight:600;line-height:1.15;letter-spacing:-0.01em;">Section heading goes here.</span>
+      </div>
+      <div class="type-row">
+        <span class="type-row__label">H3</span>
+        <span class="type-row__size">20 / 600</span>
+        <span class="type-row__sample" style="font-size:20px;font-weight:600;line-height:1.3;">Sub-block heading</span>
+      </div>
+      <div class="type-row">
+        <span class="type-row__label">Body</span>
+        <span class="type-row__size">16 / 400</span>
+        <span class="type-row__sample" style="font-size:16px;font-weight:400;line-height:1.5;">Body copy is the default reading size — paragraphs, descriptions, supporting text.</span>
+      </div>
+      <div class="type-row">
+        <span class="type-row__label">Small</span>
+        <span class="type-row__size">14 / 500</span>
+        <span class="type-row__sample" style="font-size:14px;font-weight:500;line-height:1.4;">Small text for bullets, footnotes, secondary labels.</span>
+      </div>
+      <div class="type-row">
+        <span class="type-row__label">Caption</span>
+        <span class="type-row__size">12 / 500</span>
+        <span class="type-row__sample" style="font-size:12px;font-weight:500;line-height:1.3;color:var(--color-mute);">Caption · meta · timestamps</span>
+      </div>
+      <div class="type-row">
+        <span class="type-row__label">Mono</span>
+        <span class="type-row__size">11 / 500</span>
+        <span class="type-row__sample" style="font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-mute);">123,456,789 · TABULAR NUMERALS</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       SPACING
+       ════════════════════════════════════════════════════════ -->
+  <section class="lib-section" data-category="spacing">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Tokens · Spacing</span>
+      <h2 class="lib-section__heading">4px scale</h2>
+    </div>
+    <div>
+      <div class="space-row"><span class="space-row__label">--space-1 (4)</span><div class="space-row__bar" style="width:4px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-2 (8)</span><div class="space-row__bar" style="width:8px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-3 (12)</span><div class="space-row__bar" style="width:12px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-4 (16)</span><div class="space-row__bar" style="width:16px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-5 (20)</span><div class="space-row__bar" style="width:20px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-6 (24)</span><div class="space-row__bar" style="width:24px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-8 (32)</span><div class="space-row__bar" style="width:32px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-10 (40)</span><div class="space-row__bar" style="width:40px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-12 (48)</span><div class="space-row__bar" style="width:48px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-16 (64)</span><div class="space-row__bar" style="width:64px"></div></div>
+      <div class="space-row"><span class="space-row__label">--space-20 (80)</span><div class="space-row__bar" style="width:80px"></div></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       EFFECTS — radii + shadows
+       ════════════════════════════════════════════════════════ -->
+  <section class="lib-section" data-category="effects">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Tokens · Radii</span>
+      <h2 class="lib-section__heading">Corner radius</h2>
+    </div>
+    <div class="showcase showcase--grid-6">
+      <div class="demo-tile"><div class="demo-tile__box" style="border-radius:var(--radius-sm)"></div><span class="demo-tile__caption">--radius-sm · 4</span></div>
+      <div class="demo-tile"><div class="demo-tile__box" style="border-radius:var(--radius-md)"></div><span class="demo-tile__caption">--radius-md · 8</span></div>
+      <div class="demo-tile"><div class="demo-tile__box" style="border-radius:var(--radius-lg)"></div><span class="demo-tile__caption">--radius-lg · 12</span></div>
+      <div class="demo-tile"><div class="demo-tile__box" style="border-radius:var(--radius-xl)"></div><span class="demo-tile__caption">--radius-xl · 14</span></div>
+      <div class="demo-tile"><div class="demo-tile__box" style="border-radius:var(--radius-2xl)"></div><span class="demo-tile__caption">--radius-2xl · 16</span></div>
+      <div class="demo-tile"><div class="demo-tile__box" style="border-radius:var(--radius-pill);height:40px"></div><span class="demo-tile__caption">--radius-pill</span></div>
+    </div>
+  </section>
+
+  <section class="lib-section" data-category="effects">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Tokens · Shadow</span>
+      <h2 class="lib-section__heading">Elevation</h2>
+    </div>
+    <div class="showcase showcase--grid-4">
+      <div class="demo-tile"><div class="demo-tile__box demo-tile__box--shadow" style="box-shadow:var(--shadow-island);border-radius:var(--radius-lg)"></div><span class="demo-tile__caption">--shadow-island</span></div>
+      <div class="demo-tile"><div class="demo-tile__box demo-tile__box--shadow" style="box-shadow:var(--shadow-card);border-radius:var(--radius-xl)"></div><span class="demo-tile__caption">--shadow-card</span></div>
+      <div class="demo-tile"><div class="demo-tile__box demo-tile__box--shadow" style="box-shadow:var(--shadow-accent);border-radius:var(--radius-md);background:var(--color-accent)"></div><span class="demo-tile__caption">--shadow-accent</span></div>
+      <div class="demo-tile"><div class="demo-tile__box demo-tile__box--shadow" style="box-shadow:var(--shadow-chip);border-radius:var(--radius-md)"></div><span class="demo-tile__caption">--shadow-chip</span></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       COMPONENTS
+       ════════════════════════════════════════════════════════ -->
+  <section class="lib-section" data-category="components">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Component</span>
+      <h2 class="lib-section__heading">Buttons · <code>.btn</code></h2>
+    </div>
+    <div class="showcase">
+      <button class="btn btn--primary" type="button">Primary</button>
+      <button class="btn btn--primary btn--lg" type="button">
+        Primary · Large
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+      <button class="btn btn--primary btn--sm" type="button">Primary · Small</button>
+      <button class="btn btn--ghost" type="button">Ghost</button>
+      <button class="btn btn--ghost btn--lg" type="button">Ghost · Large</button>
+      <button class="btn btn--text" type="button">Text</button>
+    </div>
+  </section>
+
+  <section class="lib-section" data-category="components">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Component</span>
+      <h2 class="lib-section__heading">Chips & tags · <code>.chip</code></h2>
+    </div>
+    <div class="showcase">
+      <span class="chip chip--green">Success</span>
+      <span class="chip chip--violet">Info</span>
+      <span class="chip chip--orange">Warning</span>
+      <span class="chip chip--accent">Accent</span>
+      <span class="chip chip--mono chip--green">VERIFIED</span>
+      <span class="chip chip--status">Live · 12m ago</span>
+      <span class="eyebrow">Eyebrow label</span>
+    </div>
+  </section>
+
+  <section class="lib-section" data-category="components">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Component</span>
+      <h2 class="lib-section__heading">Icon tiles · <code>.icon-tile</code></h2>
+    </div>
+    <div class="showcase">
+      <span class="icon-tile icon-tile--lg" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </span>
+      <span class="icon-tile" aria-label="Shield check">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      </span>
+      <span class="icon-tile" aria-label="Zap">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      </span>
+      <span class="icon-tile" aria-label="Lock">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </span>
+      <span class="icon-tile icon-tile--sm" aria-label="Eye">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      </span>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       STATES — locked button states for visual reference
+       ════════════════════════════════════════════════════════ -->
+  <section class="lib-section" data-category="states">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Patterns</span>
+      <h2 class="lib-section__heading">Button states · <code>.btn--primary</code></h2>
+    </div>
+    <div>
+      <div class="state-row">
+        <span class="state-row__label">Default</span>
+        <div><button class="btn btn--primary" type="button">Click me</button></div>
+      </div>
+      <div class="state-row">
+        <span class="state-row__label">Hover</span>
+        <div><button class="btn btn--primary" data-state="hover" type="button">Click me</button></div>
+      </div>
+      <div class="state-row">
+        <span class="state-row__label">Active</span>
+        <div><button class="btn btn--primary" data-state="active" type="button">Click me</button></div>
+      </div>
+      <div class="state-row">
+        <span class="state-row__label">Focus</span>
+        <div><button class="btn btn--primary" data-state="focus" type="button">Click me</button></div>
+      </div>
+      <div class="state-row">
+        <span class="state-row__label">Disabled</span>
+        <div><button class="btn btn--primary" type="button" disabled>Click me</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       MOTION — animation primitives
+       ════════════════════════════════════════════════════════ -->
+  <section class="lib-section" data-category="motion">
+    <div class="lib-section__head">
+      <span class="lib-section__title">Patterns</span>
+      <h2 class="lib-section__heading">Motion primitives</h2>
+    </div>
+    <div>
+      <div class="motion-row">
+        <span class="motion-row__label">Pulse</span>
+        <div class="motion-row__demo"><span class="demo-dot anim--pulse"></span></div>
+        <span class="motion-row__caption">scale 0.85 ↔ 1.15 · 2.4s · ease-in-out · loop</span>
+      </div>
+      <div class="motion-row">
+        <span class="motion-row__label">Fade in</span>
+        <div class="motion-row__demo"><span class="demo-dot anim--fade-in"></span></div>
+        <span class="motion-row__caption">opacity 0 → 1 · 2s · ease-out · loop</span>
+      </div>
+      <div class="motion-row">
+        <span class="motion-row__label">Scale + fade</span>
+        <div class="motion-row__demo"><span class="demo-box anim--scale-fade"></span></div>
+        <span class="motion-row__caption">scale 0.85 → 1 · 2s · --ease-back · loop</span>
+      </div>
+      <div class="motion-row">
+        <span class="motion-row__label">Slide up</span>
+        <div class="motion-row__demo"><span class="demo-box anim--slide-up"></span></div>
+        <span class="motion-row__caption">translateY 12 → 0 · 2s · --ease-out · loop</span>
+      </div>
+      <div class="motion-row">
+        <span class="motion-row__label">Shimmer</span>
+        <div class="motion-row__demo"><span class="anim--shimmer"></span></div>
+        <span class="motion-row__caption">loading skeleton · 1.6s · linear · loop</span>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /.lib__content -->
+</div><!-- /.lib__layout -->
+
+</main>
+
+<script>
+  window.PREVIEW_PROJECT_NAME = "Reply Anywhere";
+  window.PREVIEW_DEFAULT_VERSION = "uikit";
+  window.PREVIEW_VERSIONS = [
+    { id: "brief",     label: "Brief",     desc: "Client brief — source of truth", path: "brief/" },
+    { id: "wireframe", label: "Wireframe", desc: "Lo-fi structure of the landing", path: "wireframe/" },
+    { id: "uikit",     label: "UI Kit",    desc: "Tokens & components reference", path: "uikit/" },
+    { id: "launcher",  label: "Launcher",  desc: "Index of all preview versions", path: "" }
+  ];
+</script>
+<script defer src="../shared/service-menu.js"></script>
+
+<script>
+  /* ── Filter nav (left sidebar) ─────────────────────────────
+     Click a filter pill → set data-filter on .lib root.
+     CSS hides .lib-section that don't match active category. */
+  (function () {
+    const lib   = document.querySelector('.lib');
+    const items = document.querySelectorAll('.lib-nav__item');
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        lib.dataset.filter = item.dataset.filter;
+        items.forEach(x => x.classList.toggle('is-active', x === item));
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

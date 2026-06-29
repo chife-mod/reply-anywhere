@@ -8,374 +8,615 @@
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23116490'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='42' fill='white'%3ER%3C/text%3E%3C/svg%3E">
 
-<link rel="stylesheet" href="../shared/tokens.css">
-<link rel="stylesheet" href="../shared/components.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap">
+
 <link rel="stylesheet" href="https://chife-mod.github.io/sfg-dashboard/base/service-menu.css">
 
 <style>
-/* ─────────────────────────────────────────────────────────────────
-   WIREFRAME styles — intentionally lo-fi & grayscale.
-   No brand colors here: violet / SF styling lands at the Design stage
-   (see BRIEF.md §6–7). This page is about STRUCTURE & CONTENT ORDER.
-   ─────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   Reply Anywhere — Wireframe (Verifly sandbox-rail pattern)
+   Left = screen content (clean, neutral — NO brand yet; violet lands
+   at the Design stage). Right = narrative rail: per-section cards with
+   notes, RU translation and reference tags, height-synced to sections.
+   ──────────────────────────────────────────────────────────── */
 :root {
-  --wf-ink:    #2b3138;
-  --wf-mut:    #6b747d;
-  --wf-faint:  #aab2ba;
-  --wf-line:   #c7ced4;
-  --wf-fill:   #e4e8ec;
-  --wf-fill-2: #eef1f4;
-  --wf-page:   #dfe3e7;
-  --wf-note:   #7c5cff;   /* annotations only — ties to the future brand violet */
+  --white:#fff; --paper:#F4F6FA; --paper-2:#ECF0F6; --paper-3:#DDE4EE;
+  --ink:#0F172A; --ink-2:#1E293B;
+  --text:#0F172A; --text-mute:#475569; --text-faint:#94A3B8;
+  --accent:#3D5A80;            /* neutral wireframe accent (NOT the brand violet) */
+  --accent-soft:#E7ECF3;
+  --border-light:#E2E8F0; --border:#CBD5E1;
+  --ok:#15803D; --ok-soft:#DCFCE7; --no:#BE3030; --no-soft:#FDECEC;
+  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-pill:999px;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.05); --shadow-md:0 6px 24px rgba(15,23,42,.06);
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
+* { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: var(--wf-page);
-  color: var(--wf-ink);
-  -webkit-font-smoothing: antialiased;
-  padding: 40px 20px 140px;
-  line-height: 1.5;
+  font-family:'Geist', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size:16px; line-height:1.55; color:var(--text); background:var(--white);
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
 }
+.mono { font-family:'Geist Mono', ui-monospace, "SF Mono", Menlo, monospace; }
+img, svg { display:block; max-width:100%; }
 
-.wf {
-  max-width: 1160px;
-  margin: 0 auto;
-  background: #fff;
-  border: 1px solid var(--wf-line);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 18px 50px rgba(20,30,40,.12);
-}
-
-/* legend banner */
-.wf-legend {
-  display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center;
-  padding: 14px 24px; background: #2b3138; color: #fff;
-  font-size: 12.5px; letter-spacing: .01em;
-}
-.wf-legend strong { font-weight: 700; }
-.wf-legend .dot { color: var(--wf-note); font-weight: 700; }
-.wf-legend span.muted { color: #aab2ba; }
-
-/* section scaffold */
-.sec { position: relative; padding: 40px 56px; border-bottom: 1px dashed var(--wf-line); }
-.sec:last-child { border-bottom: none; }
-.sec__tag {
-  position: absolute; top: 0; left: 0;
-  font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: var(--wf-mut); background: var(--wf-fill-2);
-  padding: 6px 10px; border-bottom-right-radius: 6px;
-  border-right: 1px solid var(--wf-line); border-bottom: 1px solid var(--wf-line);
-}
-.note {
-  font: 400 12.5px/1.45 ui-sans-serif, system-ui, sans-serif;
-  color: var(--wf-note); margin-top: 10px;
-  padding-left: 12px; border-left: 2px solid var(--wf-note);
-}
-.note b { font-weight: 700; }
-
-/* placeholder atoms */
-.ph        { background: var(--wf-fill); border-radius: 4px; }
-.ph-soft   { background: var(--wf-fill-2); border: 1px dashed var(--wf-line); border-radius: 6px; }
-.bar       { height: 12px; background: var(--wf-fill); border-radius: 3px; }
-.bar.lg    { height: 18px; }
-.bar.title { height: 30px; background: var(--wf-line); }
-.bar.w30 { width: 30%; } .bar.w40 { width: 40%; } .bar.w50 { width: 50%; }
-.bar.w60 { width: 60%; } .bar.w70 { width: 70%; } .bar.w80 { width: 80%; } .bar.w90 { width: 90%; }
-.stack > * + * { margin-top: 10px; }
-
+/* ── Left: section primitives ─────────────────────────────────── */
+.section { padding:96px 56px; position:relative; }
+.section--paper { background:var(--paper); }
+.section--white { background:var(--white); }
+.section--ink   { background:var(--ink); color:#fff; }
+.container { max-width:1060px; margin:0 auto; }
+.head { margin-bottom:32px; max-width:760px; }
 .eyebrow {
-  font: 600 11px/1 ui-monospace, monospace; letter-spacing: .16em;
-  text-transform: uppercase; color: var(--wf-faint); margin-bottom: 14px;
+  display:inline-flex; align-items:center; gap:10px; margin-bottom:14px;
+  font-family:'Geist Mono', monospace; font-size:12px; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--accent);
 }
-.h-real { font-size: 30px; font-weight: 800; letter-spacing: -.02em; color: var(--wf-ink); line-height: 1.12; }
-.sub-real { font-size: 15px; color: var(--wf-mut); max-width: 46ch; }
-.lbl { font: 600 11px/1 ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--wf-faint); }
+.eyebrow::before { content:""; width:6px; height:6px; border-radius:999px; background:currentColor; }
+.display { font-size:clamp(40px,6vw,64px); font-weight:700; line-height:1.04; letter-spacing:-.03em; color:var(--ink); }
+.h2 { font-size:clamp(26px,3.4vw,34px); font-weight:600; line-height:1.12; letter-spacing:-.02em; color:var(--ink); }
+.h3 { font-size:19px; font-weight:600; line-height:1.3; color:var(--ink); }
+.lead { font-size:18px; line-height:1.55; color:var(--text-mute); }
+.body { font-size:16px; line-height:1.65; color:var(--text-mute); }
+.body p + p { margin-top:14px; }
 
-.btn-wf {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 12px 20px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
-  border: 1.5px solid var(--wf-ink); color: var(--wf-ink); background: transparent;
+.btn {
+  display:inline-flex; align-items:center; gap:8px; padding:13px 22px;
+  border-radius:var(--r-md); font:inherit; font-size:15px; font-weight:500;
+  border:1px solid transparent; text-decoration:none; cursor:pointer; white-space:nowrap;
 }
-.btn-wf.solid { background: var(--wf-ink); color: #fff; }
-.row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.btn--primary { background:var(--ink); color:#fff; }
+.btn--ghost { background:transparent; color:var(--ink); border-color:var(--border); }
+.btn .arrow { font-family:'Geist Mono', monospace; }
 
-/* image / screenshot box */
-.imgbox {
-  position: relative; background:
-    repeating-linear-gradient(45deg, var(--wf-fill-2) 0 14px, var(--wf-fill) 14px 28px);
-  border: 1px dashed var(--wf-line); border-radius: 8px;
-  display: grid; place-items: center; min-height: 220px; text-align: center; padding: 16px;
+/* ── Nav ─────────────────────────────────────────────────────── */
+.nav { border-bottom:1px solid var(--border-light); background:var(--white); }
+.nav__inner { max-width:1060px; margin:0 auto; padding:18px 56px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.nav__logo { font-size:19px; font-weight:800; letter-spacing:-.02em; color:var(--ink); }
+.nav__links { display:flex; gap:24px; }
+.nav__links a { font-size:14px; color:var(--text-mute); text-decoration:none; }
+.nav__actions { display:flex; gap:10px; }
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.hero { padding:88px 56px 80px; background:var(--paper); }
+.hero__inner { max-width:1060px; margin:0 auto; display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center; }
+.hero__sub { font-size:18px; line-height:1.55; color:var(--text-mute); margin-top:18px; max-width:46ch; }
+.hero__cta { display:flex; gap:12px; margin-top:28px; flex-wrap:wrap; }
+.hero__note { margin-top:16px; font-size:13px; color:var(--text-faint); }
+.hero__visual {
+  aspect-ratio:4/3; border-radius:var(--r-lg); border:1px dashed var(--border);
+  background:
+    repeating-linear-gradient(45deg, var(--paper-2) 0 16px, var(--paper) 16px 32px);
+  display:grid; place-items:center; text-align:center; padding:24px;
+  color:var(--text-faint); font-family:'Geist Mono', monospace; font-size:12px; line-height:1.6;
 }
-.imgbox .lbl { color: var(--wf-mut); }
+@media (max-width:900px){ .hero__inner{ grid-template-columns:1fr; } }
 
-/* ── 02 nav ── */
-.nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-.nav__logo { width: 150px; height: 38px; display: grid; place-items: center;
-  border: 1.5px dashed var(--wf-line); border-radius: 6px; color: var(--wf-faint);
-  font: 600 11px/1 ui-monospace, monospace; letter-spacing: .1em; }
-.nav__links { display: flex; gap: 22px; }
-.nav__links span { font-size: 13.5px; color: var(--wf-mut); font-weight: 500; }
+/* ── Logos strip ─────────────────────────────────────────────── */
+.logos { display:flex; flex-wrap:wrap; gap:16px; margin-top:8px; }
+.logo-cell {
+  flex:1 1 200px; height:72px; display:grid; place-items:center;
+  background:var(--white); border:1px solid var(--border-light); border-radius:var(--r-md);
+  font-weight:700; font-size:17px; color:var(--ink-2);
+}
 
-/* hero grid */
-.hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+/* ── Differentiator compare ──────────────────────────────────── */
+.cmp { display:grid; grid-template-columns:1fr auto 1fr; gap:18px; align-items:stretch; }
+.cmp__col { border:1px solid var(--border); border-radius:var(--r-lg); padding:28px; background:var(--white); }
+.cmp__col--win { border-color:var(--ink); border-width:1.5px; }
+.cmp__h { font-size:18px; font-weight:700; }
+.cmp__sub { font-size:13px; color:var(--text-faint); margin:4px 0 18px; }
+.cmp__vs { align-self:center; font-family:'Geist Mono', monospace; font-weight:500; color:var(--text-faint); }
+.cmp ul { list-style:none; }
+.cmp li { position:relative; padding:9px 0 9px 26px; font-size:15px; border-top:1px solid var(--border-light); }
+.cmp li:first-child { border-top:none; }
+.cmp li::before { content:"✓"; position:absolute; left:0; color:var(--ok); font-weight:700; }
+.cmp li.no { color:var(--text-faint); }
+.cmp li.no::before { content:"✕"; color:var(--no); }
+@media (max-width:760px){ .cmp{ grid-template-columns:1fr; } .cmp__vs{ display:none; } }
 
-/* logo strip */
-.logos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 14px; }
-.logo-cell { height: 64px; display: grid; place-items: center; gap: 4px;
-  border: 1px dashed var(--wf-line); border-radius: 8px; background: var(--wf-fill-2); }
-.logo-cell b { font-size: 14px; color: var(--wf-ink); }
-.logo-cell em { font-style: normal; font: 600 10px/1 ui-monospace, monospace; color: var(--wf-faint); letter-spacing: .08em; }
+/* ── Feature cards ───────────────────────────────────────────── */
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.feature { border:1px solid var(--border-light); border-radius:var(--r-lg); padding:26px; background:var(--white); }
+.feature__icn { width:46px; height:46px; border-radius:12px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center; font-weight:700; margin-bottom:16px; }
+.feature__t { font-size:17px; font-weight:600; margin-bottom:8px; }
+.feature__d { font-size:14.5px; color:var(--text-mute); line-height:1.55; }
+@media (max-width:760px){ .grid-3{ grid-template-columns:1fr; } }
 
-/* differentiator compare */
-.cmp { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: stretch; margin-top: 8px; }
-.cmp__col { border: 1px solid var(--wf-line); border-radius: 10px; padding: 22px; background: var(--wf-fill-2); }
-.cmp__col.win { border-color: var(--wf-ink); border-width: 1.5px; background: #fff; }
-.cmp__h { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-.cmp__sub { font-size: 12.5px; color: var(--wf-mut); margin-bottom: 14px; }
-.cmp li { list-style: none; font-size: 13px; color: var(--wf-ink); padding: 6px 0 6px 22px; position: relative; }
-.cmp li::before { content: "✓"; position: absolute; left: 0; color: var(--wf-mut); font-weight: 700; }
-.cmp li.no::before { content: "✕"; color: var(--wf-faint); }
-.cmp li.no { color: var(--wf-faint); }
-.cmp__vs { align-self: center; font: 700 12px/1 ui-monospace, monospace; color: var(--wf-faint); }
+/* ── Channel chips ───────────────────────────────────────────── */
+.chips { display:flex; flex-wrap:wrap; gap:10px; }
+.chip { padding:9px 16px; border-radius:var(--r-pill); background:var(--white); border:1px solid var(--border); font-size:14px; color:var(--ink-2); }
+.chip--strong { background:var(--ink); color:#fff; border-color:var(--ink); }
 
-/* 3-up grids */
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 8px; }
-.card { border: 1px solid var(--wf-line); border-radius: 10px; padding: 22px; background: #fff; }
-.card .icn { width: 40px; height: 40px; border-radius: 8px; background: var(--wf-fill); margin-bottom: 14px; display:grid; place-items:center; color: var(--wf-faint); font: 700 16px/1 ui-monospace, monospace; }
+/* ── Case cards ──────────────────────────────────────────────── */
+.cases { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.case { border:1px solid var(--border-light); border-radius:var(--r-lg); overflow:hidden; background:var(--white); }
+.case__logo { height:84px; display:grid; place-items:center; background:var(--paper); border-bottom:1px solid var(--border-light); font-weight:700; font-size:17px; color:var(--ink-2); }
+.case__body { padding:22px; }
+.case__metric { font-size:26px; font-weight:700; letter-spacing:-.02em; color:var(--ink); }
+.case__d { font-size:14px; color:var(--text-mute); margin-top:6px; line-height:1.5; }
+@media (max-width:760px){ .cases{ grid-template-columns:1fr; } }
 
-/* channels chips */
-.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
-.chip-wf { font-size: 12.5px; color: var(--wf-ink); border: 1px solid var(--wf-line);
-  background: var(--wf-fill-2); border-radius: 999px; padding: 8px 14px; }
+/* ── Demo form ───────────────────────────────────────────────── */
+.demo { display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:620px; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field--full { grid-column:1 / -1; }
+.field label { font-family:'Geist Mono', monospace; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--text-faint); }
+.field .inp { height:46px; border:1px solid var(--border); border-radius:var(--r-md); background:var(--white); }
+.field .inp--area { height:96px; }
 
-/* case cards */
-.cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 8px; }
-.case { border: 1px solid var(--wf-line); border-radius: 10px; overflow: hidden; background: #fff; }
-.case__logo { height: 70px; display: grid; place-items: center; background: var(--wf-fill-2); border-bottom: 1px dashed var(--wf-line); font-weight: 700; }
-.case__body { padding: 18px; }
+/* ── Footer ──────────────────────────────────────────────────── */
+.footer { padding:48px 56px; background:var(--ink); color:rgba(255,255,255,.66); }
+.footer__inner { max-width:1060px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+.footer__brand { font-size:18px; font-weight:800; color:#fff; }
 
-/* form */
-.form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 620px; margin-top: 8px; }
-.field { grid-column: span 1; }
-.field.full { grid-column: span 2; }
-.field .lbl { display: block; margin-bottom: 6px; }
-.field .inp { height: 40px; border: 1px solid var(--wf-line); border-radius: 6px; background: var(--wf-fill-2); }
-.field .inp.area { height: 84px; }
+/* ════════════════════════════════════════════════════════════════
+   RIGHT RAIL (Verifly sandbox-rail) — narrative blackboard.
+   ──────────────────────────────────────────────────────────── */
+.sandbox__body { display:grid; grid-template-columns:minmax(0,1fr) 380px; align-items:start; }
+.sandbox__main { grid-column:1; min-width:0; }
+.sandbox__rail { grid-column:2; position:relative; background:#FAF8F3; border-left:1px dashed rgba(15,23,42,.18); font-family:'Geist', system-ui, sans-serif; }
+.sandbox__rail-tag {
+  position:sticky; top:0; z-index:5; display:flex; justify-content:space-between; align-items:center;
+  padding:10px 14px; background:rgba(250,248,243,.94); backdrop-filter:blur(8px);
+  border-bottom:1px dashed rgba(15,23,42,.14); font-family:'Geist Mono', monospace;
+  font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:#94A3B8;
+}
+.sandbox__rail-tag strong { color:var(--accent); font-weight:600; }
 
-/* footer */
-.foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 24px; padding: 36px 56px; background: #2b3138; color: #cdd4da; }
-.foot .lbl { color: #79838d; margin-bottom: 12px; display: block; }
-.foot .bar { background: #424b54; }
-.foot__brand { font-weight: 800; color: #fff; font-size: 18px; }
+.summary { overflow:hidden; }                 /* JS sets height = section.offsetHeight (1:1) */
+.summary__card {
+  margin:12px 14px; height:calc(100% - 24px); padding:14px;
+  background:#fff; border:1px solid rgba(15,23,42,.10); border-radius:8px;
+  box-shadow:0 1px 3px rgba(15,23,42,.04); font-size:12px; line-height:1.45; color:#374151;
+  overflow-x:hidden; overflow-y:auto;
+}
+.summary__head { display:flex; align-items:baseline; gap:8px; margin-bottom:6px; font-family:'Geist Mono', monospace; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:#94A3B8; }
+.summary__num { color:var(--accent); font-weight:600; }
+.summary__title { margin:0 0 12px; font-size:14px; font-weight:600; line-height:1.3; color:#0F172A; }
+.summary__field { margin:0 0 10px; padding-bottom:10px; border-bottom:1px solid rgba(15,23,42,.06); }
+.summary__field:last-child { margin-bottom:0; padding-bottom:0; border-bottom:none; }
+.summary__field-label { display:block; margin-bottom:4px; font-family:'Geist Mono', monospace; font-size:10px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:#94A3B8; }
+.summary__field p { margin:0; font-size:12px; line-height:1.55; color:#374151; }
+.summary__field p + p { margin-top:6px; }
+.summary__tags { margin-top:12px; padding-top:10px; border-top:1px solid rgba(15,23,42,.06); }
+.summary__tags-label { display:block; margin-bottom:6px; font-family:'Geist Mono', monospace; font-size:10px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:#94A3B8; }
+.summary__tags-list { display:flex; flex-wrap:wrap; gap:6px; }
+.summary__tag { display:inline-flex; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:500; background:#E7ECF3; color:#3D5A80; }
+.summary__tag--mood { background:#F3ECDD; color:#8A6D2F; }
+.summary__tag--domain { background:#EAECEF; color:#475569; }
+.summary__tag--anti { background:#FDECEC; color:#BE3030; text-decoration:line-through; }
 
-@media (max-width: 860px) {
-  .sec { padding: 36px 28px; }
-  .hero, .cmp, .grid-3, .cases, .form, .foot { grid-template-columns: 1fr; }
-  .cmp__vs { display: none; }
-  .nav__links { display: none; }
-  .logos { grid-template-columns: 1fr; }
+/* intro card = dark */
+.summary--intro .summary__card { background:#0F172A; border-color:rgba(255,255,255,.12); }
+.summary--intro .summary__title { color:#fff; }
+.summary--intro .summary__head { color:rgba(255,255,255,.45); }
+.summary--intro .summary__num { color:#7C5CFF; }
+.summary--intro .summary__field { border-bottom-color:rgba(255,255,255,.08); }
+.summary--intro .summary__field-label { color:rgba(255,255,255,.45); }
+.summary--intro .summary__field p { color:rgba(255,255,255,.78); }
+.summary--intro .summary__tags { border-top-color:rgba(255,255,255,.10); }
+.summary--intro .summary__tags-label { color:rgba(255,255,255,.45); }
+
+/* ── Mobile: rail collapses below main ───────────────────────── */
+@media (max-width:1024px){
+  .sandbox__body { display:block; }
+  .sandbox__rail { width:100%; border-left:none; border-top:1px dashed rgba(15,23,42,.18); }
+  .sandbox__rail-tag { position:static; }
+  .summary { height:auto !important; overflow:visible; padding:0 0 16px; }
+  .summary__card { height:auto; }
+  .section, .hero, .nav__inner, .footer { padding-left:24px; padding-right:24px; }
 }
 </style>
 </head>
 <body>
 
-<main class="wf">
-
-  <!-- legend -->
-  <div class="wf-legend">
-    <strong>Reply Anywhere — Wireframe</strong>
-    <span class="muted">Stage 01 · lo-fi structure</span>
-    <span><span class="dot">▍</span> violet notes = decisions / open questions → see BRIEF.md</span>
-    <span class="muted">Grayscale on purpose — branding &amp; visuals come at the Design stage.</span>
-  </div>
+<div class="sandbox">
+<div class="sandbox__body">
+<div class="sandbox__main">
 
   <!-- 01 · NAV -->
-  <section class="sec">
-    <span class="sec__tag">01 · Nav</span>
-    <div class="nav">
-      <div class="nav__logo">LOGO</div>
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <div class="nav__logo">Reply Anywhere</div>
       <nav class="nav__links">
-        <span>Features</span><span>Channels</span><span>Cases</span><span>Pricing?</span><span>Contact</span>
+        <a href="#why">Features</a><a href="#channels">Channels</a><a href="#cases">Cases</a><a href="#demo">Pricing</a><a href="#demo">Contact</a>
       </nav>
-      <span class="btn-wf solid">Request a demo</span>
+      <div class="nav__actions">
+        <a class="btn btn--primary" href="#demo">Request a demo <span class="arrow">→</span></a>
+      </div>
     </div>
-    <p class="note">Simple gominga-style top bar. Logo (real mark TBD — <b>BRIEF §10</b>). “Pricing” optional — confirm with client.</p>
-  </section>
+  </header>
 
   <!-- 02 · HERO -->
-  <section class="sec">
-    <span class="sec__tag">02 · Hero</span>
-    <div class="hero">
-      <div class="stack">
-        <div class="eyebrow">Eyebrow · A Semantic Force product</div>
-        <div class="h-real">Reply to every review &amp; message — anywhere your customers are</div>
-        <p class="sub-real">One inbox for reviews, ratings, questions and social messages across marketplaces, app stores, maps and social networks. (Headline/sub = adapted from gominga.)</p>
-        <div class="row" style="margin-top:6px">
-          <span class="btn-wf solid">Request a demo</span>
-          <span class="btn-wf">See it live →</span>
+  <section class="hero" id="hero">
+    <div class="hero__inner">
+      <div>
+        <span class="eyebrow">A Semantic Force product</span>
+        <h1 class="display">Reply to every review &amp; message — anywhere your customers are.</h1>
+        <p class="hero__sub">One inbox for ratings, reviews, questions and social messages — across marketplaces, app stores, maps and social networks.</p>
+        <div class="hero__cta">
+          <a class="btn btn--primary btn--lg" href="#demo">Request a demo <span class="arrow">→</span></a>
+          <a class="btn btn--ghost" href="#cases">See it live <span class="arrow">→</span></a>
+        </div>
+        <p class="hero__note">Trusted by Ajax Electronics, Samsung and Volia Cable.</p>
+      </div>
+      <div class="hero__visual">Hero visual<br>product screenshot / live HelpDesk inbox<br>(provided by Ajax · TM)</div>
+    </div>
+  </section>
+
+  <!-- 03 · SOCIAL PROOF -->
+  <section class="section section--white" id="logos">
+    <div class="container">
+      <div class="head"><span class="eyebrow">Trusted by</span><h2 class="h2">Brands that reply with us.</h2></div>
+      <div class="logos">
+        <div class="logo-cell">Ajax Electronics</div>
+        <div class="logo-cell">Samsung</div>
+        <div class="logo-cell">Volia Cable</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · WHY / DIFFERENTIATOR -->
+  <section class="section section--paper" id="why">
+    <div class="container">
+      <div class="head"><span class="eyebrow">Why Reply Anywhere</span><h2 class="h2">Not just reviews. Reviews <em>and</em> social.</h2>
+        <p class="lead" style="margin-top:14px">Most tools stop at store reviews. Reply Anywhere answers everywhere your customers actually talk — reviews and social, in one place.</p>
+      </div>
+      <div class="cmp">
+        <div class="cmp__col">
+          <div class="cmp__h">Review-only tools</div>
+          <div class="cmp__sub">typical review managers</div>
+          <ul>
+            <li>Marketplace reviews</li>
+            <li>App-store reviews</li>
+            <li>Maps reviews</li>
+            <li class="no">Social comments</li>
+            <li class="no">Direct messages</li>
+          </ul>
+        </div>
+        <div class="cmp__vs">vs</div>
+        <div class="cmp__col cmp__col--win">
+          <div class="cmp__h">Reply Anywhere</div>
+          <div class="cmp__sub">built on Semantic Force</div>
+          <ul>
+            <li>Marketplace reviews</li>
+            <li>App-store &amp; maps reviews</li>
+            <li>Social comments (Instagram, TikTok…)</li>
+            <li>Direct messages &amp; DMs</li>
+            <li>50+ channels · 500+ e-commerce platforms</li>
+          </ul>
         </div>
       </div>
-      <div class="imgbox">
-        <span class="lbl">Hero visual<br>product screenshot / live dashboard<br>(from Tanya — BRIEF §10)</span>
-      </div>
     </div>
-    <p class="note"><b>Primary message:</b> reply <i>anywhere</i> = reviews <b>+ social</b> in one place. Copy adapted from gominga, not copied verbatim. CTA → demo (the only conversion goal for v1).</p>
   </section>
 
-  <!-- 03 · CUSTOMER LOGOS -->
-  <section class="sec">
-    <span class="sec__tag">03 · Social proof</span>
-    <div class="bar title w40"></div>
-    <div class="lbl" style="margin-top:8px">“Brands that reply with us” / “Trusted by”</div>
-    <div class="logos">
-      <div class="logo-cell"><b>Ajax Systems</b><em>confirmed</em></div>
-      <div class="logo-cell"><b>Samsung</b><em>confirmed</em></div>
-      <div class="logo-cell"><b>Logo 3</b><em>TBD</em></div>
-    </div>
-    <p class="note">3 logos to start (<b>BRIEF §9</b>). Ajax + Samsung confirmed; 3rd TBD (LG / Teleperformance brands — Philips, Huawei, Sony).</p>
-  </section>
-
-  <!-- 04 · DIFFERENTIATOR -->
-  <section class="sec">
-    <span class="sec__tag">04 · Why Reply Anywhere</span>
-    <div class="h-real" style="font-size:24px; margin-bottom:6px">Not just reviews. Reviews <em>and</em> social.</div>
-    <div class="cmp">
-      <div class="cmp__col">
-        <div class="cmp__h">Review-only tools</div>
-        <div class="cmp__sub">e.g. typical review managers</div>
-        <ul class="cmp">
-          <li>Marketplace reviews</li>
-          <li>App-store reviews</li>
-          <li>Maps reviews</li>
-          <li class="no">Social comments</li>
-          <li class="no">Direct messages</li>
-        </ul>
-      </div>
-      <div class="cmp__vs">VS</div>
-      <div class="cmp__col win">
-        <div class="cmp__h">Reply Anywhere</div>
-        <div class="cmp__sub">built on Semantic Force</div>
-        <ul class="cmp">
-          <li>Marketplace reviews</li>
-          <li>App-store &amp; maps reviews</li>
-          <li>Social comments (IG, TikTok…)</li>
-          <li>Direct messages &amp; DMs</li>
-          <li>50+ channels, 500+ e-commerce</li>
-        </ul>
+  <!-- 05 · CAPABILITIES -->
+  <section class="section section--white" id="features">
+    <div class="container">
+      <div class="head"><span class="eyebrow">Capabilities</span><h2 class="h2">Everything you need to respond at scale.</h2></div>
+      <div class="grid-3">
+        <div class="feature">
+          <div class="feature__icn">▣</div>
+          <div class="feature__t">All channels in one inbox</div>
+          <div class="feature__d">Reviews, comments, questions and DMs from every platform land in a single queue — nothing slips through.</div>
+        </div>
+        <div class="feature">
+          <div class="feature__icn">◐</div>
+          <div class="feature__t">AI listening &amp; prioritization</div>
+          <div class="feature__d">AI flags critical cases, routes by topic and surfaces what needs an answer first.</div>
+        </div>
+        <div class="feature">
+          <div class="feature__icn">⤷</div>
+          <div class="feature__t">Templates, auto-replies &amp; media</div>
+          <div class="feature__d">Reply faster with smart templates and automation; send rich media right in the response.</div>
+        </div>
       </div>
     </div>
-    <p class="note"><b>Core wedge vs gominga (BRIEF §4).</b> gominga = reviews only; we add social/messaging out of the box. Keep the comparison fair (don’t name the competitor on the live page).</p>
-  </section>
-
-  <!-- 05 · FEATURES -->
-  <section class="sec">
-    <span class="sec__tag">05 · Capabilities</span>
-    <div class="bar title w50"></div>
-    <div class="grid-3">
-      <div class="card">
-        <div class="icn">▣</div>
-        <div class="bar lg w80"></div>
-        <div class="stack" style="margin-top:12px"><div class="bar w90"></div><div class="bar w70"></div></div>
-        <div class="lbl" style="margin-top:14px">All channels in one inbox</div>
-      </div>
-      <div class="card">
-        <div class="icn">◐</div>
-        <div class="bar lg w70"></div>
-        <div class="stack" style="margin-top:12px"><div class="bar w90"></div><div class="bar w60"></div></div>
-        <div class="lbl" style="margin-top:14px">AI listening &amp; prioritization</div>
-      </div>
-      <div class="card">
-        <div class="icn">⤷</div>
-        <div class="bar lg w80"></div>
-        <div class="stack" style="margin-top:12px"><div class="bar w90"></div><div class="bar w70"></div></div>
-        <div class="lbl" style="margin-top:14px">Templates, auto-replies &amp; media</div>
-      </div>
-    </div>
-    <p class="note">3 feature blocks — copy adapted from gominga + SF HelpDesk (AI routing, templates, rich-media replies, segmentation, CRM). Add a 2nd row only if needed.</p>
   </section>
 
   <!-- 06 · CHANNELS -->
-  <section class="sec">
-    <span class="sec__tag">06 · Channel coverage</span>
-    <div class="bar title w40"></div>
-    <div class="lbl" style="margin-top:8px">Everywhere your customers talk</div>
-    <div class="chips">
-      <span class="chip-wf">Marketplaces</span>
-      <span class="chip-wf">App Store</span>
-      <span class="chip-wf">Google Play</span>
-      <span class="chip-wf">Google Maps</span>
-      <span class="chip-wf">Review sites</span>
-      <span class="chip-wf">Instagram — comments + DM</span>
-      <span class="chip-wf">Facebook Messenger</span>
-      <span class="chip-wf">WhatsApp</span>
-      <span class="chip-wf">TikTok</span>
-      <span class="chip-wf">+ 500 e-commerce platforms</span>
+  <section class="section section--paper" id="channels">
+    <div class="container">
+      <div class="head"><span class="eyebrow">Channel coverage</span><h2 class="h2">Everywhere your customers talk.</h2></div>
+      <div class="chips">
+        <span class="chip">Marketplaces</span>
+        <span class="chip">App Store</span>
+        <span class="chip">Google Play</span>
+        <span class="chip">Google Maps</span>
+        <span class="chip">Review sites</span>
+        <span class="chip chip--strong">Instagram — comments + DM</span>
+        <span class="chip chip--strong">Facebook Messenger</span>
+        <span class="chip chip--strong">WhatsApp</span>
+        <span class="chip chip--strong">TikTok</span>
+        <span class="chip">+ 500 e-commerce platforms</span>
+      </div>
     </div>
-    <p class="note">This block is the proof behind §04. Steal the “All Platforms” idea from gominga but lead with social. Final list pulled from SF HelpDesk.</p>
   </section>
 
   <!-- 07 · CASES -->
-  <section class="sec">
-    <span class="sec__tag">07 · Examples / Cases</span>
-    <div class="bar title w40"></div>
-    <div class="cases">
-      <div class="case">
-        <div class="case__logo">Ajax Systems</div>
-        <div class="case__body stack"><div class="bar w90"></div><div class="bar w70"></div><div class="lbl" style="margin-top:6px">Read case →</div></div>
-      </div>
-      <div class="case">
-        <div class="case__logo">Samsung</div>
-        <div class="case__body stack"><div class="bar w90"></div><div class="bar w60"></div><div class="lbl" style="margin-top:6px">Read case →</div></div>
-      </div>
-      <div class="case">
-        <div class="case__logo" style="color:var(--wf-faint)">Case 3 — TBD</div>
-        <div class="case__body stack"><div class="bar w80"></div><div class="bar w50"></div><div class="lbl" style="margin-top:6px">Read case →</div></div>
+  <section class="section section--white" id="cases">
+    <div class="container">
+      <div class="head"><span class="eyebrow">Examples</span><h2 class="h2">Brands replying everywhere with us.</h2></div>
+      <div class="cases">
+        <div class="case">
+          <div class="case__logo">Ajax Electronics</div>
+          <div class="case__body"><div class="case__metric">[metric]</div><div class="case__d">How Ajax answers across reviews and social through one HelpDesk inbox.</div></div>
+        </div>
+        <div class="case">
+          <div class="case__logo">Samsung</div>
+          <div class="case__body"><div class="case__metric">[metric]</div><div class="case__d">Responding to customers across CIS markets and channels at scale.</div></div>
+        </div>
+        <div class="case">
+          <div class="case__logo">Volia Cable</div>
+          <div class="case__body"><div class="case__metric">[metric]</div><div class="case__d">Telecom support handled across reviews, maps and social in one place.</div></div>
+        </div>
       </div>
     </div>
-    <p class="note">gominga has ~10 success stories; we ship <b>3</b> (BRIEF §5/§9). Could link out or stay inline — confirm depth. Live Ajax dashboard from Tanya can power the strongest one.</p>
   </section>
 
   <!-- 08 · DEMO / CONTACT -->
-  <section class="sec">
-    <span class="sec__tag">08 · Demo / Contact</span>
-    <div class="hero">
-      <div class="stack">
-        <div class="h-real" style="font-size:24px">Request a demo</div>
-        <p class="sub-real">Short form — gominga style. Goal of the whole landing.</p>
-        <div class="form">
-          <div class="field"><span class="lbl">Name</span><div class="inp"></div></div>
-          <div class="field"><span class="lbl">Company</span><div class="inp"></div></div>
-          <div class="field"><span class="lbl">Email</span><div class="inp"></div></div>
-          <div class="field"><span class="lbl">Country</span><div class="inp"></div></div>
-          <div class="field full"><span class="lbl">Message (optional)</span><div class="inp area"></div></div>
-          <div class="field full"><span class="btn-wf solid">Request a demo</span></div>
-        </div>
+  <section class="section section--ink" id="demo">
+    <div class="container">
+      <div class="head"><span class="eyebrow" style="color:#9FB4FF">Get started</span><h2 class="h2" style="color:#fff">Request a demo.</h2>
+        <p class="lead" style="color:rgba(255,255,255,.72); margin-top:12px">See Reply Anywhere on your own channels. Short form — we'll reach out.</p>
       </div>
-      <div class="imgbox"><span class="lbl">Optional side visual<br>or testimonial quote</span></div>
+      <form class="demo" onsubmit="event.preventDefault();">
+        <div class="field"><label>Name</label><div class="inp"></div></div>
+        <div class="field"><label>Company</label><div class="inp"></div></div>
+        <div class="field"><label>Email</label><div class="inp"></div></div>
+        <div class="field"><label>Country</label><div class="inp"></div></div>
+        <div class="field field--full"><label>Message (optional)</label><div class="inp inp--area"></div></div>
+        <div class="field field--full"><a class="btn btn--primary" style="background:#fff;color:var(--ink)" href="#">Request a demo <span class="arrow">→</span></a></div>
+      </form>
     </div>
-    <p class="note">Keep it minimal (Name / Company / Email / Country + consent). One clear CTA. Wire to the same backend as the SF demo form later.</p>
   </section>
 
-  <!-- 09 · FOOTER -->
-  <div class="foot">
-    <div>
-      <div class="foot__brand">Reply&nbsp;Anywhere</div>
-      <div class="stack" style="margin-top:12px"><div class="bar w80"></div><div class="bar w50"></div></div>
-      <div class="lbl" style="margin-top:14px; color:#79838d">A Semantic Force product</div>
+  <footer class="footer">
+    <div class="footer__inner">
+      <div><div class="footer__brand">Reply Anywhere</div><div style="margin-top:8px;font-size:13px">A Semantic Force product</div></div>
+      <div style="font-size:13px">Product · Channels · Cases · Contact</div>
     </div>
-    <div><span class="lbl">Product</span><div class="stack"><div class="bar w70"></div><div class="bar w60"></div><div class="bar w80"></div></div></div>
-    <div><span class="lbl">Company</span><div class="stack"><div class="bar w60"></div><div class="bar w70"></div><div class="bar w50"></div></div></div>
-    <div><span class="lbl">Legal</span><div class="stack"><div class="bar w60"></div><div class="bar w50"></div></div></div>
+  </footer>
+
+</div><!-- /.sandbox__main -->
+
+<!-- ═══════════════ RIGHT: narrative rail ═══════════════ -->
+<aside class="sandbox__rail" aria-label="Creative direction notes">
+  <div class="sandbox__rail-tag"><strong>Reply Anywhere</strong><span>v0.1 · wireframe rail</span></div>
+
+  <!-- 00 · INTRO -->
+  <div class="summary summary--intro" data-for="nav">
+    <div class="summary__card">
+      <div class="summary__head"><span class="summary__num">00</span><span class="summary__label">Intro</span></div>
+      <h3 class="summary__title">Narrative blackboard</h3>
+      <div class="summary__field"><span class="summary__field-label">Слева</span><p>Чистый контент лендинга (Stage-01 копия, нейтральная). Бренд-цвет (фиолетовый) и финальные визуалы — на стадии Design.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Справа</span><p>Заметки по каждой секции: смысл, эмоция, визуал, motion, связь, метафора + перевод RU + теги для поиска референсов (Mobbin / Dribbble / Awwwards).</p></div>
+      <div class="summary__field"><span class="summary__field-label">Источник</span><p>Структура и тексты адаптированы с gominga (упрощено ~60%); фактура каналов/AI — из SF HelpDesk. Подтверждено письмом клиента.</p></div>
+      <div class="summary__tags">
+        <span class="summary__tags-label">Cross-cutting</span>
+        <div class="summary__tags-list">
+          <span class="summary__tag--mood summary__tag">saas-clean</span>
+          <span class="summary__tag--mood summary__tag">trust-led</span>
+          <span class="summary__tag--mood summary__tag">product-led</span>
+          <span class="summary__tag--domain summary__tag">review-management</span>
+          <span class="summary__tag--domain summary__tag">omnichannel-cx</span>
+          <span class="summary__tag--domain summary__tag">b2b-saas</span>
+        </div>
+      </div>
+      <div class="summary__tags">
+        <span class="summary__tags-label">Anti — do NOT</span>
+        <div class="summary__tags-list">
+          <span class="summary__tag--anti summary__tag">crypto-bro</span>
+          <span class="summary__tag--anti summary__tag">neumorphism</span>
+          <span class="summary__tag--anti summary__tag">cartoon-mascot</span>
+          <span class="summary__tag--anti summary__tag">cluttered-dashboard</span>
+          <span class="summary__tag--anti summary__tag">dark-gamer</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-</main>
+  <!-- 02 · HERO -->
+  <div class="summary" data-for="hero">
+    <div class="summary__card">
+      <div class="summary__head"><span class="summary__num">02</span><span class="summary__label">Hero</span></div>
+      <h3 class="summary__title">First impression / hook</h3>
+      <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Одно окно для ответов на отзывы и сообщения по всем каналам. Главный CTA — запрос демо.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Наконец-то всё в одном месте» — спокойствие, контроль, без хаоса вкладок.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Визуал</span><p>device-mockup, unified-inbox, channel-badges. Скрин живого HelpDesk от Ajax (TM).</p></div>
+      <div class="summary__field"><span class="summary__field-label">Motion</span><p>Лёгкое появление бейджей каналов; курсор «отвечает» в инбоксе (loop).</p></div>
+      <div class="summary__field"><span class="summary__field-label">Связь</span><p>Заявляет обещание → §04 доказывает «почему мы», §06 показывает охват каналов.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Один пульт ко всем каналам клиента.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
+        <p><strong>Заголовок:</strong> Отвечайте на каждый отзыв и сообщение — там, где ваши клиенты.</p>
+        <p><strong>Тело:</strong> Единый инбокс для оценок, отзывов, вопросов и сообщений в соцсетях — на маркетплейсах, в сторах, на картах и в соцсетях.</p>
+        <p><strong>CTA:</strong> Запросить демо</p>
+      </div>
+      <div class="summary__tags">
+        <span class="summary__tags-label">Reference tags</span>
+        <div class="summary__tags-list">
+          <span class="summary__tag">hero-split</span>
+          <span class="summary__tag">product-screenshot</span>
+          <span class="summary__tag">unified-inbox</span>
+          <span class="summary__tag">channel-badges</span>
+          <span class="summary__tag--mood summary__tag">saas-clean</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<!-- chip config — keep identical across all preview pages -->
+  <!-- 03 · SOCIAL PROOF -->
+  <div class="summary" data-for="logos">
+    <div class="summary__card">
+      <div class="summary__head"><span class="summary__num">03</span><span class="summary__label">Social proof</span></div>
+      <h3 class="summary__title">Credibility — logos</h3>
+      <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Три бренда, которые отвечают через нас: Ajax Electronics, Samsung, Volia Cable (подтверждены письмом).</p></div>
+      <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Доверие: «серьёзные бренды уже здесь».</p></div>
+      <div class="summary__field"><span class="summary__field-label">Визуал</span><p>logo-row, монохром/серый, реальные лого — на стадии Design.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Motion</span><p>Статично или медленный marquee при расширении списка.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Связь</span><p>Подкрепляет обещание hero перед аргументом §04.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Метафора</span><p>«Нас выбрали те, кому доверяют миллионы».</p></div>
+      <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
+        <p><strong>Заголовок:</strong> Бренды, которые отвечают вместе с нами.</p>
+        <p><strong>Тело:</strong> Ajax Electronics · Samsung · Volia Cable</p>
+      </div>
+      <div class="summary__tags">
+        <span class="summary__tags-label">Reference tags</span>
+        <div class="summary__tags-list">
+          <span class="summary__tag">logo-wall</span>
+          <span class="summary__tag">trust-bar</span>
+          <span class="summary__tag">logo-marquee</span>
+          <span class="summary__tag--mood summary__tag">trust-led</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 · WHY -->
+  <div class="summary" data-for="why">
+    <div class="summary__card">
+      <div class="summary__head"><span class="summary__num">04</span><span class="summary__label">Why</span></div>
+      <h3 class="summary__title">Core wedge vs review-only tools</h3>
+      <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Главное отличие: конкуренты = только отзывы; мы = отзывы + соцсети/личка из коробки (на стеке Semantic Force).</p></div>
+      <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Ага, вот в чём разница» — момент ясности.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Визуал</span><p>comparison-table, two-column, check-vs-cross. Конкурента не называем.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Motion</span><p>Правая колонка-«победитель» подсвечивается при скролле; галочки появляются по очереди.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Связь</span><p>Аргумент после доверия (§03); §06 затем доказывает охват фактически.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Они закрывают одну дверь — мы открываем все.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
+        <p><strong>Заголовок:</strong> Не только отзывы. Отзывы и соцсети.</p>
+        <p><strong>Тело:</strong> Большинство инструментов ограничиваются отзывами в сторах. Reply Anywhere отвечает везде, где реально говорят клиенты — отзывы и соцсети, в одном месте.</p>
+      </div>
+      <div class="summary__tags">
+        <span class="summary__tags-label">Reference tags</span>
+        <div class="summary__tags-list">
+          <span class="summary__tag">comparison-table</span>
+          <span class="summary__tag">vs-columns</span>
+          <span class="summary__tag">check-cross-list</span>
+          <span class="summary__tag">feature-matrix</span>
+          <span class="summary__tag--mood summary__tag">confident</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 · CAPABILITIES -->
+  <div class="summary" data-for="features">
+    <div class="summary__card">
+      <div class="summary__head"><span class="summary__num">05</span><span class="summary__label">Capabilities</span></div>
+      <h3 class="summary__title">What it does — 3 pillars</h3>
+      <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Три блока: единый инбокс · AI-листенинг и приоритизация · шаблоны/автоответы/медиа. (Из gominga + SF HelpDesk.)</p></div>
+      <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Уверенность в возможностях, без перегруза.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Визуал</span><p>feature-trio, icon-tiles, мини-скрины каждого пункта.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Motion</span><p>Карточки поднимаются на hover; иконки оживают при входе во вьюпорт.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Связь</span><p>«Почему» (§04) → «что именно умеет» (здесь) → «где» (§06).</p></div>
+      <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Три рычага одной панели управления.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
+        <p><strong>Заголовок:</strong> Всё, чтобы отвечать в масштабе.</p>
+        <p><strong>Тело:</strong> Все каналы в одном инбоксе · AI-листенинг и приоритизация · Шаблоны, автоответы и медиа.</p>
+      </div>
+      <div class="summary__tags">
+        <span class="summary__tags-label">Reference tags</span>
+        <div class="summary__tags-list">
+          <span class="summary__tag">feature-trio</span>
+          <span class="summary__tag">icon-cards</span>
+          <span class="summary__tag">bento-features</span>
+          <span class="summary__tag--mood summary__tag">product-led</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 · CHANNELS -->
+  <div class="summary" data-for="channels">
+    <div class="summary__card">
+      <div class="summary__head"><span class="summary__num">06</span><span class="summary__label">Channels</span></div>
+      <h3 class="summary__title">Coverage — the proof behind §04</h3>
+      <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Список каналов: маркетплейсы, сторы, карты, review-сайты + соцсети/мессенджеры (IG, FB Messenger, WhatsApp, TikTok) + 500+ e-commerce.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Они правда покрывают всё» — масштаб.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Визуал</span><p>channel-grid / logo-chips; соцсети визуально выделены (это наша фишка).</p></div>
+      <div class="summary__field"><span class="summary__field-label">Motion</span><p>Чипы появляются волной; соц-чипы подсвечены.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Связь</span><p>Делает заявление §04 осязаемым; ведёт к кейсам §07.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Карта всех точек, где звучит голос клиента.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
+        <p><strong>Заголовок:</strong> Везде, где говорят ваши клиенты.</p>
+        <p><strong>Тело:</strong> Маркетплейсы, App Store, Google Play, Google Maps, review-сайты, Instagram (комментарии + директ), Facebook Messenger, WhatsApp, TikTok, +500 e-commerce платформ.</p>
+      </div>
+      <div class="summary__tags">
+        <span class="summary__tags-label">Reference tags</span>
+        <div class="summary__tags-list">
+          <span class="summary__tag">logo-grid</span>
+          <span class="summary__tag">channel-chips</span>
+          <span class="summary__tag">integrations-wall</span>
+          <span class="summary__tag">marquee-logos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 · CASES -->
+  <div class="summary" data-for="cases">
+    <div class="summary__card">
+      <div class="summary__head"><span class="summary__num">07</span><span class="summary__label">Cases</span></div>
+      <h3 class="summary__title">Proof in practice — 3 cases</h3>
+      <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Три кейса: Ajax Electronics, Samsung, Volia Cable. Метрики/детали — от Ajax (TM) и из SF.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Доказательство результатом: «работает у реальных брендов».</p></div>
+      <div class="summary__field"><span class="summary__field-label">Визуал</span><p>case-cards, logo + metric. Сильнейший кейс может питаться живым дашбордом Ajax.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Motion</span><p>Счётчики метрик «накручиваются» при входе во вьюпорт.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Связь</span><p>После охвата (§06) — доказательство; ведёт к CTA §08.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Витрина с тремя историями успеха.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
+        <p><strong>Заголовок:</strong> Бренды, которые отвечают везде вместе с нами.</p>
+        <p><strong>Тело:</strong> Ajax Electronics · Samsung · Volia Cable — карточки с метриками. Инлайн или отдельные страницы — уточнить глубину.</p>
+      </div>
+      <div class="summary__tags">
+        <span class="summary__tags-label">Reference tags</span>
+        <div class="summary__tags-list">
+          <span class="summary__tag">case-cards</span>
+          <span class="summary__tag">metric-counter</span>
+          <span class="summary__tag">logo-quote</span>
+          <span class="summary__tag--mood summary__tag">trust-led</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 08 · DEMO -->
+  <div class="summary" data-for="demo">
+    <div class="summary__card">
+      <div class="summary__head"><span class="summary__num">08</span><span class="summary__label">Demo / CTA</span></div>
+      <h3 class="summary__title">The conversion goal</h3>
+      <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Короткая форма запроса демо — единственная цель конверсии v1. Минимум полей.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Низкий барьер: «быстро, ни к чему не обязывает».</p></div>
+      <div class="summary__field"><span class="summary__field-label">Визуал</span><p>contrast-section (тёмная), compact-form. Один заметный CTA.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Motion</span><p>Поля фокусируются плавно; кнопка с лёгким lift.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Связь</span><p>Финальный шаг после доказательств; повторяет CTA из hero.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Дверь, в которую легко войти.</p></div>
+      <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
+        <p><strong>Заголовок:</strong> Запросите демо.</p>
+        <p><strong>Тело:</strong> Посмотрите Reply Anywhere на ваших каналах. Короткая форма — мы свяжемся.</p>
+        <p><strong>CTA:</strong> Запросить демо</p>
+      </div>
+      <div class="summary__tags">
+        <span class="summary__tags-label">Reference tags</span>
+        <div class="summary__tags-list">
+          <span class="summary__tag">cta-section</span>
+          <span class="summary__tag">demo-form</span>
+          <span class="summary__tag">dark-contrast-band</span>
+          <span class="summary__tag--mood summary__tag">saas-clean</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</aside>
+</div><!-- /.sandbox__body -->
+</div><!-- /.sandbox -->
+
+<!-- nav pill config (loaded from the shared base) -->
 <script>
   window.PREVIEW_PROJECT_NAME = "Reply Anywhere";
   window.PREVIEW_DEFAULT_VERSION = "wireframe";
@@ -386,5 +627,27 @@ body {
   ];
 </script>
 <script defer src="https://chife-mod.github.io/sfg-dashboard/base/service-menu.js"></script>
+
+<!-- rail height-sync: each .summary matches its section's height 1:1 -->
+<script>
+(function syncSandboxRail() {
+  var rail = document.querySelector('.sandbox__rail');
+  var main = document.querySelector('.sandbox__main');
+  if (!rail || !main) return;
+  var summaries = rail.querySelectorAll('.summary[data-for]');
+  function sync() {
+    if (window.innerWidth <= 1024) { summaries.forEach(function(s){ s.style.height=''; }); return; }
+    summaries.forEach(function(s){
+      var t = main.querySelector('#' + s.dataset.for);
+      if (t) s.style.height = t.offsetHeight + 'px';
+    });
+  }
+  window.addEventListener('load', sync);
+  window.addEventListener('resize', sync);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sync);
+  if (window.ResizeObserver) new ResizeObserver(sync).observe(main);
+  sync();
+})();
+</script>
 </body>
 </html>

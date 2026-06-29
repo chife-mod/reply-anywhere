@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Document Viewer — Reply Anywhere</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23116490'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='42' fill='white'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="shared/service-menu.css">
+
+<style>
+  /* ─── Reset ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #fff;
+    color: #1F2328;
+    font-family: -apple-system, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ─── Topbar (sticky, dark — matches launcher chrome) ─ */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 18, 25, 0.95);
+    backdrop-filter: saturate(160%) blur(12px);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+  }
+  .topbar__back {
+    color: #9FBACD;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 200ms ease;
+    letter-spacing: 0.02em;
+  }
+  .topbar__back:hover { color: white; }
+  .topbar__divider {
+    height: 14px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .topbar__filename {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .topbar__source {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ─── Main doc area ─────────────────────────────────── */
+  .doc-wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 48px 32px 160px;
+  }
+
+  /* Markdown styles — Github-ish, restrained */
+  .doc h1 { font-size: 36px; margin: 24px 0 16px; line-height: 1.2; letter-spacing: -0.01em; }
+  .doc h2 { font-size: 24px; margin: 40px 0 14px; padding-bottom: 8px; border-bottom: 1px solid #e1e4e8; line-height: 1.25; letter-spacing: -0.005em; }
+  .doc h3 { font-size: 19px; margin: 28px 0 10px; line-height: 1.3; }
+  .doc h4 { font-size: 16px; margin: 22px 0 8px; }
+  .doc h5 { font-size: 14px; margin: 18px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; color: #57606a; }
+
+  .doc p { margin: 0 0 16px; }
+
+  .doc ul, .doc ol { margin: 0 0 16px 28px; }
+  .doc li { margin-bottom: 6px; }
+  .doc li > p { margin: 4px 0; }
+
+  .doc a {
+    color: #0969da;
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+  .doc a:hover {
+    text-decoration: underline;
+  }
+
+  .doc code {
+    background: #afb8c133;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.92em;
+  }
+  .doc pre {
+    background: #f6f8fa;
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 0 0 16px;
+    line-height: 1.45;
+  }
+  .doc pre code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-size: 13px;
+  }
+
+  .doc blockquote {
+    border-left: 3px solid #d0d7de;
+    padding: 4px 0 4px 16px;
+    color: #57606a;
+    margin: 0 0 16px;
+    font-style: normal;
+  }
+  .doc blockquote > p:last-child { margin-bottom: 0; }
+
+  .doc table {
+    border-collapse: collapse;
+    margin: 0 0 16px;
+    max-width: 100%;
+    display: block;
+    overflow-x: auto;
+    font-size: 14px;
+  }
+  .doc table th, .doc table td {
+    padding: 8px 14px;
+    border: 1px solid #d0d7de;
+    vertical-align: top;
+  }
+  .doc table th {
+    background: #f6f8fa;
+    font-weight: 600;
+    text-align: left;
+  }
+  .doc table tr:nth-child(even) td {
+    background: #fafbfc;
+  }
+
+  .doc hr {
+    border: 0;
+    border-top: 1px solid #d0d7de;
+    margin: 32px 0;
+  }
+
+  .doc img { max-width: 100%; height: auto; }
+
+  .doc strong { font-weight: 600; }
+
+  /* Task lists (GFM) */
+  .doc li input[type="checkbox"] {
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* Loading / Error states */
+  .doc__msg {
+    padding: 60px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #57606a;
+  }
+  .doc__msg--error {
+    color: #cf222e;
+  }
+  .doc__msg code {
+    background: rgba(207, 34, 46, 0.08);
+  }
+
+  /* Footer tiny credit */
+  .doc-foot {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 32px 60px;
+    font-size: 12px;
+    color: #8c959f;
+    border-top: 1px solid #e1e4e8;
+    padding-top: 20px;
+  }
+  .doc-foot a {
+    color: #57606a;
+    text-decoration: underline;
+  }
+
+  /* Print-friendly */
+  @media print {
+    .topbar, .doc-foot { display: none; }
+    .doc-wrap { max-width: 100%; padding: 0; }
+  }
+</style>
+
+<!-- marked.js — minimal markdown → HTML renderer from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="topbar__back" href="./" aria-label="Back to Reply Anywhere launcher">
+    ← Reply Anywhere Launcher
+  </a>
+  <span class="topbar__divider" aria-hidden="true"></span>
+  <span class="topbar__source">Document Viewer</span>
+  <span class="topbar__filename" id="filename"></span>
+</header>
+
+<main class="doc-wrap">
+  <article class="doc" id="content">
+    <div class="doc__msg">Loading…</div>
+  </article>
+</main>
+
+<footer class="doc-foot">
+  Rendered with marked.js · view source <code id="src-link"></code>
+</footer>
+
+<script>
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const file = params.get('file');
+  const content = document.getElementById('content');
+  const filenameEl = document.getElementById('filename');
+  const srcLinkEl = document.getElementById('src-link');
+
+  if (!file) {
+    content.innerHTML = '<div class="doc__msg doc__msg--error">No file specified. Use <code>viewer.html?file=path/to/doc.md</code></div>';
+    return;
+  }
+
+  filenameEl.textContent = file;
+  srcLinkEl.textContent = file;
+  document.title = file.split('/').pop() + ' — Reply Anywhere';
+
+  try {
+    const res = await fetch(file);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const md = await res.text();
+
+    // Configure marked
+    marked.setOptions({
+      gfm: true,
+      breaks: false,
+      headerIds: true
+    });
+
+    content.innerHTML = marked.parse(md);
+
+    // Post-process: rewrite relative .md links to use viewer.html
+    const baseDir = file.substring(0, file.lastIndexOf('/') + 1);
+    content.querySelectorAll('a[href]').forEach(a => {
+      const href = a.getAttribute('href');
+      if (!href) return;
+      if (href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:')) return;
+      // Strip hash for matching, preserve for nav
+      const [path, hash] = href.split('#');
+      if (path.endsWith('.md') || path.endsWith('.md/')) {
+        // Resolve relative to source file's dir
+        let target;
+        try {
+          target = new URL(path, 'http://x/' + baseDir).pathname.replace(/^\//, '');
+        } catch (e) {
+          target = baseDir + path;
+        }
+        a.href = 'viewer.html?file=' + encodeURIComponent(target) + (hash ? '#' + hash : '');
+      } else if (path && !path.includes('://')) {
+        // Other relative links (assets, html pages) — resolve relative to file dir
+        try {
+          a.href = new URL(path, location.origin + '/' + baseDir).pathname + (hash ? '#' + hash : '');
+        } catch (e) {}
+      }
+    });
+
+    // Make external links open in new tab
+    content.querySelectorAll('a[href^="http"]').forEach(a => {
+      a.target = '_blank';
+      a.rel = 'noopener';
+    });
+  } catch (err) {
+    content.innerHTML = '<div class="doc__msg doc__msg--error">Could not load <code>' + file + '</code>: ' + err.message + '</div>';
+  }
+})();
+</script>
+
+</body>
+</html>

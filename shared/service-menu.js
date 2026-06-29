@@ -226,7 +226,10 @@
     });
   }
 
-  function init() { build(); buildGrid(); }
+  /* Grid-toggle отключён — по запросу. buildGrid() и svgGrid() остаются
+     определёнными в файле на случай если кому-то понадобится включить
+     обратно одной строкой. Сейчас init() строит только version-chip. */
+  function init() { build(); }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

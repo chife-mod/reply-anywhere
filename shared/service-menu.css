@@ -1,7 +1,6 @@
-/* Service Menu — preview-only floating navigator. Disabled in production builds.
-   Layout: flex container at bottom-right with grid-toggle (left) + version capsule.
-   Uses var(--color-accent) for the active grid-toggle state with hardcoded fallback,
-   so it works whether or not tokens.css is loaded. */
+/* Service Menu — preview-only floating navigator (the nav pill).
+   Chip-only: a single rounded capsule bottom-right that opens a version list.
+   No grid overlay (matches the Manu.ai base). */
 
 .service-menu {
   position: fixed;
@@ -191,79 +190,4 @@
   .service-menu__item {
     transition: none !important;
   }
-}
-
-/* ─── Grid overlay (12-column system reference) ──────────────
-   Floating circular toggle (sibling of capsule, sits LEFT of it)
-   + full-viewport blue 12-column overlay anchored to a 1440px
-   frame with 80px gutters. Dev-only utility: state persisted in
-   localStorage so it stays on across page navigation. */
-
-.grid-toggle {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  background: rgba(28, 34, 42, 0.94);
-  backdrop-filter: saturate(160%) blur(12px);
-  -webkit-backdrop-filter: saturate(160%) blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 999px;
-  color: #9FBACD;
-  cursor: pointer;
-  opacity: 0.92;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transition: background 200ms ease, color 200ms ease, border-color 200ms ease, opacity 200ms ease, transform 200ms ease;
-}
-.grid-toggle:hover { opacity: 1; transform: translateY(-1px); }
-.grid-toggle.is-on {
-  background: var(--color-accent, #4B6CFF);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.5);
-  opacity: 1;
-}
-.grid-toggle svg { width: 18px; height: 18px; }
-
-.grid-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 99998;
-  pointer-events: none;
-  display: none;
-  justify-content: center;
-}
-.grid-overlay.is-on { display: flex; }
-
-.grid-overlay__frame {
-  width: 100%;
-  max-width: 1440px;
-  height: 100%;
-  border-left:  1px dashed rgba(75, 108, 255, 0.5);
-  border-right: 1px dashed rgba(75, 108, 255, 0.5);
-}
-.grid-overlay__cols {
-  height: 100%;
-  margin: 0 80px;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 24px;
-}
-.grid-overlay__col {
-  background: rgba(75, 108, 255, 0.08);
-  border-left:  1px solid rgba(75, 108, 255, 0.22);
-  border-right: 1px solid rgba(75, 108, 255, 0.22);
-}
-
-@media (max-width: 600px) {
-  .grid-toggle { width: 36px; height: 36px; }
-  .grid-toggle svg { width: 16px; height: 16px; }
-  .grid-overlay__cols { margin: 0 16px; gap: 8px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .grid-toggle { transition: none !important; }
 }

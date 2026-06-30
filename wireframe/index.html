@@ -8,19 +8,13 @@
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23116490'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='700' font-size='42' fill='white'%3ER%3C/text%3E%3C/svg%3E">
 
-<!-- Native SFG design tokens (single source of truth for this project) -->
 <link rel="stylesheet" href="../shared/tokens.css">
-<!-- Nav pill from the shared SFG dashboard base -->
 <link rel="stylesheet" href="https://chife-mod.github.io/sfg-dashboard/base/service-menu.css">
 
 <style>
-/* ─────────────────────────────────────────────────────────────────
-   Reply Anywhere — wireframe (mod-manager sandbox-rail template).
-   Native to SFG: uses the project's shared/tokens.css, system font,
-   neutral wireframe chrome. No foreign palette, no brand color yet —
-   violet lands at the Design stage. Aliases below map the template's
-   token names onto the project's native tokens (clean-slate rule).
-   ───────────────────────────────────────────────────────────────── */
+/* Reply Anywhere — wireframe (mod-manager sandbox-rail template).
+   Native to SFG: project shared/tokens.css, system font, neutral chrome.
+   Aliases map the template token names onto the project's native tokens. */
 :root{
   --color-rule-soft: var(--color-divider);
   --color-ink-mute:  var(--color-mute);
@@ -34,33 +28,23 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{font-family:var(--font-sans);background:var(--color-white);color:var(--color-ink);-webkit-font-smoothing:antialiased}
 
-/* ─── Layout grid: left wireframe + right rail ─── */
 .sandbox__body{display:grid;grid-template-columns:minmax(0,1fr) 380px;align-items:start}
 .sandbox__main{grid-column:1;min-width:0;padding:0 clamp(20px,5vw,64px)}
 .sandbox__rail{grid-column:2;position:relative;background:var(--color-paper);border-left:1px dashed var(--color-rule-soft)}
 
-/* ─── LEFT: nav band ─── */
 .navband{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px 0;border-bottom:1px dashed var(--color-rule-soft)}
 .navband__logo{font-size:18px;font-weight:700;letter-spacing:-.01em;color:var(--color-ink)}
 .navband__links{display:flex;gap:20px;flex-wrap:wrap}
 .navband__links span{font-size:13px;color:var(--color-mute)}
-.navband__links span.is-new{color:var(--color-accent-deep);font-weight:600}
 .navband__cta{padding:9px 16px;border:1px solid var(--color-ink);border-radius:var(--radius-pill);font-size:13px;font-weight:600}
 
-/* ─── LEFT: wireframe sections ─── */
 .section{max-width:1060px;margin:0 auto;padding:64px 0;border-bottom:1px dashed var(--color-rule-soft)}
 .section__eyebrow{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--color-ink-muted);margin-bottom:14px}
 .section h2{font-size:clamp(26px,4vw,42px);line-height:1.08;letter-spacing:-.02em;margin-bottom:16px}
 .section p.body{font-size:16px;line-height:1.6;color:var(--color-ink-mute);max-width:60ch;margin-bottom:20px}
 .section .cta{display:inline-block;padding:11px 20px;border:1px solid var(--color-ink);border-radius:var(--radius-pill);font-size:13px;font-weight:600}
-.section .ph{border:1px dashed var(--color-rule-soft);border-radius:var(--radius-md);display:grid;place-items:center;text-align:center;color:var(--color-ink-muted);font-family:var(--font-mono);font-size:12px;line-height:1.6;padding:20px;min-height:160px;margin-top:8px}
-.section .rows{list-style:none;margin:8px 0 0;max-width:60ch}
-.section .rows li{display:flex;gap:10px;padding:9px 0;border-top:1px dashed var(--color-rule-soft);font-size:15px;color:var(--color-ink-mute)}
-.section .rows li:first-child{border-top:none}
-.section .rows .ok{color:var(--color-success-fg);font-weight:700}
-.section .rows .no{color:#B42318;font-weight:700}
+.section .ph{border:1px dashed var(--color-rule-soft);border-radius:var(--radius-md);display:grid;place-items:center;color:var(--color-ink-muted);font-family:var(--font-mono);font-size:12px;min-height:160px;margin-top:8px}
 
-/* ─── RIGHT: rail ─── */
 .sandbox__rail-tag{position:sticky;top:0;z-index:5;display:flex;flex-direction:column;gap:2px;padding:14px;background:var(--color-paper);border-bottom:1px dashed var(--color-rule-soft)}
 .sandbox__rail-tag strong{font-size:13px}
 .sandbox__rail-tag span{font-family:var(--font-mono);font-size:10px;color:var(--color-ink-muted)}
@@ -82,8 +66,12 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
 .summary__tag--mood{background:var(--color-tag-mood-bg);color:var(--color-tag-mood-fg)}
 .summary__tag--domain{background:var(--color-tag-domain-bg);color:var(--color-tag-domain-fg)}
 .summary__tag--anti{background:var(--color-tag-anti-bg);color:var(--color-tag-anti-fg);text-decoration:line-through}
+.summary__refs{margin-top:10px}
+.summary__refs-label{display:block;margin-bottom:6px;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-ink-muted)}
+.summary__refs a{display:inline-block;font-size:11px;color:var(--color-accent-deep);text-decoration:none;border-bottom:1px solid transparent}
+.summary__refs a:hover{border-bottom-color:currentColor}
+.summary__refs a+a{margin-left:10px}
 
-/* ─── Mobile: rail collapses below ─── */
 @media(max-width:1024px){
   .sandbox__body{display:block}
   .sandbox__rail{width:100%;border-left:none;border-top:1px dashed var(--color-rule-soft)}
@@ -95,14 +83,12 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
 <body>
 <div class="sandbox"><div class="sandbox__body">
 
-  <!-- ═══ LEFT: wireframe — клиентская копия (адаптировано с gominga / SF) ═══ -->
   <main class="sandbox__main">
 
-    <!-- Nav band (menu) -->
     <header class="navband">
       <div class="navband__logo">Reply Anywhere</div>
       <nav class="navband__links">
-        <span>Features</span><span>Channels</span><span class="is-new">Compare&nbsp;Us</span><span>Cases</span><span>Pricing</span><span>Contact</span>
+        <span>Features</span><span>Channels</span><span>Compare&nbsp;Us</span><span>Cases</span><span>Pricing</span><span>Contact</span>
       </nav>
       <span class="navband__cta">Request a demo</span>
     </header>
@@ -112,84 +98,74 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
       <h2>Reply to every review &amp; message — anywhere your customers are.</h2>
       <p class="body">One inbox for ratings, reviews, questions and social messages — across marketplaces, app stores, maps and social networks.</p>
       <a class="cta">Request a demo →</a>
-      <div class="ph">Hero visual — product screenshot / live HelpDesk inbox (from Ajax · TM)</div>
+      <div class="ph">Hero visual</div>
     </section>
 
     <section class="section" id="logos">
       <div class="section__eyebrow">02 — Social proof</div>
       <h2>Brands that reply with us.</h2>
       <p class="body">Ajax Electronics · Samsung · Volia Cable</p>
-      <div class="ph">Logo row — 3 client logos (real marks at Design stage)</div>
+      <div class="ph">Logo row</div>
     </section>
 
     <section class="section" id="why">
       <div class="section__eyebrow">03 — Why Reply Anywhere</div>
       <h2>Not just reviews. Reviews <em>and</em> social.</h2>
-      <p class="body">Most tools stop at store reviews. Reply Anywhere answers everywhere your customers actually talk — reviews and social, in one place, on the Semantic Force stack.</p>
-      <div class="ph">Value points — 3–4 benefit tiles (one inbox · more channels · faster replies)</div>
+      <p class="body">Most tools stop at store reviews. Reply Anywhere answers everywhere your customers actually talk — reviews and social, in one place.</p>
+      <div class="ph">Value tiles</div>
     </section>
 
     <section class="section" id="features">
       <div class="section__eyebrow">04 — Capabilities</div>
       <h2>Everything you need to respond at scale.</h2>
       <p class="body">All channels in one inbox · AI listening &amp; prioritization · Templates, auto-replies &amp; rich-media responses.</p>
-      <div class="ph">Feature trio — 3 cards with icon + title + line</div>
+      <div class="ph">Feature trio</div>
     </section>
 
     <section class="section" id="channels">
       <div class="section__eyebrow">05 — Channel coverage</div>
       <h2>Everywhere your customers talk.</h2>
       <p class="body">Marketplaces, App Store, Google Play, Google Maps, review sites — plus Instagram (comments + DM), Facebook Messenger, WhatsApp, TikTok and 500+ e-commerce platforms.</p>
-      <div class="ph">Channel grid / logo wall — social channels highlighted</div>
+      <div class="ph">Channel grid</div>
     </section>
 
-    <!-- NEW: Compare Us (audiencelab.io-style named comparison) -->
     <section class="section" id="compare">
       <div class="section__eyebrow">06 — Compare Us</div>
       <h2>Reply Anywhere vs gominga.</h2>
-      <p class="body">Side-by-side, feature by feature. gominga handles store reviews; Reply Anywhere covers reviews <em>and</em> social/messaging out of the box.</p>
-      <ul class="rows">
-        <li><span class="ok">✓</span> Marketplace / app-store / maps reviews — both</li>
-        <li><span class="ok">✓</span> Social comments (Instagram, TikTok) — <strong>Reply Anywhere only</strong> <span class="no">✕ gominga</span></li>
-        <li><span class="ok">✓</span> Direct messages &amp; DMs — <strong>Reply Anywhere only</strong> <span class="no">✕ gominga</span></li>
-        <li><span class="ok">✓</span> 50+ channels · 500+ e-commerce platforms — Reply Anywhere</li>
-        <li><span class="ok">✓</span> AI listening, prioritization, templates — both</li>
-      </ul>
-      <div class="ph">Comparison matrix — rows × (Reply Anywhere / gominga), ✓ / ✕. Optional: dedicated /compare pages per competitor (audiencelab pattern)</div>
+      <p class="body">Side-by-side, feature by feature. gominga handles store reviews; Reply Anywhere covers reviews and social/messaging out of the box.</p>
+      <div class="ph">Comparison matrix</div>
     </section>
 
     <section class="section" id="cases">
       <div class="section__eyebrow">07 — Examples / Cases</div>
       <h2>Brands replying everywhere with us.</h2>
-      <p class="body">Ajax Electronics · Samsung · Volia Cable — short result cards. Screens / creds from Ajax (TM).</p>
-      <div class="ph">3 case cards — logo + metric + one line</div>
+      <p class="body">Ajax Electronics · Samsung · Volia Cable</p>
+      <div class="ph">Case cards</div>
     </section>
 
     <section class="section" id="demo">
       <div class="section__eyebrow">08 — Demo / Contact</div>
       <h2>Request a demo.</h2>
-      <p class="body">See Reply Anywhere on your own channels. Short form — Name, Company, Email, Country. The single conversion goal of the page.</p>
+      <p class="body">See Reply Anywhere on your own channels. Short form — Name, Company, Email, Country.</p>
       <a class="cta">Request a demo →</a>
-      <div class="ph">Compact demo form</div>
+      <div class="ph">Demo form</div>
     </section>
 
   </main>
 
-  <!-- ═══ RIGHT: rail — рабочие заметки по секциям (7 полей + перевод RU + теги) ═══ -->
   <aside class="sandbox__rail" aria-label="Creative direction notes">
 
     <div class="sandbox__rail-tag">
       <strong>Reply Anywhere</strong>
-      <span>v0.2 · narrative blackboard</span>
+      <span>v0.3 · narrative blackboard</span>
     </div>
 
-    <!-- Intro (в зоне навбара) -->
     <div class="summary summary--intro">
       <div class="summary__card">
         <div class="summary__head"><span class="summary__num">00</span><span class="summary__label">Intro</span></div>
         <h3 class="summary__title">Narrative blackboard</h3>
-        <div class="summary__field"><span class="summary__field-label">Слева</span><p>Чистый контент лендинга (адаптировано с gominga, упрощено; фактура каналов/AI — из SF HelpDesk). Бренд-цвет (фиолетовый) и финальные визуалы — на стадии Design.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Справа</span><p>По каждой секции: смысл, эмоция, визуал, motion, связь, метафора + перевод RU + теги для поиска рефов.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Слева</span><p>Чистый контент лендинга, без мусора. Бренд-цвет и финальные визуалы — на стадии Design.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Справа</span><p>По каждой секции: 7 полей + теги для поиска рефов + ссылки на аналоги.</p></div>
         <div class="summary__tags"><span class="summary__tags-label">Cross-cutting</span>
           <div class="summary__tags-list">
             <span class="summary__tag summary__tag--mood">saas-clean</span>
@@ -207,6 +183,11 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
             <span class="summary__tag summary__tag--anti">cluttered-dashboard</span>
           </div>
         </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналоги</span>
+          <a href="https://gominga.com/" target="_blank" rel="noopener">gominga.com</a>
+          <a href="https://semanticforce.ai/products/omnichannel-helpdesk" target="_blank" rel="noopener">SF HelpDesk</a>
+          <a href="https://audiencelab.io/" target="_blank" rel="noopener">audiencelab.io</a>
+        </div>
       </div>
     </div>
 
@@ -216,9 +197,9 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
         <h3 class="summary__title">First impression / hook</h3>
         <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Одно окно для ответов на отзывы и сообщения по всем каналам. Главный CTA — запрос демо.</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Наконец всё в одном месте» — контроль вместо хаоса вкладок.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>device-mockup, unified-inbox, channel-badges. Скрин живого HelpDesk от Ajax (TM).</p></div>
-        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Бейджи каналов появляются по очереди; курсор «отвечает» в инбоксе (loop).</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Заявляет обещание → §03 «почему», §06 «сравнение» доказывают.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>device-mockup, unified-inbox, channel-badges.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Бейджи каналов появляются по очереди; курсор «отвечает» в инбоксе.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Заявляет обещание → §03 и §06 доказывают.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Один пульт ко всем каналам клиента.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
           <p><strong>Заголовок:</strong> Отвечайте на каждый отзыв и сообщение — там, где ваши клиенты.</p>
@@ -232,6 +213,9 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
             <span class="summary__tag summary__tag--mood">saas-clean</span>
           </div>
         </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
+          <a href="https://gominga.com/" target="_blank" rel="noopener">gominga.com</a>
+        </div>
       </div>
     </div>
 
@@ -239,11 +223,11 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
       <div class="summary__card">
         <div class="summary__head"><span class="summary__num">02</span><span class="summary__label">Social proof</span></div>
         <h3 class="summary__title">Credibility — logos</h3>
-        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Три бренда, которые отвечают через нас: Ajax Electronics, Samsung, Volia Cable (подтверждены письмом).</p></div>
+        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Три бренда, которые отвечают через нас: Ajax Electronics, Samsung, Volia Cable.</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Доверие: «серьёзные бренды уже здесь».</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>logo-row, монохром/серый, реальные лого — на стадии Design.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Статично или медленный marquee при расширении.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Подкрепляет обещание hero перед аргументом §03.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>logo-row, монохром/серый.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Статично или медленный marquee.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Подкрепляет обещание hero перед §03.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>«Нас выбрали те, кому доверяют миллионы».</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
           <p><strong>Заголовок:</strong> Бренды, которые отвечают вместе с нами.</p>
@@ -255,6 +239,9 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
             <span class="summary__tag">logo-marquee</span><span class="summary__tag summary__tag--mood">trust-led</span>
           </div>
         </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
+          <a href="https://gominga.com/" target="_blank" rel="noopener">gominga.com</a>
+        </div>
       </div>
     </div>
 
@@ -264,9 +251,9 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
         <h3 class="summary__title">The wedge — soft framing</h3>
         <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Мы отвечаем и в отзывах, и в соцсетях/личке — из коробки (на стеке Semantic Force).</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Облегчение: «вот чего не хватало».</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>benefit-tiles, split-illustration; соцсети визуально выделены.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>benefit-tiles, split-illustration; соцсети выделены.</p></div>
         <div class="summary__field"><span class="summary__field-label">Motion</span><p>Плитки выгод появляются на скролле.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Мягкая версия аргумента; жёсткая таблица — в §06 Compare Us.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Мягкая версия аргумента; жёсткая таблица — в §06.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Они закрывают одну дверь — мы открываем все.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
           <p><strong>Заголовок:</strong> Не только отзывы. Отзывы и соцсети.</p>
@@ -278,6 +265,9 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
             <span class="summary__tag">split-section</span><span class="summary__tag summary__tag--mood">confident</span>
           </div>
         </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
+          <a href="https://gominga.com/" target="_blank" rel="noopener">gominga.com</a>
+        </div>
       </div>
     </div>
 
@@ -285,11 +275,11 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
       <div class="summary__card">
         <div class="summary__head"><span class="summary__num">04</span><span class="summary__label">Capabilities</span></div>
         <h3 class="summary__title">What it does — 3 pillars</h3>
-        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Единый инбокс · AI-листенинг и приоритизация · шаблоны/автоответы/медиа. (gominga + SF HelpDesk.)</p></div>
+        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Единый инбокс · AI-листенинг и приоритизация · шаблоны/автоответы/медиа.</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Уверенность в возможностях, без перегруза.</p></div>
         <div class="summary__field"><span class="summary__field-label">Визуал</span><p>feature-trio, icon-tiles, мини-скрины.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Карточки приподнимаются на hover; иконки оживают на входе.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>«Почему» (§03) → «что умеет» (здесь) → «где» (§05).</p></div>
+        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Карточки приподнимаются на hover.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>«Почему» (§03) → «что умеет» → «где» (§05).</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Три рычага одной панели.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
           <p><strong>Заголовок:</strong> Всё, чтобы отвечать в масштабе.</p>
@@ -301,6 +291,9 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
             <span class="summary__tag">bento-features</span><span class="summary__tag summary__tag--mood">product-led</span>
           </div>
         </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
+          <a href="https://semanticforce.ai/products/omnichannel-helpdesk" target="_blank" rel="noopener">SF HelpDesk</a>
+        </div>
       </div>
     </div>
 
@@ -308,11 +301,11 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
       <div class="summary__card">
         <div class="summary__head"><span class="summary__num">05</span><span class="summary__label">Channels</span></div>
         <h3 class="summary__title">Coverage — proof of breadth</h3>
-        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Маркетплейсы, сторы, карты, review-сайты + соцсети/мессенджеры (IG, FB Messenger, WhatsApp, TikTok) + 500+ e-commerce.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Маркетплейсы, сторы, карты, review-сайты + соцсети/мессенджеры + 500+ e-commerce.</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Они правда покрывают всё» — масштаб.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>channel-grid / logo-chips; соц-каналы подсвечены (это наша фишка).</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>channel-grid / logo-chips; соц-каналы подсвечены.</p></div>
         <div class="summary__field"><span class="summary__field-label">Motion</span><p>Чипы появляются волной.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Делает обещание осязаемым; ведёт к Compare Us §06.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Делает обещание осязаемым; ведёт к §06.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Карта всех точек, где звучит голос клиента.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
           <p><strong>Заголовок:</strong> Везде, где говорят ваши клиенты.</p>
@@ -324,31 +317,35 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
             <span class="summary__tag">integrations-wall</span><span class="summary__tag">marquee-logos</span>
           </div>
         </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
+          <a href="https://semanticforce.ai/products/omnichannel-helpdesk" target="_blank" rel="noopener">SF HelpDesk</a>
+        </div>
       </div>
     </div>
 
     <div class="summary" data-for="compare">
       <div class="summary__card">
         <div class="summary__head"><span class="summary__num">06</span><span class="summary__label">Compare Us</span></div>
-        <h3 class="summary__title">Named comparison (audiencelab pattern)</h3>
-        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Прямое сравнение «Reply Anywhere vs gominga», feature-by-feature. Наш перевес — соцсети и личка. По образцу audiencelab.io (Compare Us в меню + отдельные /compare страницы на конкурента).</p></div>
+        <h3 class="summary__title">Named comparison</h3>
+        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Прямое сравнение «Reply Anywhere vs gominga», feature-by-feature. Наш перевес — соцсети и личка.</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Ага, вот в чём разница» — ясность выбора.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>comparison-table, two-column, check-vs-cross. Бренд-колонка выделена.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Строки-различия подсвечиваются на скролле; галочки появляются по очереди.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Жёсткая версия §03; ведёт к доказательству кейсами §07.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>comparison-table, two-column, check-vs-cross.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Строки-различия подсвечиваются; галочки появляются по очереди.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Жёсткая версия §03; ведёт к кейсам §07.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Две колонки — у нас все галочки.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
           <p><strong>Заголовок:</strong> Reply Anywhere против gominga.</p>
           <p><strong>Тело:</strong> Сравнение по функциям. gominga закрывает отзывы в сторах; Reply Anywhere — отзывы и соцсети/личку из коробки.</p>
           <p><strong>CTA:</strong> Смотреть сравнение</p>
         </div>
-        <div class="summary__field"><span class="summary__field-label">⚠︎ Решение</span><p>В §04 брифа было «не называть конкурента на лайве». Здесь — наоборот, по audiencelab называем gominga. Подтвердить с клиентом (зафиксировано в BRIEF §16).</p></div>
         <div class="summary__tags"><span class="summary__tags-label">Reference tags</span>
           <div class="summary__tags-list">
             <span class="summary__tag">comparison-table</span><span class="summary__tag">vs-competitor</span>
-            <span class="summary__tag">pricing-style-matrix</span><span class="summary__tag">check-cross-grid</span>
-            <span class="summary__tag summary__tag--domain">b2b-saas</span>
+            <span class="summary__tag">check-cross-grid</span><span class="summary__tag summary__tag--domain">b2b-saas</span>
           </div>
+        </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
+          <a href="https://audiencelab.io/" target="_blank" rel="noopener">audiencelab.io</a>
         </div>
       </div>
     </div>
@@ -357,11 +354,11 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
       <div class="summary__card">
         <div class="summary__head"><span class="summary__num">07</span><span class="summary__label">Cases</span></div>
         <h3 class="summary__title">Proof in practice — 3 cases</h3>
-        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Кейсы: Ajax Electronics, Samsung, Volia Cable. Метрики/детали — от Ajax (TM) и из SF.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Кейсы: Ajax Electronics, Samsung, Volia Cable.</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Работает у реальных брендов».</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>case-cards, logo + metric. Сильнейший кейс — на живом дашборде Ajax.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>case-cards, logo + metric.</p></div>
         <div class="summary__field"><span class="summary__field-label">Motion</span><p>Счётчики метрик «накручиваются» на входе.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>После Compare Us (§06) — доказательство; ведёт к CTA §08.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>После §06 — доказательство; ведёт к CTA §08.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Витрина с тремя историями успеха.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
           <p><strong>Заголовок:</strong> Бренды, которые отвечают везде вместе с нами.</p>
@@ -372,6 +369,9 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
             <span class="summary__tag">case-cards</span><span class="summary__tag">metric-counter</span>
             <span class="summary__tag">logo-quote</span><span class="summary__tag summary__tag--mood">trust-led</span>
           </div>
+        </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
+          <a href="https://gominga.com/" target="_blank" rel="noopener">gominga.com</a>
         </div>
       </div>
     </div>
@@ -384,7 +384,7 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Низкий барьер: «быстро, ни к чему не обязывает».</p></div>
         <div class="summary__field"><span class="summary__field-label">Визуал</span><p>contrast-band (тёмная), compact-form, один CTA.</p></div>
         <div class="summary__field"><span class="summary__field-label">Motion</span><p>Поля фокусируются плавно; кнопка с лёгким lift.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Финальный шаг после доказательств; повтор CTA из hero.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Финальный шаг; повтор CTA из hero.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Дверь, в которую легко войти.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
           <p><strong>Заголовок:</strong> Запросите демо.</p>
@@ -397,6 +397,9 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
             <span class="summary__tag">dark-contrast-band</span><span class="summary__tag summary__tag--mood">saas-clean</span>
           </div>
         </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
+          <a href="https://gominga.com/" target="_blank" rel="noopener">gominga.com</a>
+        </div>
       </div>
     </div>
 
@@ -404,7 +407,6 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
 
 </div></div>
 
-<!-- nav pill config (loaded from the shared SFG base) -->
 <script>
   window.PREVIEW_PROJECT_NAME = "Reply Anywhere";
   window.PREVIEW_DEFAULT_VERSION = "wireframe";
@@ -416,7 +418,6 @@ html,body{font-family:var(--font-sans);background:var(--color-white);color:var(-
 </script>
 <script defer src="https://chife-mod.github.io/sfg-dashboard/base/service-menu.js"></script>
 
-<!-- position sync: each .summary[data-for] = its section's height; intro = nav-band zone -->
 <script>
 (function syncSandboxRail(){
   const rail=document.querySelector('.sandbox__rail'), main=document.querySelector('.sandbox__main');

@@ -16,17 +16,25 @@
    Native to SFG: project shared/tokens.css, system font, neutral chrome.
    Aliases map the template token names onto the project's native tokens. */
 :root{
-  --color-rule-soft: var(--color-divider);
-  --color-ink-mute:  var(--color-mute);
-  --color-ink-muted: var(--color-mute);
-  --shadow-card-quiet: var(--shadow-island);
-  --color-tag-bg: var(--color-accent-soft);   --color-tag-fg: var(--color-accent-deep);
-  --color-tag-mood-bg: var(--color-warn-bg);  --color-tag-mood-fg: var(--color-warn-fg);
-  --color-tag-domain-bg: var(--color-border-light); --color-tag-domain-fg: var(--color-mute);
-  --color-tag-anti-bg: #FBE3E3; --color-tag-anti-fg: #B42318;
+  /* Dark wireframe scheme — navy, consistent with the SFG dashboard base.
+     Overrides the project tokens locally (this page only). */
+  --wf-page:         #0E1422;                       /* page / main background */
+  --color-white:     #161D2E;                       /* card & placeholder surface */
+  --color-paper:     #0B1018;                       /* rail + rail-tag background */
+  --color-ink:       #E8EDF4;                        /* headings / strong text */
+  --color-mute:      #AEB7C7;
+  --color-rule-soft: rgba(255,255,255,0.12);
+  --color-ink-mute:  #C3CAD8;
+  --color-ink-muted: #8B94A7;
+  --shadow-card-quiet: 0 1px 3px rgba(0,0,0,.5);
+  --color-tag-bg: rgba(75,108,255,.18);     --color-tag-fg: #A8B8FF;
+  --color-tag-mood-bg: rgba(194,65,12,.22); --color-tag-mood-fg: #F0B187;
+  --color-tag-domain-bg: rgba(255,255,255,.08); --color-tag-domain-fg: #AEB7C7;
+  --color-tag-anti-bg: rgba(180,35,24,.24); --color-tag-anti-fg: #F2A39C;
+  --color-accent-deep: #A8B8FF;                     /* refs links */
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{font-family:var(--font-sans);background:var(--color-white);color:var(--color-ink);-webkit-font-smoothing:antialiased}
+html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--color-ink);-webkit-font-smoothing:antialiased}
 
 .sandbox__body{display:grid;grid-template-columns:minmax(0,1fr) 380px;align-items:start}
 .sandbox__main{grid-column:1;min-width:0;padding:0 clamp(20px,5vw,64px)}

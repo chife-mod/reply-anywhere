@@ -63,6 +63,16 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
 .feat span{font-size:12.5px;color:var(--color-ink-muted)}
 @media(max-width:900px){.hero{grid-template-columns:1fr}}
 
+/* social proof — brand + quote + person (rough) */
+.testi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+.testi__card{border:1px solid var(--color-rule-soft);border-radius:var(--radius-md);padding:16px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:12px}
+.testi__logo{height:30px;display:flex;align-items:center;font-weight:800;letter-spacing:.03em;color:var(--color-ink)}
+.testi__quote{font-size:13.5px;line-height:1.5;color:var(--color-ink-mute)}
+.testi__person{display:flex;align-items:center;gap:10px;margin-top:auto}
+.testi__ava{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--color-rule-soft);flex-shrink:0}
+.testi__person span{font-size:12px;color:var(--color-ink-muted)}
+@media(max-width:760px){.testi{grid-template-columns:1fr}}
+
 /* rail */
 .sandbox__rail-tag{position:sticky;top:0;z-index:5;display:flex;flex-direction:column;gap:2px;padding:14px;background:var(--color-paper);border-bottom:1px dashed var(--color-rule-soft)}
 .sandbox__rail-tag strong{font-size:13px}
@@ -141,9 +151,25 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
 
     <section class="section" id="logos">
       <div class="section__eyebrow">03 — Social proof</div>
-      <h2>Brands that reply with us.</h2>
-      <p class="body">Ajax Electronics · Samsung · Volia Cable</p>
-      <div class="ph">Logo row</div>
+      <h2>Brands that <span class="rot">reply with us</span>.</h2>
+      <p class="body">Fewer clients — so each one counts: brand logo + quote + person together. Testimonial carousel.</p>
+      <div class="testi">
+        <div class="testi__card">
+          <div class="testi__logo">AJAX</div>
+          <p class="testi__quote">“Reply Anywhere helped us keep every customer conversation in one place — we respond faster and with much more consistency.”</p>
+          <div class="testi__person"><span class="testi__ava"></span><span>Customer Support Lead · Ajax Electronics</span></div>
+        </div>
+        <div class="testi__card">
+          <div class="testi__logo">SAMSUNG</div>
+          <p class="testi__quote">“Short customer quote — one or two lines.”</p>
+          <div class="testi__person"><span class="testi__ava"></span><span>Role · Samsung</span></div>
+        </div>
+        <div class="testi__card">
+          <div class="testi__logo">VOLIA</div>
+          <p class="testi__quote">“Short customer quote — one or two lines.”</p>
+          <div class="testi__person"><span class="testi__ava"></span><span>Role · Volia Cable</span></div>
+        </div>
+      </div>
     </section>
 
     <section class="section" id="why">
@@ -242,7 +268,7 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
         <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Одно окно для ответов по всем каналам. Главный CTA — демо.</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Наконец всё в одном месте» — контроль.</p></div>
         <div class="summary__field"><span class="summary__field-label">Визуал</span><p>device-mockup / glowing-logo-card; channel-badges; gradient-headline.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Ротация последнего слова + иконки канала (Reviews·Google → Comments·Instagram → …). Свечение карточки.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Ротация последнего слова + иконки канала (Reviews·Google → Comments·Instagram → …). Свечение карточки. Hero — отдельный animated-блок (в работе).</p></div>
         <div class="summary__field"><span class="summary__field-label">Связь</span><p>Обещание → §04 и §07 доказывают.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Один пульт ко всем каналам клиента.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
@@ -266,11 +292,11 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
     <div class="summary" data-for="logos">
       <div class="summary__card">
         <div class="summary__head"><span class="summary__num">02</span><span class="summary__label">Social proof</span></div>
-        <h3 class="summary__title">Credibility — logos</h3>
-        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Три бренда: Ajax Electronics, Samsung, Volia Cable.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Доверие: «серьёзные бренды уже здесь».</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>logo-row, монохром.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Статично / медленный marquee.</p></div>
+        <h3 class="summary__title">Credibility — testimonials + logos</h3>
+        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Клиентов мало → берём глубиной: бренд + цитата + личность в одной карточке (и клиенты, и отзывы сразу). Нужны реальные цитаты + согласие на имя/фото (Ajax — через TM; Samsung / Volia — уточнить; можно смешать богатый отзыв + логотипы).</p></div>
+        <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>Доверие + человечность: «живые голоса брендов».</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>testimonial-card: лого + цитата + аватар/имя-роль. Карусель из 3 (сгруппировано по клиенту, не вперемешку).</p></div>
+        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Авто-карусель / drag; карточки появляются на скролле.</p></div>
         <div class="summary__field"><span class="summary__field-label">Связь</span><p>Подкрепляет hero перед §04.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>«Нас выбрали те, кому доверяют».</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
@@ -279,7 +305,8 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
         </div>
         <div class="summary__tags"><span class="summary__tags-label">Reference tags</span>
           <div class="summary__tags-list">
-            <span class="summary__tag">logo-wall</span><span class="summary__tag">trust-bar</span>
+            <span class="summary__tag">testimonial-carousel</span><span class="summary__tag">logo-quote</span>
+            <span class="summary__tag">pull-quote</span><span class="summary__tag">avatar-quote</span>
             <span class="summary__tag summary__tag--mood">trust-led</span>
           </div>
         </div>

@@ -252,8 +252,15 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
       <div class="ph">Feature trio</div>
     </section>
 
+    <section class="section" id="cases">
+      <div class="section__eyebrow">06 — Examples / Cases</div>
+      <h2>Brands replying everywhere with us.</h2>
+      <p class="body">Ajax Electronics · Samsung · Volia Cable</p>
+      <div class="ph">Case cards</div>
+    </section>
+
     <section class="section" id="channels">
-      <div class="section__eyebrow">06 — Where review management ends</div>
+      <div class="section__eyebrow">07 — Where review management ends</div>
 
       <!-- state 1: channel tile cloud + two-line headline -->
       <div class="scene__head">Where review management ends,<br><span class="rot">Reply Anywhere begins</span></div>
@@ -284,7 +291,7 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
     </section>
 
     <section class="section" id="compare">
-      <div class="section__eyebrow">07 — Compare Us</div>
+      <div class="section__eyebrow">08 — Compare Us</div>
       <h2>Reply Anywhere vs gominga.</h2>
       <p class="body">Side-by-side, feature by feature. gominga handles store reviews; Reply Anywhere covers reviews and social/messaging out of the box.</p>
       <table class="cmp">
@@ -299,13 +306,6 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
         </tbody>
       </table>
       <p class="body" style="margin-top:14px;font-size:13px;color:var(--color-ink-muted)">Like audiencelab.io: “Compare Us” in the menu + a dedicated /compare page per competitor.</p>
-    </section>
-
-    <section class="section" id="cases">
-      <div class="section__eyebrow">08 — Examples / Cases</div>
-      <h2>Brands replying everywhere with us.</h2>
-      <p class="body">Ajax Electronics · Samsung · Volia Cable</p>
-      <div class="ph">Case cards</div>
     </section>
 
     <section class="section" id="demo">
@@ -471,15 +471,41 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
       </div>
     </div>
 
+    <div class="summary" data-for="cases">
+      <div class="summary__card">
+        <div class="summary__head"><span class="summary__num">05</span><span class="summary__label">Cases</span></div>
+        <h3 class="summary__title">Proof in practice</h3>
+        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Кейсы: Ajax Electronics, Samsung, Volia Cable.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Работает у реальных брендов».</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>case-cards, logo + metric.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Счётчики метрик на входе.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>После возможностей — доказательство результатом; ведёт к сцене каналов.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Витрина историй успеха.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
+          <p><strong>Заголовок:</strong> Бренды, которые отвечают везде вместе с нами.</p>
+          <p><strong>Тело:</strong> Ajax Electronics · Samsung · Volia Cable.</p>
+        </div>
+        <div class="summary__tags"><span class="summary__tags-label">Reference tags</span>
+          <div class="summary__tags-list">
+            <span class="summary__tag">case-cards</span><span class="summary__tag">metric-counter</span>
+            <span class="summary__tag summary__tag--mood">trust-led</span>
+          </div>
+        </div>
+        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
+          <a href="https://gominga.com/" target="_blank" rel="noopener">gominga.com</a>
+        </div>
+      </div>
+    </div>
+
     <div class="summary" data-for="channels">
       <div class="summary__card">
-        <div class="summary__head"><span class="summary__num">05</span><span class="summary__label">Channels</span></div>
+        <div class="summary__head"><span class="summary__num">06</span><span class="summary__label">Channels</span></div>
         <h3 class="summary__title">Positioning + channels (scroll scene)</h3>
         <div class="summary__field"><span class="summary__field-label">Смысл</span><p>«Where review management ends, Reply Anywhere begins» — позиционирование + все каналы плитками: review-каналы (Google/Amazon/App Store/eBay/Etsy/Trustpilot) + everywhere (Maps, IG DMs/Comments, Messenger, TikTok, WhatsApp, FB).</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Вау, сколько всего» → ясность: мы начинаемся там, где обычные review-tools заканчиваются.</p></div>
         <div class="summary__field"><span class="summary__field-label">Визуал</span><p>Облако channel-pills вокруг 2-строчного заголовка. Цвет группирует: тёмные = review-mgmt, акцентные = что добавляет Reply Anywhere. Затем сворачивается в центр.</p></div>
         <div class="summary__field"><span class="summary__field-label">Motion</span><p>Scroll-scene: плитки влетают (сначала review, потом все), заголовок собирается по частям → на скролле всё исчезает, заголовок поднимается, появляются описание + 3 фичи. GSAP ScrollTrigger; reduced-motion → статичный collapsed.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Ядро wedge + каналы в одном месте (поглощает channels-секцию). §04 теперь чисто value-prop, §07 — таблица; дублей больше нет.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Ядро wedge + каналы в одном месте. §04 — value-prop, §08 — таблица Compare; дублей нет.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Хаос каналов → один экран.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
           <p><strong>Заголовок:</strong> Где заканчивается управление отзывами — начинается Reply Anywhere.</p>
@@ -500,7 +526,7 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
 
     <div class="summary" data-for="compare">
       <div class="summary__card">
-        <div class="summary__head"><span class="summary__num">06</span><span class="summary__label">Compare Us</span></div>
+        <div class="summary__head"><span class="summary__num">07</span><span class="summary__label">Compare Us</span></div>
         <h3 class="summary__title">Named comparison</h3>
         <div class="summary__field"><span class="summary__field-label">Смысл</span><p>«Reply Anywhere vs gominga», feature-by-feature. Наш перевес — соцсети и личка.</p></div>
         <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Вот в чём разница» — ясность.</p></div>
@@ -521,32 +547,6 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
         </div>
         <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
           <a href="https://audiencelab.io/" target="_blank" rel="noopener">audiencelab.io</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="summary" data-for="cases">
-      <div class="summary__card">
-        <div class="summary__head"><span class="summary__num">07</span><span class="summary__label">Cases</span></div>
-        <h3 class="summary__title">Proof in practice</h3>
-        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Кейсы: Ajax Electronics, Samsung, Volia Cable.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Работает у реальных брендов».</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>case-cards, logo + metric.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Счётчики метрик на входе.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>После §07 — доказательство; ведёт к §09.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Витрина историй успеха.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
-          <p><strong>Заголовок:</strong> Бренды, которые отвечают везде вместе с нами.</p>
-          <p><strong>Тело:</strong> Ajax Electronics · Samsung · Volia Cable.</p>
-        </div>
-        <div class="summary__tags"><span class="summary__tags-label">Reference tags</span>
-          <div class="summary__tags-list">
-            <span class="summary__tag">case-cards</span><span class="summary__tag">metric-counter</span>
-            <span class="summary__tag summary__tag--mood">trust-led</span>
-          </div>
-        </div>
-        <div class="summary__refs"><span class="summary__refs-label">Аналог</span>
-          <a href="https://gominga.com/" target="_blank" rel="noopener">gominga.com</a>
         </div>
       </div>
     </div>

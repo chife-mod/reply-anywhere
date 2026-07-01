@@ -63,6 +63,11 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
 .feat span{font-size:12.5px;color:var(--color-ink-muted)}
 @media(max-width:900px){.hero{grid-template-columns:1fr}}
 
+/* value-prop bullet list (gominga layout) */
+.benefits{list-style:none;margin:2px 0 22px;display:flex;flex-direction:column;gap:11px}
+.benefits li{position:relative;padding-left:22px;font-size:16px;line-height:1.4;color:var(--color-ink-mute)}
+.benefits li::before{content:"";position:absolute;left:2px;top:8px;width:7px;height:7px;border-radius:50%;background:var(--color-accent-deep)}
+
 /* social proof — brand + quote + person, smooth auto-marquee; each client's
    whole card is colour-coded (rough — final brand palette at Design). */
 .testi{overflow:hidden;margin-top:8px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
@@ -210,9 +215,21 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
 
     <section class="section" id="why">
       <div class="section__eyebrow">04 — Why Reply Anywhere</div>
-      <h2>Not just reviews. Reviews <em>and</em> social.</h2>
-      <p class="body">Most tools stop at store reviews. Reply Anywhere answers everywhere your customers actually talk — reviews and social, in one place.</p>
-      <div class="ph">Value tiles</div>
+      <div class="hero">
+        <div>
+          <h2>Not just reviews. Reviews <em>and</em> social.</h2>
+          <p class="body">The one platform to manage reviews, comments, questions and messages across every channel.</p>
+          <ul class="benefits">
+            <li>Increase conversion and sales</li>
+            <li>Reduce costs and improve process efficiency</li>
+            <li>Enhance brand loyalty</li>
+            <li>Improve your product and service offering</li>
+            <li>Excite customers on every touchpoint</li>
+          </ul>
+          <a class="cta">Find out more →</a>
+        </div>
+        <div class="ph">Product dashboard screenshot</div>
+      </div>
     </section>
 
     <section class="section" id="features">
@@ -367,10 +384,10 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
     <div class="summary" data-for="why">
       <div class="summary__card">
         <div class="summary__head"><span class="summary__num">03</span><span class="summary__label">Why</span></div>
-        <h3 class="summary__title">The wedge — soft framing</h3>
-        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Мы отвечаем и в отзывах, и в соцсетях/личке — из коробки.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Вот чего не хватало».</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>benefit-tiles; соцсети выделены.</p></div>
+        <h3 class="summary__title">Value proposition (по gominga)</h3>
+        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Value-prop экран по gominga: заголовок + буллет-список выгод + CTA + скрин продукта. Наш акцент — отзывы <em>и</em> соцсети.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Вот чего не хватало» + деловая выгода.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>Two-column (как gominga): буллеты выгод слева + product-screenshot справа + кнопка «Find out more».</p></div>
         <div class="summary__field"><span class="summary__field-label">Motion</span><p>Плитки выгод на скролле.</p></div>
         <div class="summary__field"><span class="summary__field-label">Связь</span><p>Мягкая версия; жёсткая таблица — §07.</p></div>
         <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Они закрывают одну дверь — мы открываем все.</p></div>
@@ -380,7 +397,8 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
         </div>
         <div class="summary__tags"><span class="summary__tags-label">Reference tags</span>
           <div class="summary__tags-list">
-            <span class="summary__tag">value-props</span><span class="summary__tag">benefit-tiles</span>
+            <span class="summary__tag">value-prop</span><span class="summary__tag">bullet-list</span>
+            <span class="summary__tag">product-shot</span><span class="summary__tag">split-section</span>
             <span class="summary__tag summary__tag--mood">confident</span>
           </div>
         </div>

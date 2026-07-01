@@ -68,6 +68,19 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
 .benefits li{position:relative;padding-left:22px;font-size:16px;line-height:1.4;color:var(--color-ink-mute)}
 .benefits li::before{content:"";position:absolute;left:2px;top:8px;width:7px;height:7px;border-radius:50%;background:var(--color-accent-deep)}
 
+/* channel / positioning scroll-scene (rough — two states shown stacked) */
+.scene__head{font-size:clamp(24px,3.4vw,38px);font-weight:800;line-height:1.14;letter-spacing:-.02em;text-align:center;max-width:24ch;margin:8px auto 22px}
+.scene__head .rot{color:#A855F7;display:inline-block}
+.scene__cloud{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:920px;margin:0 auto}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;font-size:13.5px;border:1px solid var(--color-rule-soft)}
+.pill::before{content:"";width:16px;height:16px;border-radius:5px;background:rgba(255,255,255,.22);flex-shrink:0}
+.pill--rev{background:rgba(255,255,255,.03);color:var(--color-ink)}
+.pill--any{background:rgba(168,85,247,.16);border-color:rgba(168,85,247,.42);color:#E6D8FF}
+.scene__collapsed{max-width:640px;margin:36px auto 0;text-align:center;border-top:1px dashed var(--color-rule-soft);padding-top:30px}
+.scene__collapsed .body{margin:0 auto 20px;max-width:54ch}
+.scene__collapsed .feat-row{justify-content:center}
+.scene__note{text-align:center;color:var(--color-ink-muted);font-family:var(--font-mono);font-size:12px;margin-top:18px}
+
 /* social proof — brand + quote + person, smooth auto-marquee; each client's
    whole card is colour-coded (rough — final brand palette at Design). */
 .testi{overflow:hidden;margin-top:8px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
@@ -240,10 +253,39 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
     </section>
 
     <section class="section" id="channels">
-      <div class="section__eyebrow">06 — Channel coverage</div>
-      <h2>Everywhere your customers talk.</h2>
-      <p class="body">Marketplaces, App Store, Google Play, Google Maps, review sites — plus Instagram (comments + DM), Facebook Messenger, WhatsApp, TikTok and 500+ e-commerce platforms.</p>
-      <div class="ph">Channel grid</div>
+      <div class="section__eyebrow">06 — Where review management ends</div>
+
+      <!-- state 1: channel tile cloud + two-line headline -->
+      <div class="scene__head">Where review management ends,<br><span class="rot">Reply Anywhere begins</span></div>
+      <div class="scene__cloud">
+        <span class="pill pill--rev">Google Reviews</span>
+        <span class="pill pill--rev">Amazon Reviews</span>
+        <span class="pill pill--rev">App Store Reviews</span>
+        <span class="pill pill--rev">eBay</span>
+        <span class="pill pill--rev">Etsy</span>
+        <span class="pill pill--rev">Trustpilot</span>
+        <span class="pill pill--rev">+500 e-commerce</span>
+        <span class="pill pill--any">Google Maps</span>
+        <span class="pill pill--any">Instagram DMs</span>
+        <span class="pill pill--any">Instagram Comments</span>
+        <span class="pill pill--any">Messenger</span>
+        <span class="pill pill--any">Facebook Comments</span>
+        <span class="pill pill--any">WhatsApp</span>
+        <span class="pill pill--any">TikTok Comments</span>
+      </div>
+
+      <!-- state 2 (after scroll): collapses to heading + description + features -->
+      <div class="scene__collapsed">
+        <div class="scene__head">Where review management ends,<br><span class="rot">Reply Anywhere begins</span></div>
+        <p class="body">Reply Anywhere brings reviews, comments, direct messages and customer conversations into one workspace. Respond faster, keep every channel in sync and turn conversations into actionable insights.</p>
+        <div class="feat-row">
+          <div class="feat"><span class="feat__i">⚡</span><div><b>Every channel</b><span>one workspace</span></div></div>
+          <div class="feat"><span class="feat__i">💬</span><div><b>Faster responses</b><span>less manual work</span></div></div>
+          <div class="feat"><span class="feat__i">▟</span><div><b>Actionable insights</b><span>better decisions</span></div></div>
+        </div>
+      </div>
+
+      <p class="scene__note">Scroll scene: tiles fly in (reviews first → then all channels), headline builds in two parts, then collapses to heading + description + 3 features. Static fallback = collapsed state.</p>
     </section>
 
     <section class="section" id="compare">
@@ -437,21 +479,22 @@ html,body{font-family:var(--font-sans);background:var(--wf-page);color:var(--col
     <div class="summary" data-for="channels">
       <div class="summary__card">
         <div class="summary__head"><span class="summary__num">05</span><span class="summary__label">Channels</span></div>
-        <h3 class="summary__title">Coverage — proof of breadth</h3>
-        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>Маркетплейсы, сторы, карты, review-сайты + соцсети/мессенджеры + 500+ e-commerce.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Покрывают всё» — масштаб.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>channel-grid / logo-chips; соц-каналы подсвечены.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Чипы появляются волной.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Делает обещание осязаемым; ведёт к §07.</p></div>
-        <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Карта всех точек, где звучит голос клиента.</p></div>
+        <h3 class="summary__title">Positioning + channels (scroll scene)</h3>
+        <div class="summary__field"><span class="summary__field-label">Смысл</span><p>«Where review management ends, Reply Anywhere begins» — позиционирование + все каналы плитками: review-каналы (Google/Amazon/App Store/eBay/Etsy/Trustpilot) + everywhere (Maps, IG DMs/Comments, Messenger, TikTok, WhatsApp, FB).</p></div>
+        <div class="summary__field"><span class="summary__field-label">Эмоция</span><p>«Вау, сколько всего» → ясность: мы начинаемся там, где обычные review-tools заканчиваются.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Визуал</span><p>Облако channel-pills вокруг 2-строчного заголовка. Цвет группирует: тёмные = review-mgmt, акцентные = что добавляет Reply Anywhere. Затем сворачивается в центр.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Motion</span><p>Scroll-scene: плитки влетают (сначала review, потом все), заголовок собирается по частям → на скролле всё исчезает, заголовок поднимается, появляются описание + 3 фичи. GSAP ScrollTrigger; reduced-motion → статичный collapsed.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Связь</span><p>Ядро wedge (перекликается с §04/§07); поглощает прежнюю channels-секцию. Фичи-трио дублирует §02 — свести к одному.</p></div>
+        <div class="summary__field"><span class="summary__field-label">Метафора</span><p>Хаос каналов → один экран.</p></div>
         <div class="summary__field"><span class="summary__field-label">Перевод (RU)</span>
-          <p><strong>Заголовок:</strong> Везде, где говорят ваши клиенты.</p>
-          <p><strong>Тело:</strong> Маркетплейсы, App Store, Google Play, Google Maps, review-сайты, Instagram (комментарии + директ), Facebook Messenger, WhatsApp, TikTok, +500 e-commerce.</p>
+          <p><strong>Заголовок:</strong> Где заканчивается управление отзывами — начинается Reply Anywhere.</p>
+          <p><strong>Тело:</strong> Reply Anywhere собирает отзывы, комментарии, личные сообщения и разговоры с клиентами в одном пространстве. Отвечайте быстрее, держите все каналы в синхроне и превращайте разговоры в инсайты.</p>
         </div>
         <div class="summary__tags"><span class="summary__tags-label">Reference tags</span>
           <div class="summary__tags-list">
-            <span class="summary__tag">logo-grid</span><span class="summary__tag">channel-chips</span>
-            <span class="summary__tag">integrations-wall</span>
+            <span class="summary__tag">scroll-scene</span><span class="summary__tag">pinned-section</span>
+            <span class="summary__tag">tag-cloud</span><span class="summary__tag">channel-pills</span>
+            <span class="summary__tag">staggered-reveal</span>
           </div>
         </div>
         <div class="summary__refs"><span class="summary__refs-label">Аналог</span>

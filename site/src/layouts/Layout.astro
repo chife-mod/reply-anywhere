@@ -1,0 +1,49 @@
+---
+// Self-hosted variable font (no Google Fonts round-trip). Vite content-hashes the
+// woff2, which the _headers immutable rule then caches forever.
+// Inter = the design's actual family (extracted from Figma, Phase A).
+import '@fontsource-variable/inter';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import JsonLd from '../components/JsonLd.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  canonical?: string;
+  noindex?: boolean;
+  jsonLd?: boolean;
+}
+const { title, description, ogImage, canonical, noindex = false, jsonLd = false } = Astro.props;
+
+// Cloudflare Web Analytics — privacy-first, zero-cookie. Only injected when a
+// beacon token is configured, so no broken beacon ships in dev.
+const cfAnalytics = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#111322" />
+    <meta name="generator" content={Astro.generator} />
+    <SEO title={title} description={description} ogImage={ogImage} canonical={canonical} noindex={noindex} />
+    {jsonLd && <JsonLd />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+    {cfAnalytics && (
+      <script
+        is:inline
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={JSON.stringify({ token: cfAnalytics })}
+      />
+    )}
+  </body>
+</html>

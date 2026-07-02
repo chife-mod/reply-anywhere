@@ -1,0 +1,439 @@
+---
+// Features (Figma 24:989, 1440×965) — «Everything you need / to respond at scale».
+// Header row (H2 left + lead right 416px) → 3 feature cards 416×562 (master
+// 25:1109; instances 25:1110 / 25:1129 show the orbit visual at 20% opacity)
+// → CTA band (25:1860). All copy verbatim from Figma.
+import SectionHeading from '../ui/SectionHeading.astro';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import logoMark from '../../assets/brand/logo-mark.svg';
+import avatar1 from '../../assets/avatars/avatar-1.png';
+import avatar2 from '../../assets/avatars/avatar-2.png';
+import avatar3 from '../../assets/avatars/avatar-3.png';
+
+const cards = [
+  {
+    icon: 'tabler/layout-grid',
+    title: 'All Channels',
+    sub: 'Everything in one place',
+    body: 'Bring every customer conversation into one workspace — from Google and Amazon to Instagram, WhatsApp and Messenger. No switching between tools. No missed conversations.',
+    footIcon: 'tabler/messages',
+    foot1: 'One inbox. Every conversation.',
+    foot2: 'Stay in sync. Respond faster.',
+    dim: false,
+  },
+  {
+    icon: 'tabler/sparkles',
+    title: 'Advanced Insights',
+    sub: 'Turn conversations into decisions',
+    body: 'Understand customer feedback across every channel. Identify trends, recurring issues and opportunities with AI-powered insights that help your team prioritize what matters most.',
+    footIcon: 'tabler/bulb',
+    foot1: 'See patterns.',
+    foot2: 'Make smarter decisions.',
+    dim: true,
+  },
+  {
+    icon: 'tabler/robot-face',
+    title: 'Reply with AI',
+    sub: 'Respond faster with confidence',
+    body: 'Generate consistent, high-quality replies in seconds. Let AI help your team answer faster, stay on brand and reduce repetitive manual work.',
+    footIcon: 'tabler/send-2',
+    foot1: 'Less manual work.',
+    foot2: 'Better responses.',
+    dim: true,
+  },
+];
+
+const avatars = [avatar1, avatar2, avatar3];
+---
+
+<section class="features" id="features">
+  <div class="features__inner">
+    <header class="features__head">
+      <SectionHeading line1="Everything you need" accent="to respond at scale" align="left" />
+      <p class="features__lead">
+        Reply Anywhere brings reviews, comments, direct messages and customer questions into one
+        workspace. Respond faster, stay consistent and turn every conversation into valuable
+        customer insights.
+      </p>
+    </header>
+
+    <ul class="features__grid">
+      {cards.map((card) => (
+        <li class:list={['card', { 'card--dim': card.dim }]}>
+          <div class="card__head">
+            <span class="card__tile"><Icon name={card.icon} size={24} /></span>
+            <div class="card__titles">
+              <h3 class="card__title">{card.title}</h3>
+              <p class="card__sub">{card.sub}</p>
+            </div>
+          </div>
+          <p class="card__body">{card.body}</p>
+          <div class="card__fade" aria-hidden="true"></div>
+          {/* Orbit visual (25:1086): rings + triple-glow + connector lines +
+              center app tile + channel bubbles. Purely decorative. */}
+          <div class="orbit" aria-hidden="true">
+            <span class="orbit__ring orbit__ring--300"><Icon name="decor/orbit-ring-300" size={300} /></span>
+            <span class="orbit__ring orbit__ring--220"><Icon name="decor/orbit-ring-220" size={220} /></span>
+            <span class="orbit__ring orbit__ring--140"><Icon name="decor/orbit-ring-140" size={140} /></span>
+            <span class="orbit__glow orbit__glow--wide"></span>
+            <span class="orbit__line orbit__line--3"><Icon name="decor/orbit-line-3" width={146} height={1} /></span>
+            <span class="orbit__line orbit__line--1"><Icon name="decor/orbit-line-1" width={113} height={1} /></span>
+            <span class="orbit__line orbit__line--2"><Icon name="decor/orbit-line-2" width={114} height={1} /></span>
+            <span class="orbit__glow orbit__glow--mid"></span>
+            <span class="orbit__glow orbit__glow--tight"></span>
+            <span class="orbit__app"><img src={logoMark.src} width="45" height="40" alt="" /></span>
+            <span class="orbit__bubble orbit__bubble--amazon"><Icon name="logos/amazon-mark" size={24} /></span>
+            <span class="orbit__halo"><Icon name="decor/bubble-glow" size={82} /></span>
+            <span class="orbit__bubble orbit__bubble--maps"><Icon name="logos/google-maps" size={24} /></span>
+            <span class="orbit__bubble orbit__bubble--messenger"><Icon name="logos/messenger" size={24} /></span>
+            <span class="orbit__bubble orbit__bubble--instagram"><Icon name="logos/instagram" size={24} /></span>
+            <span class="orbit__bubble orbit__bubble--whatsapp"><Icon name="logos/whatsapp" size={24} /></span>
+            <span class="orbit__bubble orbit__bubble--facebook"><Icon name="logos/facebook" size={24} /></span>
+            <span class="orbit__dot orbit__dot--a"><Icon name="decor/orbit-dot-glow" size={15} /></span>
+            <span class="orbit__dot orbit__dot--b"><Icon name="decor/orbit-dot-glow" size={15} /></span>
+            <span class="orbit__dot orbit__dot--c"><Icon name="decor/orbit-dot" size={15} /></span>
+            <span class="orbit__dot orbit__dot--c-core"><Icon name="decor/orbit-dot-core" size={6} /></span>
+          </div>
+          <div class="card__foot">
+            <span class="card__pill"><Icon name={card.footIcon} size={24} /></span>
+            <p class="card__foot-text">
+              {card.foot1}
+              <span class="card__foot-dim">{card.foot2}</span>
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <div class="cta">
+      <div class="cta__intro">
+        <span class="cta__tile"><Icon name="tabler/inbox" size={26} /></span>
+        <div class="cta__copy">
+          <h3 class="cta__title">See Reply Anywhere in action.</h3>
+          <p class="cta__sub">
+            Discover how leading brands manage every<br />customer conversation from one workspace.
+          </p>
+        </div>
+      </div>
+      <div class="cta__meta">
+        <p class="cta__trust">Trusted by teams at Ajax,<br />Samsung and Volia</p>
+        <div class="cta__avatars">
+          {avatars.map((a) => (
+            <img src={a.src} width="80" height="80" alt="" loading="lazy" decoding="async" />
+          ))}
+        </div>
+        <Button href="#demo" variant="dark" label="Request a free demo" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .features {
+    padding: var(--sp-10) var(--margin-desktop); /* Figma root: py-40 px-80 */
+  }
+  .features__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-8);
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+
+  /* ─── Header row (25:1863) ─────────────────────────────────── */
+  .features__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--sp-8);
+  }
+  .features__lead {
+    width: 416px; /* Figma 24:992 */
+    flex-shrink: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--text-body);
+  }
+
+  /* ─── Cards row (25:1148) ──────────────────────────────────── */
+  .features__grid {
+    display: flex;
+    gap: var(--sp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .card {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+    flex: 1;
+    min-width: 0;
+    height: 562px; /* Figma 25:1109 fixed frame — no height token */
+    padding: var(--sp-8) var(--sp-8) var(--sp-6); /* pt32 px32 pb24 */
+    background: var(--surface-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .card__head {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: var(--sp-4);
+    align-items: flex-start;
+  }
+  .card__tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    background: var(--surface-tile);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-tile);
+  }
+  .card__title {
+    font-size: var(--fs-card-title);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-body);
+    color: var(--text-hi);
+    letter-spacing: normal;
+  }
+  .card__sub {
+    font-size: var(--fs-card-sub);
+    line-height: var(--lh-body);
+    color: var(--violet-light);
+  }
+  .card__body {
+    position: relative;
+    z-index: 2;
+    font-size: var(--fs-ui);
+    line-height: var(--lh-body);
+    color: var(--text-hi);
+  }
+  .card__fade {
+    position: absolute;
+    inset: 180px 18px auto 7px; /* Figma 25:1712: x7 y180 w391 */
+    height: 51px;
+    z-index: 1;
+    background: var(--grad-card-fade);
+    pointer-events: none;
+  }
+
+  /* ─── Orbit visual (25:1086, 246px stage centered at 176,123) ─
+     Every element is positioned from the stage center so the
+     composition survives card-width changes gracefully.
+     Figma anchors the stage at a FIXED x32/y216 inside the 562px
+     card regardless of how many lines the body copy wraps to, so
+     the stage is absolutely positioned (NOT flowed after the body —
+     flowing it made card 3's shorter 3-line body pull the whole
+     illustration up by the text-height delta). */
+  .orbit {
+    position: absolute;
+    top: 215px; /* Figma 25:1086 y216 from the card edge, minus the 1px border
+                   (absolute offsets resolve from the padding box) */
+    left: var(--sp-8);
+    right: var(--sp-8);
+    height: 246px;
+    z-index: 0;
+  }
+  .card--dim .orbit {
+    opacity: 0.2; /* Figma: instance visuals at 20% */
+  }
+  /* :where() keeps specificity at (0,1,0) so the per-element
+     position overrides below can win. */
+  .orbit > :where(span) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .orbit :global(img) {
+    display: block;
+  }
+  /* Rings must stay PERFECT circles: the spans are absolutely positioned
+     with no intrinsic width, so global img{max-width:100%} would clamp the
+     ring img width against the shrink-to-fit span (→ ellipses). Explicit
+     square sizes + img filling the span keep them 1:1 and concentric. */
+  .orbit__ring {
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+  .orbit > .orbit__ring--300 { width: 300px; height: 300px; }
+  .orbit > .orbit__ring--220 { width: 220px; height: 220px; }
+  .orbit > .orbit__ring--140 { width: 140px; height: 140px; }
+  .orbit__ring :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+  .orbit__glow {
+    width: 76px;
+    height: 76px;
+    border-radius: 25px; /* Figma glow square — no radius token */
+    background: var(--violet);
+  }
+  .orbit__glow--wide { filter: blur(var(--glow-blur-wide)); }
+  .orbit__glow--mid { filter: blur(var(--glow-blur-mid)); }
+  .orbit__glow--tight { filter: blur(var(--glow-blur-tight)); }
+  .orbit__line { height: 1px; }
+  .orbit__line :global(img) { width: 100%; height: 100%; }
+  .orbit > .orbit__line--3 {
+    width: 145.691px;
+    left: calc(50% - 55.5px);
+    top: calc(50% - 52.5px);
+    transform: translate(-50%, -50%) rotate(-133.89deg);
+  }
+  .orbit > .orbit__line--1 {
+    width: 112.872px;
+    left: calc(50% + 44px);
+    top: calc(50% - 28px);
+    transform: translate(-50%, -50%) rotate(-29.74deg);
+  }
+  .orbit > .orbit__line--2 {
+    width: 114.232px;
+    left: calc(50% + 48.5px);
+    top: calc(50% + 20px);
+    transform: translate(-50%, -50%) rotate(20.5deg);
+  }
+  .orbit__app {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    background: var(--black);
+    border: 1.25px solid var(--border-soft);
+    border-radius: var(--r-app);
+    box-shadow: var(--shadow-app-tile);
+  }
+  .orbit__app img { width: 44.571px; height: 40px; }
+  .orbit__bubble {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--surface-bubble);
+    border-radius: var(--r-pill);
+  }
+  /* Figma centers (offsets from the 176,123 stage center): */
+  .orbit > .orbit__bubble--amazon { left: calc(50% - 106px); top: calc(50% - 105px); }
+  .orbit__bubble--amazon :global(img) { width: 22.84px; height: 23.54px; }
+  .orbit__halo { width: 81.8px; height: 81.8px; } /* glow behind maps bubble */
+  .orbit__halo :global(img) { width: 100%; height: 100%; }
+  .orbit > .orbit__halo,
+  .orbit > .orbit__bubble--maps { left: calc(50% + 92px); top: calc(50% - 56px); }
+  .orbit__bubble--maps :global(img) { width: 16.8px; height: 24.081px; }
+  .orbit > .orbit__bubble--messenger { left: calc(50% + 70px); top: calc(50% - 130px); }
+  .orbit > .orbit__bubble--instagram { left: calc(50% - 71px); top: calc(50% + 88px); }
+  .orbit > .orbit__bubble--whatsapp { left: calc(50% - 112px); top: 50%; }
+  .orbit > .orbit__bubble--facebook { left: calc(50% + 102px); top: calc(50% + 38px); }
+  .orbit > .orbit__dot--a { left: calc(50% + 46px); top: calc(50% - 30px); }
+  .orbit > .orbit__dot--b { left: calc(50% - 82px); top: calc(50% - 79px); }
+  .orbit > .orbit__dot--c,
+  .orbit > .orbit__dot--c-core { left: calc(50% + 71px); top: calc(50% + 28px); }
+  .orbit__dot--c-core :global(img) { width: 6.2px; height: 6.2px; }
+
+  /* ─── Card footer (25:1068) ────────────────────────────────── */
+  .card__foot {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-25);
+    margin-top: auto;
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--border-line);
+  }
+  .card__pill {
+    display: flex;
+    padding: var(--sp-2);
+    background: var(--surface-tile);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-pill);
+  }
+  .card__foot-text {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--fs-ui);
+    line-height: var(--lh-body);
+    color: var(--text-hi);
+  }
+  .card__foot-dim { color: var(--text-dim); }
+
+  /* ─── CTA band (25:1860) ───────────────────────────────────── */
+  .cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-6);
+    padding: var(--sp-6);
+    background: var(--grad-cta);
+    border: 1px solid var(--border-white);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .cta__intro {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-8);
+    flex: 1;
+    min-width: 0;
+  }
+  .cta__tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    background: var(--surface-tile);
+    border-radius: 17.143px; /* Figma 26:475 — no radius token */
+  }
+  /* Figma icon box 34.286px; the exported glyph is its 25.714px content. */
+  .cta__tile :global(img) { width: 25.714px; height: 25.714px; }
+  .cta__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+  .cta__title {
+    font-size: var(--fs-card-title);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-body);
+    color: var(--text-hi);
+    letter-spacing: normal;
+  }
+  .cta__sub {
+    font-size: var(--fs-card-sub);
+    line-height: var(--lh-body);
+    color: var(--text-body);
+  }
+  .cta__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-6);
+    flex-shrink: 0;
+  }
+  .cta__trust {
+    font-size: var(--fs-ui);
+    line-height: var(--lh-chip); /* 1.2 */
+    color: var(--text-hi);
+  }
+  .cta__avatars {
+    display: flex;
+  }
+  .cta__avatars img {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--r-pill);
+  }
+  .cta__avatars img:not(:last-child) {
+    margin-right: -12px; /* Figma overlap — no negative spacing token */
+  }
+</style>

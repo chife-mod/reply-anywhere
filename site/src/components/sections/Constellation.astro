@@ -1,0 +1,297 @@
+---
+// Channel constellation (Figma 19:215, 1440×650) — centered SectionHeading
+// (20:361) orbited by 13 ChannelPills at exact Figma coordinates. Two pill
+// fills in the design: default rgba(0,0,0,.5) and a violet accent
+// rgba(171,13,255,.2) on 10 pills. data-constellation / data-constellation-pill
+// are the Phase D motion hooks (float/parallax pass).
+import SectionHeading from '../ui/SectionHeading.astro';
+import ChannelPill from '../ui/ChannelPill.astro';
+
+interface Pill {
+  x: number; // Figma absolute position inside the 1440×650 frame
+  y: number;
+  icon: string;
+  category: string;
+  name: string;
+  iconWidth?: number; // non-square logos keep their Figma aspect
+  iconHeight?: number;
+  violet?: boolean; // rgba(171,13,255,.2) fill variant
+}
+
+// Order = Figma layer order (20:377 … 20:682).
+const pills: Pill[] = [
+  { x: 198, y: 161, icon: 'logos/google-g', category: 'Company Reviews', name: 'Google Reviews' },
+  { x: 991, y: 418, icon: 'logos/appstore', category: 'App Reviews', name: 'App Store Reviews', iconWidth: 24, iconHeight: 21 },
+  { x: 826, y: 187, icon: 'logos/amazon', category: 'Product Reviews', name: 'Amazon Reviews' },
+  { x: 376, y: 451, icon: 'logos/instagram', category: 'Social Comments', name: 'Instagram Comments', violet: true },
+  { x: 1073, y: 244, icon: 'logos/tiktok', category: 'Social Comments', name: 'TikTok Comments', iconWidth: 21, iconHeight: 24, violet: true },
+  { x: 684, y: 520, icon: 'logos/facebook', category: 'Social Comments', name: 'Facebook Comments', violet: true },
+  { x: 554, y: 196, icon: 'logos/messenger', category: 'Direct Messages', name: 'Messenger', violet: true },
+  { x: 442, y: 97, icon: 'logos/google-maps', category: 'Location Reviews', name: 'Google Maps', iconWidth: 17, iconHeight: 24, violet: true },
+  { x: 1102, y: 496, icon: 'logos/trustpilot', category: 'Company Reviews', name: 'Trustpilot', iconWidth: 24, iconHeight: 23, violet: true },
+  { x: 85, y: 225, icon: 'logos/ebay', category: 'Marketplace Reviews', name: 'eBay', iconWidth: 30, iconHeight: 12, violet: true },
+  { x: 171, y: 361, icon: 'logos/whatsapp', category: 'Less manual work', name: 'WhatsApp', violet: true },
+  { x: 213, y: 520, icon: 'logos/etsy', category: 'Marketplace Reviews', name: 'Etsy', violet: true },
+  { x: 726, y: 73, icon: 'logos/instagram', category: 'Direct Messages', name: 'Instagram DMs', violet: true },
+];
+---
+
+<section class="constellation" id="constellation" data-constellation data-scene-part="constellation">
+  <div class="constellation__stage">
+    <div class="constellation__heading" data-scene-el="headline">
+      <SectionHeading
+        line1="One platform for review management"
+        accent="and social customer service"
+      />
+    </div>
+    <ul class="constellation__pills" role="list">
+      {
+        pills.map((p) => (
+          <li
+            class:list={['constellation__spot', { 'constellation__spot--violet': p.violet }]}
+            style={`--x: ${p.x}px; --y: ${p.y}px;`}
+            data-constellation-pill
+            data-scene-el="pill"
+            data-wave={p.violet ? '2' : '1'}
+          >
+            <ChannelPill
+              icon={p.icon}
+              category={p.category}
+              name={p.name}
+              iconWidth={p.iconWidth}
+              iconHeight={p.iconHeight}
+              variant={p.violet ? 'social' : 'dark'}
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  /* Fixed 1440 stage centered in the viewport; wider screens get symmetric
+     side bleed, narrower ones clip the constellation edges gracefully. */
+  .constellation {
+    display: flex;
+    justify-content: center;
+    overflow: clip;
+  }
+  .constellation__stage {
+    position: relative;
+    flex: 0 0 auto;
+    width: 1440px; /* Figma frame 19:215 */
+    height: 650px;
+  }
+  .constellation__heading {
+    position: absolute;
+    top: 283px; /* Figma 20:361 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 704px; /* Figma 20:361 */
+    max-width: calc(100vw - 2 * var(--margin-desktop));
+  }
+  .constellation__pills {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .constellation__spot {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+  }
+  /* Disc size + violet fill now live in the ChannelPill kit (disc 40px default,
+     variant="social" → var(--surface-pill-social)) — no scoped overrides. */
+</style>
+
+<style is:global>
+  /* «One platform» pinned scroll scene (docs/SCROLL-SCENE-SPEC.md).
+     .is-scene is added by JS ONLY when motion is allowed — no-JS and
+     prefers-reduced-motion keep the static two-block flow untouched.
+     Pin = CSS position:sticky (NOT gsap pin — Verifly reload-race lesson):
+     both sections stick at top:0 inside the tall scene wrapper, PlatformIntro
+     overlays Constellation via margin-top:-100vh, ScrollTrigger only scrubs. */
+  [data-scene='one-platform'].is-scene {
+    height: 450vh; /* ≈350vh of scrub distance for the timeline */
+  }
+  .is-scene [data-scene-part='constellation'] {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-items: center;
+  }
+  .is-scene [data-scene-part='intro'] {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 0;
+    margin-top: -100vh; /* overlay on the constellation inside the same pin */
+    overflow: clip;
+  }
+  /* The Constellation headline IS the scene headline (it stays, spec §5).
+     PlatformIntro's own duplicate heading only reserves layout space. */
+  .is-scene [data-scene-part='intro'] .heading {
+    visibility: hidden;
+  }
+  /* JS-measured shift keeping the hidden intro heading on the exact Y of the
+     persistent constellation headline, so body + chips land under it. */
+  .is-scene [data-scene-part='intro'] .platform-intro__inner {
+    transform: translateY(var(--pi-shift, 0px));
+  }
+</style>
+
+<script>
+  // «One platform» scroll scene (docs/SCROLL-SCENE-SPEC.md; feel reference —
+  // branch.computer randomized fly-ins). CSS sticky + ScrollTrigger scrub, no
+  // gsap pin. transform/opacity only, no blur. A scrubbed timeline only
+  // advances with scroll inside the scene range, so nothing ticks while the
+  // scene is off-viewport or the tab is hidden.
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  /** Deterministic PRNG seeded per element index — pill speeds/delays must not
+      reshuffle between page loads (spec: рандом-сид на индекс). */
+  function mulberry32(seed: number) {
+    let a = seed | 0;
+    return () => {
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  /** Wrap each word of `text` in a span (typing effect targets). */
+  function splitWords(text: string) {
+    const frag = document.createDocumentFragment();
+    const words: HTMLElement[] = [];
+    text
+      .trim()
+      .split(/\s+/)
+      .forEach((word, i) => {
+        if (i > 0) frag.append(' ');
+        const span = document.createElement('span');
+        span.className = 'scene-word';
+        span.textContent = word;
+        frag.append(span);
+        words.push(span);
+      });
+    return { frag, words };
+  }
+
+  function initScene(scene: HTMLElement) {
+    const intro = scene.querySelector<HTMLElement>('[data-scene-part="intro"]');
+    const headline = scene.querySelector<HTMLElement>('[data-scene-el="headline"] h2');
+    const accent = headline?.querySelector<HTMLElement>('.heading__accent');
+    const body = scene.querySelector<HTMLElement>('[data-scene-el="body"]');
+    const chipsWrap = scene.querySelector<HTMLElement>('[data-scene-el="chips"]');
+    const introHeading = intro?.querySelector<HTMLElement>('h2');
+    const introInner = intro?.querySelector<HTMLElement>('.platform-intro__inner');
+    const pills = [...scene.querySelectorAll<HTMLElement>('[data-scene-el="pill"]')];
+    if (!intro || !headline || !accent || !body || !chipsWrap || !introHeading || !introInner || pills.length === 0) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Headline word split: part 1 = plain text nodes, part 2 = violet accent.
+    const line1: HTMLElement[] = [];
+    for (const node of [...headline.childNodes]) {
+      if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+        const { frag, words } = splitWords(node.textContent);
+        line1.push(...words);
+        headline.replaceChild(frag, node);
+      }
+    }
+    const { frag: accentFrag, words: line2 } = splitWords(accent.textContent ?? '');
+    accent.replaceChildren(accentFrag);
+    line1.forEach((w) => (w.dataset.sceneEl = 'headline-1'));
+    line2.forEach((w) => (w.dataset.sceneEl = 'headline-2'));
+
+    const wave1 = pills.filter((p) => p.dataset.wave === '1'); // 3 dark pills
+    const wave2 = pills.filter((p) => p.dataset.wave === '2'); // 10 violet pills
+    const chips = [...chipsWrap.children];
+
+    // Switch on the sticky-scene layout (static flow = fallback state).
+    scene.classList.add('is-scene');
+
+    // Keep the persistent constellation headline and the hidden PlatformIntro
+    // heading on the same Y, so the body/chips appear under the headline that
+    // stays (spec §5–7). Both sections are stuck at the same top → the delta
+    // is scroll-independent.
+    const align = () => {
+      introInner.style.setProperty('--pi-shift', '0px');
+      const delta = headline.getBoundingClientRect().top - introHeading.getBoundingClientRect().top;
+      introInner.style.setProperty('--pi-shift', `${delta}px`);
+    };
+    align();
+    document.fonts?.ready.then(() => {
+      align();
+      ScrollTrigger.refresh();
+    });
+    window.addEventListener('resize', align);
+
+    // Initial states (transform/opacity only — no blur, no filters).
+    gsap.set([...line1, ...line2], { opacity: 0 });
+    gsap.set(pills, { opacity: 0, scale: 1.6 });
+    gsap.set(body, { opacity: 0, y: 40 });
+    gsap.set(chips, { opacity: 0, y: 24 });
+
+    // One scrubbed timeline; position values are abstract beats mapped onto
+    // the ~350vh scrub distance by ScrollTrigger.
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: scene,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+      },
+    });
+
+    // 1 — headline part 1 «types» in word by word (spec §1).
+    tl.to(line1, { opacity: 1, duration: 0.12, stagger: 0.16 }, 0);
+
+    // 2 — wave 1: the 3 dark pills fly in — opacity 0 + scale 1.6 → settle,
+    // each with its own seeded duration/delay (branch.computer feel, spec §2).
+    wave1.forEach((pill, i) => {
+      const r = mulberry32(i + 1);
+      tl.to(
+        pill,
+        { opacity: 1, scale: 1, duration: 0.9 + r() * 0.7, ease: 'power2.out' },
+        1.1 + r() * 0.5
+      );
+    });
+
+    // 3 — headline part 2 (violet bold) types in (spec §3).
+    tl.to(line2, { opacity: 1, duration: 0.12, stagger: 0.16 }, 3.2);
+
+    // 4 — wave 2: the 10 violet pills, same effect (spec §4).
+    wave2.forEach((pill, i) => {
+      const r = mulberry32(101 + i);
+      tl.to(
+        pill,
+        { opacity: 1, scale: 1, duration: 0.8 + r() * 0.8, ease: 'power2.out' },
+        4.1 + r() * 0.9
+      );
+    });
+
+    // 5 — pills clear the stage; the headline stays put (spec §5).
+    tl.to(pills, { opacity: 0, scale: 0.92, duration: 0.8, ease: 'power1.in', stagger: 0.015 }, 7.0);
+
+    // 6 — description fades in bottom-up (spec §6).
+    tl.to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 8.1);
+
+    // 7 — three chips: чик-чик-чик (spec §7).
+    tl.to(chips, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.45 }, 9.0);
+
+    // 8 — settle beat before the unpin (spec §8: normal scroll resumes).
+    tl.to({}, { duration: 1 }, 10.4);
+  }
+
+  const scene = document.querySelector<HTMLElement>('[data-scene="one-platform"]');
+  // Guard BEFORE creating any timeline/layout: reduced motion or no JS keeps
+  // the current static two-block flow (spec: статика без пина).
+  if (scene && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    initScene(scene);
+  }
+</script>

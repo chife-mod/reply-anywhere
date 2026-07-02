@@ -1,0 +1,18 @@
+# Cloudflare (Workers Static Assets honours _headers). Astro fingerprints
+# everything under /_astro/* with a content hash, so those files are safe to
+# cache forever (immutable). Self-hosted fonts are content-hashed too.
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+# Baseline security headers for every response. (HSTS is intentionally NOT set
+# here — enable it on the Cloudflare dashboard once the final domain + all
+# subdomains are confirmed HTTPS, to avoid locking in a wrong policy.)
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()

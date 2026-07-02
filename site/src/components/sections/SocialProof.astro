@@ -1,0 +1,390 @@
+---
+// Social proof band (Figma 19:22, 1440×234) — «Brands that automate with
+// ReplyAnywhere» + horizontal marquee strip (19:170, 1718×88 — wider than the
+// viewport). Phase D: the [data-marquee] track loops via a CSS translateX
+// keyframe — the tile group renders TWICE (second copy aria-hidden) so the
+// wrap is seamless; a tiny script pauses it off-viewport / on hidden tab, and
+// prefers-reduced-motion parks it static at the Figma x7 offset.
+// Tiles left→right: Ajax logo · testimonial · «8 connected channels» stat ·
+// avatar · role · Samsung logo · testimonial · «24 connected channels» blue
+// stat (client add-on 2026-07-02) · avatar. Brand-color tiles (green #1DCF94 /
+// blue #1998FF) carry black 14px/1.3 text.
+import Icon from '../ui/Icon.astro';
+import avatar from '../../assets/avatars/avatar-1.png';
+
+// Figma reuses ONE portrait for both marquee avatars (19:168 + 19:209 share
+// the same source image — verified by hash), so one asset serves both.
+const quote =
+  'Reply Anywhere helped us keep every customer conversation in one place. Our team responds faster and with much more consistency.';
+---
+
+<section class="social-proof" id="social-proof" aria-label="Social proof">
+  <p class="social-proof__title">
+    <span>Brands that</span>
+    <strong>automate</strong>
+    <span>with ReplyAnywhere</span>
+  </p>
+
+  <div class="social-proof__band">
+    <div class="social-proof__track" data-marquee>
+      {
+        // Two identical copies of the strip → translateX(-50%) wraps seamlessly.
+        // Copy 2 is decorative filler, hidden from the a11y tree.
+        [0, 1].map((copy) => (
+          <ul class="social-proof__group" aria-hidden={copy === 1 ? 'true' : undefined}>
+            <li class="sp-tile sp-tile--green sp-tile--logo-ajax">
+              <Icon name="logos/client-ajax" width={96} height={20} alt="Ajax Systems" />
+            </li>
+            <li class="sp-tile sp-tile--green sp-tile--quote">
+              <blockquote>
+                <p>{quote}</p>
+              </blockquote>
+              <Icon name="quote-mark" width={66} height={48} class="sp-quote-mark" />
+            </li>
+            <li class="sp-tile sp-tile--green sp-tile--stat">
+              <p class="sp-stat">
+                <span class="sp-stat__num">8</span>
+                <span class="sp-stat__label">
+                  Connected<br />channels
+                </span>
+              </p>
+              <div class="sp-stat__strip" aria-hidden="true">
+                <Icon name="tabler/brand-telegram" size={20} />
+                <Icon name="tabler/brand-whatsapp" size={20} />
+                <Icon name="tabler/brand-messenger" size={20} />
+                <Icon name="tabler/brand-amazon" size={20} />
+                <Icon name="tabler/brand-instagram" size={20} />
+                <Icon name="tabler/brand-facebook" size={20} />
+              </div>
+            </li>
+            <li class="sp-avatar">
+              <img src={avatar.src} width="88" height="88" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            </li>
+            <li class="sp-tile sp-tile--green sp-tile--role">
+              <p>
+                Customer Support Lead,<br />Ajax Systems
+              </p>
+            </li>
+            <li class="sp-tile sp-tile--blue sp-tile--logo-samsung">
+              <Icon name="logos/client-samsung" width={130} height={29} alt="Samsung" />
+            </li>
+            <li class="sp-tile sp-tile--blue sp-tile--quote sp-tile--quote-over">
+              <blockquote>
+                <p>{quote}</p>
+              </blockquote>
+              <Icon name="quote-mark" width={66} height={48} class="sp-quote-mark" />
+            </li>
+            <li class="sp-tile sp-tile--blue sp-tile--stat sp-tile--stat-blue">
+              <p class="sp-stat">
+                <span class="sp-stat__num">24</span>
+                <span class="sp-stat__label">
+                  Connected<br />channels
+                </span>
+              </p>
+              <div class="sp-stat__strip" aria-hidden="true">
+                <Icon name="tabler/brand-telegram" size={20} />
+                <Icon name="tabler/brand-whatsapp" size={20} />
+                <Icon name="tabler/brand-messenger" size={20} />
+                <Icon name="tabler/brand-amazon" size={20} />
+                <Icon name="tabler/brand-instagram" size={20} />
+                <Icon name="tabler/brand-facebook" size={20} />
+              </div>
+            </li>
+            <li class="sp-avatar">
+              <img src={avatar.src} width="88" height="88" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            </li>
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .social-proof {
+    /* Client-brand tile colors — Figma literals, no token yet (see missingTokens) */
+    --tile-green: #1dcf94;
+    --tile-blue: #1998ff;
+    --strip-fade: #1ecf94; /* Figma 32:3177/32:3178 fade rects (1 off from tile green — as designed) */
+    padding-block: var(--sp-10); /* heading y40 · band bottom inset 40 */
+    overflow: hidden; /* strip is 1718px wide — viewport clips the marquee */
+  }
+
+  /* ── Heading — 24px one-liner, words spaced by explicit 8px gaps (19:175) ── */
+  .social-proof__title {
+    display: flex;
+    justify-content: center;
+    gap: var(--sp-2);
+    margin: 0;
+    font-size: var(--fs-card-title); /* 24px — same step as card titles; no band-title token */
+    line-height: var(--lh-h2); /* 1.05 */
+    font-weight: var(--fw-regular);
+    color: var(--text-body);
+  }
+  .social-proof__title strong {
+    font-weight: var(--fw-bold);
+    color: var(--violet);
+  }
+
+  /* ── Marquee band (19:170) ── */
+  .social-proof__band {
+    margin-top: var(--sp-10); /* heading ends y65 → band y106 */
+  }
+  /* Track = two identical groups side by side sliding left by exactly one
+     group width for a seamless wrap. Client 2026-07-02 (rev 2): ~30% slower
+     again → ~1900px cycle / 125s ≈ 15px/s, plus HAND PAN — the strip can be
+     grabbed and dragged. JS (below) owns the transform via a GSAP ticker
+     (.is-js kills the CSS keyframe); the keyframe stays as the no-JS fallback.
+     transform-only, GPU-composited. */
+  .social-proof__band {
+    touch-action: pan-y; /* horizontal drags pan the strip; vertical swipes still scroll the page */
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .social-proof__band.is-dragging { cursor: grabbing; }
+  .social-proof__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    margin-left: 7px; /* Figma parked scroll offset (band x7) = loop start */
+    will-change: transform;
+    animation: sp-marquee 125s linear infinite;
+  }
+  .social-proof__track.is-js { animation: none; } /* JS ticker drives the x */
+  .social-proof__band:hover .social-proof__track:not(.is-js) { animation-play-state: paused; }
+  @keyframes sp-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .social-proof__group {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin: 0;
+    padding: 0 var(--sp-3) 0 0; /* right pad = inter-tile gap → seam matches rhythm */
+    list-style: none;
+  }
+  /* Reduced motion → static design state: Figma's parked strip, no duplicate */
+  @media (prefers-reduced-motion: reduce) {
+    .social-proof__track {
+      animation: none;
+      will-change: auto;
+    }
+    .social-proof__group[aria-hidden='true'] { display: none; }
+  }
+
+  /* ── Tile base — 88px tall rounded cards on brand colors ── */
+  .sp-tile {
+    display: flex;
+    align-items: center;
+    flex: none;
+    height: 88px;
+    border-radius: var(--r-md);
+    color: var(--black);
+  }
+  .sp-tile--green { background: var(--tile-green); }
+  .sp-tile--blue { background: var(--tile-blue); }
+  .sp-tile p {
+    margin: 0;
+    font-size: var(--fs-ui);
+    line-height: 1.3; /* Figma card text leading (no token) */
+  }
+
+  /* Logo tiles (19:180 · 19:197) — logo centered inside fixed-width card */
+  .sp-tile--logo-ajax { width: 144px; }
+  .sp-tile--logo-samsung { width: 178px; }
+  .sp-tile--logo-ajax, .sp-tile--logo-samsung { justify-content: center; }
+
+  /* Testimonial tiles (19:188 · 19:206) — 336px quote + watermark quote-mark */
+  .sp-tile--quote {
+    position: relative;
+    width: 384px;
+    padding-inline: var(--sp-6);
+  }
+  .sp-tile--quote blockquote {
+    position: relative; /* keeps text above the watermark (Figma 19:188 order) */
+    margin: 0;
+    width: 336px;
+  }
+  /* (:global — the img lives inside the shared <Icon> component) */
+  .sp-tile--quote :global(.sp-quote-mark) {
+    position: absolute; /* Figma: x318 y20, 65.524×48 */
+    top: var(--sp-5);
+    left: 318px;
+    width: 65.524px;
+    height: 48px;
+    opacity: 0.3; /* white glyph @ .3 on green (Figma fill-opacity) */
+  }
+  /* Blue testimonial: mark @ .2 and painted ABOVE the text (Figma 19:206 z-order) */
+  .sp-tile--quote-over :global(.sp-quote-mark) { opacity: 0.2; z-index: 1; }
+
+  /* Stat tiles — «8/24 Connected channels» + clipped channel-icon strip.
+     Green = Figma 28:2510; blue «24» = client add-on 2026-07-02 (same anatomy,
+     Samsung-blue fill, fades tinted to match). */
+  .sp-tile--stat {
+    --_fade: var(--strip-fade);
+    --_fade0: rgba(30, 207, 148, 0);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--sp-1);
+    width: 157px;
+  }
+  .sp-tile--stat-blue {
+    --_fade: var(--tile-blue);
+    --_fade0: rgba(25, 152, 255, 0);
+  }
+  .sp-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding-inline: var(--sp-6);
+  }
+  .sp-stat__num {
+    font-size: 44px; /* Figma 28:2511 (no token) */
+    line-height: 1;
+  }
+  .sp-stat__label {
+    font-size: var(--fs-ui);
+    line-height: 1.19; /* Figma 32:3130 */
+  }
+  .sp-stat__strip {
+    position: relative;
+    display: flex;
+    gap: var(--sp-2);
+    width: 138px; /* 6th icon (facebook) parked outside the clip — Figma 32:3176 */
+    height: var(--sp-5);
+    overflow: hidden;
+  }
+  .sp-stat__strip > :global(img) { flex: none; }
+  /* Edge fades (32:3177 / 32:3178) — 30×20 rects melting icons into the tile */
+  .sp-stat__strip::before,
+  .sp-stat__strip::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 30px;
+    height: var(--sp-5);
+    pointer-events: none;
+  }
+  .sp-stat__strip::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--_fade), var(--_fade0));
+  }
+  .sp-stat__strip::after {
+    right: 0;
+    background: linear-gradient(-90deg, var(--_fade), var(--_fade0));
+  }
+
+  /* Role tile (19:194) */
+  .sp-tile--role {
+    width: 211px;
+    padding-inline: var(--sp-6);
+  }
+
+  /* Avatars (19:168 · 19:209) — 88px portrait discs */
+  .sp-avatar {
+    flex: none;
+    width: 88px;
+    height: 88px;
+  }
+  .sp-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--r-pill);
+  }
+</style>
+
+<script>
+  // Marquee transport (client 2026-07-02): auto-drift ~15px/s + hand pan.
+  // A GSAP ticker owns the offset; pointer drag adjusts it directly with a
+  // light momentum glide on release. Auto-drift pauses on hover / off-viewport
+  // / hidden tab; reduced-motion kills auto-drift but the USER-initiated drag
+  // stays available. transform/x only.
+  import { gsap } from 'gsap';
+
+  const band = document.querySelector<HTMLElement>('#social-proof .social-proof__band');
+  const track = document.querySelector<HTMLElement>('#social-proof [data-marquee]');
+  if (band && track) initMarquee(band, track);
+
+  function initMarquee(band: HTMLElement, track: HTMLElement) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    track.classList.add('is-js'); // CSS keyframe off — the ticker owns x now
+
+    const groupW = () => track.scrollWidth / 2; // one strip copy = wrap length
+    const LOOP_S = 125; // full loop duration (≈15px/s — 30% slower than 96s)
+
+    let offset = 0;
+    let dragging = false;
+    let hovering = false;
+    let parked = false;
+    let velocity = 0; // px/s momentum after release
+    let lastX = 0;
+    let lastT = 0;
+
+    const apply = () => {
+      const g = groupW();
+      offset = ((offset % g) + g) % g; // seamless wrap both directions
+      gsap.set(track, { x: -offset });
+    };
+
+    gsap.ticker.add(() => {
+      if (parked || dragging) return;
+      const dt = gsap.ticker.deltaRatio(60) / 60;
+      if (Math.abs(velocity) > 4) {
+        offset -= velocity * dt;
+        velocity *= Math.pow(0.002, dt); // exponential glide-out (~1s)
+        apply();
+      } else if (!hovering && !reduce.matches) {
+        offset += (groupW() / LOOP_S) * dt;
+        apply();
+      }
+    });
+
+    band.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      velocity = 0;
+      lastX = e.clientX;
+      lastT = performance.now();
+      band.classList.add('is-dragging');
+      band.setPointerCapture(e.pointerId);
+    });
+    band.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      const t = performance.now();
+      if (t > lastT) velocity = (dx / (t - lastT)) * 1000;
+      lastX = e.clientX;
+      lastT = t;
+      offset -= dx;
+      apply();
+    });
+    const release = () => {
+      if (!dragging) return;
+      dragging = false;
+      band.classList.remove('is-dragging');
+      if (performance.now() - lastT > 120) velocity = 0; // held still → no glide
+    };
+    band.addEventListener('pointerup', release);
+    band.addEventListener('pointercancel', release);
+    band.addEventListener('dragstart', (e) => e.preventDefault()); // no native img ghosts
+
+    band.addEventListener('pointerenter', () => (hovering = true));
+    band.addEventListener('pointerleave', () => (hovering = false));
+
+    // Power hygiene — nothing advances off-viewport or on a hidden tab.
+    let inView = false;
+    const sync = () => (parked = !inView || document.hidden);
+    new IntersectionObserver(
+      (entries) => {
+        inView = entries[entries.length - 1].isIntersecting;
+        sync();
+      },
+      { rootMargin: '64px' }
+    ).observe(track);
+    document.addEventListener('visibilitychange', sync);
+    sync();
+  }
+</script>

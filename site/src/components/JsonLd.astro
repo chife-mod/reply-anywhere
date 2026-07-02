@@ -1,0 +1,33 @@
+---
+// Structured data (JSON-LD) for AI-answer engines + rich results. Emitted on the
+// home page. URLs derive from `site` (astro.config) so they stay correct when the
+// domain is swapped at launch. Modelled as a SoftwareApplication (the product)
+// published by an Organization (Semantic Force). `logo`/`sameAs` are added once a
+// hosted brand PNG + official social URLs exist.
+const home = new URL('/', Astro.site).href;
+
+const org = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': home + '#organization',
+  name: 'Semantic Force',
+  url: 'https://semanticforce.ai',
+};
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  '@id': home + '#software',
+  name: 'Reply Anywhere',
+  url: home,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  description:
+    'Reply Anywhere is one inbox for every review and message — marketplaces, app stores, Google Maps and e-commerce reviews, plus social comments and DMs (Instagram, TikTok, Messenger, WhatsApp). Built on the Semantic Force omnichannel stack.',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'Request a free demo' },
+  publisher: { '@id': home + '#organization' },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(org)} />
+<script type="application/ld+json" set:html={JSON.stringify(app)} />

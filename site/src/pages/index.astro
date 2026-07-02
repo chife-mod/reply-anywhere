@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/sections/Nav.astro';
+import Hero from '../components/sections/Hero.astro';
+import SocialProof from '../components/sections/SocialProof.astro';
+import Constellation from '../components/sections/Constellation.astro';
+import PlatformIntro from '../components/sections/PlatformIntro.astro';
+import Features from '../components/sections/Features.astro';
+
+// Reply Anywhere — the assembled longread (Figma 2:8 order).
+// Constellation + PlatformIntro are wrapped as ONE scroll scene
+// (docs/SCROLL-SCENE-SPEC.md): statically they flow as two blocks (this IS the
+// reduced-motion / no-JS fallback); the Phase D pinned scrub timeline mounts on
+// [data-scene="one-platform"].
+// The demo form (DemoForm.astro + /api/demo Worker) stays functional but is NOT
+// on the page yet — its section design hasn't been drawn. CTA anchors point at
+// #demo for when it lands.
+---
+
+<Layout
+  title="Reply Anywhere — every review and message, one inbox"
+  description="One inbox for every review and message: marketplaces, app stores, Google Maps and e-commerce reviews, plus social comments and DMs — Instagram, TikTok, Messenger, WhatsApp. Built on the Semantic Force omnichannel stack."
+  jsonLd
+>
+  <Nav />
+  <main id="main">
+    <Hero />
+    <SocialProof />
+    <div data-scene="one-platform">
+      <Constellation />
+      <PlatformIntro />
+    </div>
+    <Features />
+  </main>
+</Layout>

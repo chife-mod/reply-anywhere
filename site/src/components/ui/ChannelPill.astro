@@ -1,0 +1,63 @@
+---
+// Channel pill (Figma 20:377 pattern — constellation section):
+// rgba(0,0,0,.5) pill · pl4 pr16 py4 · gap 8 · black 48px disc with 24px logo ·
+// two-line text: 10/1.2 @50% over 14/1.3 white.
+import Icon from './Icon.astro';
+
+interface Props {
+  icon: string; // "logos/google-g" etc.
+  category: string; // top line, e.g. "Company Reviews"
+  name: string; // bottom line, e.g. "Google Reviews"
+  iconWidth?: number; // non-square logos (google-maps)
+  iconHeight?: number;
+  variant?: 'dark' | 'social'; // Figma: dark rgba(0,0,0,.5) wave-1 · violet rgba(171,13,255,.2) wave-2
+}
+const { icon, category, name, iconWidth, iconHeight, variant = 'dark' } = Astro.props;
+---
+
+<div class:list={['pill', variant === 'social' && 'pill--social']}>
+  <span class="pill__disc">
+    <Icon name={icon} size={24} width={iconWidth} height={iconHeight} />
+  </span>
+  <span class="pill__text">
+    <span class="pill__cat">{category}</span>
+    <span class="pill__name">{name}</span>
+  </span>
+</div>
+
+<style>
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-1) var(--sp-4) var(--sp-1) var(--sp-1);
+    background: var(--surface-pill);
+    border-radius: var(--r-pill);
+  }
+  .pill--social { background: var(--surface-pill-social); }
+  .pill__disc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--sp-10); /* Figma 19:215/41:4265: disc 40×40, icon 24 */
+    height: var(--sp-10);
+    background: var(--black);
+    border-radius: var(--r-pill);
+  }
+  .pill__text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    white-space: nowrap;
+  }
+  .pill__cat {
+    font-size: var(--fs-pill-label);
+    line-height: 1.2;
+    color: var(--text-dim);
+  }
+  .pill__name {
+    font-size: var(--fs-ui);
+    line-height: 1.3;
+    color: var(--text-hi);
+  }
+</style>

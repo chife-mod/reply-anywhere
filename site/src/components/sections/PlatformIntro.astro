@@ -1,0 +1,76 @@
+---
+// Platform intro (Figma 20:819, 1440×650) — «One platform for review management /
+// and social customer service». Centered 706px column (20:940), gap 48:
+// SectionHeading + body 18/1.4 (bold lead, 70px inset) + 3 feature chips.
+import SectionHeading from '../ui/SectionHeading.astro';
+import Chip from '../ui/Chip.astro';
+---
+
+<!-- data-scene-* = «one platform» scroll-scene hooks (docs/SCROLL-SCENE-SPEC.md);
+     the scene script lives in Constellation.astro. Static flow untouched. -->
+<section class="platform-intro" id="platform-intro" data-scene-part="intro">
+  <div class="platform-intro__inner">
+    <SectionHeading
+      line1="One platform for review management"
+      accent="and social customer service"
+    />
+    <p class="platform-intro__body" data-scene-el="body">
+      <strong>One workspace for every customer conversation. </strong>
+      Reviews, comments, direct messages and customer questions — managed together, so your team
+      responds faster, stays consistent and never misses a conversation.
+    </p>
+    <div class="platform-intro__chips" data-scene-el="chips">
+      <Chip icon="tabler/bolt" line1="Every channel" line2="One workspace" />
+      <Chip icon="tabler/message" line1="Faster responces" line2="Less manual work" />
+      <Chip icon="tabler/chart-bar-popular" line1="Actionable insights" line2="Better decisions" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .platform-intro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 650px; /* Figma frame height 20:819 */
+    padding: 56px var(--margin-desktop); /* Figma py-56 (no spacing token) */
+  }
+  .platform-intro__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-12);
+    width: 100%;
+    max-width: 706px; /* Figma content block 20:940 */
+  }
+  .platform-intro__body {
+    margin: 0;
+    padding-inline: 70px; /* Figma inset 38:3888 (no spacing token) */
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-regular);
+    color: var(--text-body);
+    text-align: center;
+  }
+  .platform-intro__body strong {
+    font-weight: var(--fw-bold);
+    color: var(--text-hi);
+  }
+  .platform-intro__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--sp-6);
+  }
+
+  /* Graceful degradation until mobile frames land */
+  @media (max-width: 720px) {
+    .platform-intro {
+      padding-inline: var(--menu-pad);
+    }
+    .platform-intro__body {
+      padding-inline: 0;
+    }
+  }
+</style>

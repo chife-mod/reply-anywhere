@@ -1,0 +1,36 @@
+---
+// Section H2 (Figma 20:940 / 24:991 pattern). ONE heading style for all agents:
+// Inter Regular 40/1.05 white@80%, accent segment Inter Bold 40 --violet.
+// Layout (centered vs left) is a prop; type NEVER changes per section.
+interface Props {
+  line1: string;
+  accent: string; // violet bold segment (usually line 2)
+  align?: 'center' | 'left';
+  level?: 1 | 2; // semantic tag; visual style identical per Figma
+}
+const { line1, accent, align = 'center', level = 2 } = Astro.props;
+const Tag = `h${level}` as 'h1' | 'h2';
+---
+
+<Tag class:list={['heading', `heading--${align}`]}>
+  {line1}
+  <br />
+  <span class="heading__accent">{accent}</span>
+</Tag>
+
+<style>
+  .heading {
+    margin: 0;
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    font-weight: var(--fw-regular);
+    color: var(--text-body);
+    letter-spacing: normal;
+  }
+  .heading--center { text-align: center; }
+  .heading--left { text-align: left; }
+  .heading__accent {
+    font-weight: var(--fw-bold);
+    color: var(--violet);
+  }
+</style>

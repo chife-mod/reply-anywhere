@@ -1,0 +1,48 @@
+---
+// THE button (Figma node 6:294 / 13:810 / 26:481). Three variants, exact tokens:
+//  primary — bg --violet · p16 · r8 · Inter Medium 14 white · leading-none
+//  dark    — bg --surface-tile (#111322), same metrics (CTA band, dark contexts)
+//  icon    — 1px --violet border square · p11 · r8 · 24px icon slot (arrow companion)
+interface Props {
+  href: string;
+  variant?: 'primary' | 'dark' | 'icon';
+  label?: string; // text variants; icon variant uses slot for <Icon>
+  class?: string;
+}
+const { href, variant = 'primary', label, class: cls } = Astro.props;
+---
+
+<a href={href} class:list={['btn', `btn--${variant}`, cls]}>
+  {label}
+  <slot />
+</a>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-md);
+    font-family: var(--font-sans);
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    color: var(--text-hi);
+    text-decoration: none;
+    transition: filter var(--dur-fast) var(--ease-out);
+  }
+  .btn--primary {
+    background: var(--violet);
+    padding: var(--sp-4);
+  }
+  .btn--dark {
+    background: var(--surface-tile);
+    padding: var(--sp-4);
+  }
+  .btn--icon {
+    border: 1px solid var(--violet);
+    padding: 11px; /* Figma: 11px pad + 24px icon = 46px square */
+  }
+  .btn:hover { filter: brightness(1.12); }
+  .btn:focus-visible { outline: 2px solid var(--violet-light); outline-offset: 2px; }
+</style>

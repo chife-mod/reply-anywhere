@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "reply-anywhere",
+  "compatibility_date": "2026-07-01",
+
+  // A tiny API Worker rides alongside the static assets in one deployment.
+  // Cloudflare serves matching static files first; the Worker only runs for
+  // non-asset paths (e.g. /api/demo). This is Workers Static Assets — CF's
+  // go-forward platform (Workers Sites deprecated; Pages being wound down).
+  "main": "./worker/index.ts",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+
+  // Free, built-in logs/metrics for the Worker (a broken demo form is noticed).
+  "observability": { "enabled": true }
+}

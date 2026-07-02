@@ -1,0 +1,112 @@
+---
+// Demo-request form → POSTs to the /api/demo Worker (see worker/index.ts), which
+// verifies Turnstile and delivers the lead. The Turnstile widget only renders
+// when a public site key is configured (so local dev stays light + functional).
+// ⚠️ Scaffold styling — the real form design lands with the approved concept.
+const sitekey = import.meta.env.PUBLIC_TURNSTILE_SITEKEY;
+---
+
+<section id="demo" class="demo">
+  <div class="container demo__inner">
+    <h2 class="demo__title">Request your free demo</h2>
+    <p class="demo__lede">See Reply Anywhere on your own channels. We'll be in touch within one business day.</p>
+
+    <form id="demo-form" class="demo__form" method="POST" action="/api/demo" novalidate>
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" autocomplete="name" />
+      </div>
+      <div class="field">
+        <label for="email">Work email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field field--wide">
+        <label for="message">What would you like to solve?</label>
+        <textarea id="message" name="message" rows="3"></textarea>
+      </div>
+      {sitekey && <div class="cf-turnstile" data-sitekey={sitekey}></div>}
+      <button class="btn btn--primary" type="submit">Request demo</button>
+      <p class="demo__status" role="status" aria-live="polite"></p>
+    </form>
+
+    <p class="scaffold-note">Scaffold form — wired end-to-end to the Worker at <code>/api/demo</code>. Fields &amp; styling finalize at design phase.</p>
+  </div>
+</section>
+
+{sitekey && <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer is:inline></script>}
+
+<script is:inline>
+  // Progressive enhancement: intercept submit, POST as JSON, show inline status.
+  // With JS disabled the form still POSTs form-encoded to /api/demo directly.
+  const form = document.getElementById('demo-form');
+  if (form) {
+    const status = form.querySelector('.demo__status');
+    const btn = form.querySelector('button[type="submit"]');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = Object.fromEntries(new FormData(form).entries());
+      btn.disabled = true;
+      status.textContent = 'Sending…';
+      try {
+        const res = await fetch('/api/demo', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const out = await res.json().catch(() => ({}));
+        if (res.ok) {
+          status.textContent = "Thanks — we'll be in touch.";
+          form.reset();
+          if (window.turnstile) window.turnstile.reset();
+        } else {
+          status.textContent =
+            out.error === 'invalid_email'
+              ? 'Please enter a valid work email.'
+              : out.error === 'turnstile_failed'
+                ? 'Spam check failed — please retry.'
+                : 'Something went wrong. Please try again.';
+        }
+      } catch {
+        status.textContent = 'Network error. Please try again.';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .demo {
+    padding-block: var(--space-24);
+    background: var(--color-white);
+    border-top: 1px solid var(--color-line);
+  }
+  .demo__inner { max-width: 640px; }
+  .demo__title { font-size: var(--text-h2); }
+  .demo__lede { margin-top: var(--space-3); color: var(--color-mute); }
+  .demo__form {
+    margin-top: var(--space-8);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+  .field { display: grid; gap: var(--space-2); }
+  .field--wide, .cf-turnstile, .demo__form > button, .demo__status { grid-column: 1 / -1; }
+  label { font-size: var(--text-small); font-weight: 600; }
+  input, textarea {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-paper);
+    resize: vertical;
+  }
+  input:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+  }
+  .demo__form > button { justify-self: start; }
+  .demo__status { min-height: 1.2em; font-size: var(--text-small); color: var(--color-primary-deep); font-weight: 600; }
+  @media (max-width: 560px) {
+    .demo__form { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,652 @@
+---
+// Hero (Figma 2:36, desktop 1440×554). Static end-state = rotation state 1
+// ("Review" + Google / Amazon / App Store bubbles). data-hero-anim hooks +
+// the JSON states block below feed the Phase D typing/dock motion (33:3771).
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import Chip from '../ui/Chip.astro';
+
+// Motion atoms (HERO-MOTION-SPEC.md) — SVG files in src/assets/hero/, pre-blurred
+// in the file so the script only ever animates transform/opacity.
+import railAsset from '../../assets/hero/rail-2.svg';
+import pulseAsset from '../../assets/hero/pulse-a.svg';
+import flashAsset from '../../assets/hero/bubble-glow.svg';
+
+// Rotation states (Figma 33:3771 «Typing Messages») for the Phase D motion pass.
+const heroStates = [
+  { word: 'Review', bubbles: ['logos/google-g', 'logos/amazon', 'logos/appstore-hero'] },
+  { word: 'Comment', bubbles: ['logos/instagram', 'logos/tiktok', 'logos/facebook'] },
+  { word: 'Message', bubbles: ['logos/whatsapp', 'logos/messenger', 'logos/instagram'] },
+];
+
+// Word-bubble icon boxes (Figma 33:3771: 50px bubble, icon 30 on the long side —
+// non-square marks keep their intrinsic aspect, as in the static state 1).
+const wordIconDims: Record<string, { w: number; h: number }> = {
+  'logos/google-g': { w: 30, h: 30 },
+  'logos/amazon': { w: 30, h: 30 },
+  'logos/appstore-hero': { w: 30, h: 27 },
+  'logos/instagram': { w: 30, h: 30 },
+  'logos/tiktok': { w: 26.571, h: 30 },
+  'logos/facebook': { w: 30, h: 30 },
+  'logos/whatsapp': { w: 30, h: 30 },
+  'logos/messenger': { w: 30, h: 30 },
+};
+
+// Orbit channel bubbles — 1:1 sync with Figma 31:2808 (client update
+// 2026-07-02: walmart/ebay/etsy added, dupes gone, 14 channels total).
+// x/y = top-left of the 64px disc; logo rendered at its exact Figma size inside.
+const orbitBubbles = [
+  { id: 'tiktok',      icon: 'logos/tiktok',      x: 64.44,  y: 66.06,  w: 30.333, h: 35 },
+  { id: 'appstore',    icon: 'logos/appstore',    x: 0,      y: 168,    w: 35,     h: 30.919 },
+  { id: 'messenger',   icon: 'logos/messenger',   x: 397.44, y: 18.76,  w: 38.4,   h: 38.4 },
+  { id: 'walmart',     icon: 'logos/walmart',     x: 2,      y: 380,    w: 34.667, h: 40 },
+  { id: 'instagram',   icon: 'logos/instagram',   x: 549,    y: 246,    w: 35,     h: 35 },
+  { id: 'trustpilot',  icon: 'logos/trustpilot',  x: 130.66, y: 431.22, w: 40,     h: 38.039 },
+  { id: 'whatsapp',    icon: 'logos/whatsapp',    x: 53.09,  y: 264.72, w: 40,     h: 40 },
+  { id: 'facebook',    icon: 'logos/facebook',    x: 457.99, y: 336.62, w: 40,     h: 40 },
+  { id: 'amazon',      icon: 'logos/amazon-round',x: 439,    y: 154,    w: 40,     h: 40 },
+  { id: 'maps',        icon: 'logos/google-maps', x: 288,    y: 133,    w: 27.906, h: 40 },
+  { id: 'etsy',        icon: 'logos/etsy',        x: 279,    y: 57,     w: 35,     h: 35 },
+  { id: 'ebay',        icon: 'logos/ebay',        x: 146,    y: 326,    w: 40,     h: 16 },
+  { id: 'google',      icon: 'logos/google',      x: 348,    y: 450,    w: 40,     h: 40 },
+  { id: 'play',        icon: 'logos/google-play', x: 178,    y: 0,      w: 28.8,   h: 31.78 },
+];
+
+// Dot sparks (Figma 15.136px frames whose glow art extends −43.75% each side →
+// rendered as the full 28.381px asset at the pre-offset position).
+const sparks = [
+  { x: 369.85, y: 225.77 },
+  { x: 127.66, y: 133.06 },
+  { x: 417.15, y: 335.51 },
+];
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <div class="hero__heading">
+        <h1 class="hero__title" id="hero-title">
+          <span>Respond to every</span>
+          <span class="hero__accent-row">
+            <strong class="hero__word" data-hero-anim="word">Review</strong>
+            <span class="hero__bubbles" data-hero-anim="bubbles" aria-hidden="true">
+              {heroStates.map((state, i) => (
+                <span class="hero__bubble-set" data-hero-bubble-set={i} data-active={i === 0 ? '' : undefined}>
+                  {state.bubbles.map((icon) => (
+                    <span class="hero__bubble">
+                      <Icon name={icon} width={wordIconDims[icon].w} height={wordIconDims[icon].h} />
+                    </span>
+                  ))}
+                </span>
+              ))}
+            </span>
+          </span>
+        </h1>
+        <p class="hero__sub">
+          Respond to reviews, comments, messages and customer questions across every channel — from
+          one workspace.
+        </p>
+      </div>
+      <div class="hero__cta">
+        <Button href="#demo" label="Request a free demo " />
+        <Button href="#demo" variant="icon">
+          <Icon name="tabler/arrow-up-right" size={24} alt="Request a free demo" />
+        </Button>
+      </div>
+      <ul class="hero__chips" role="list">
+        <li><Chip icon="tabler/bolt" line1="All channels" line2="in one place" /></li>
+        <li><Chip icon="tabler/message" line1="Faster responces" line2="happy customers" /></li>
+        <li><Chip icon="tabler/chart-bar-popular" line1="Better insights" line2="smarter decisions" /></li>
+      </ul>
+    </div>
+
+    <!-- Orbit visual (Figma 31:2808) — purely decorative -->
+    <div class="orbit" aria-hidden="true" data-hero-orbit>
+      <div class="orbit__ring"><Icon name="hero/ring-outer" width={567.614} height={567.614} /></div>
+      <div class="orbit__ring"><Icon name="hero/ring-mid" width={416.25} height={416.25} /></div>
+      <div class="orbit__ring"><Icon name="hero/ring-inner" width={264.886} height={264.886} /></div>
+
+      <div class="orbit__glow orbit__glow--wide"></div>
+      <div class="orbit__line orbit__line--3">
+        <span class="orbit__line-rot"><Icon name="hero/orbit-line-3" width={275.655} height={1} /></span>
+      </div>
+      <div class="orbit__line orbit__line--1">
+        <span class="orbit__line-rot"><Icon name="hero/orbit-line-1" width={213.558} height={1} /></span>
+      </div>
+      <div class="orbit__line orbit__line--2">
+        <span class="orbit__line-rot"><Icon name="hero/orbit-line-2" width={216.133} height={1} /></span>
+      </div>
+      <div class="orbit__glow orbit__glow--mid"></div>
+      <div class="orbit__glow orbit__glow--soft"></div>
+      <div class="orbit__glow orbit__glow--tight"></div>
+
+      <!-- Live rail + pulse layer (HERO-MOTION-SPEC §3): sits ABOVE glows/rings,
+           BELOW channel bubbles and the tile — pulses never fly over logos. -->
+      <div class="orbit__net" data-hero-net>
+        <div class="orbit__rail" data-hero-rail><img src={railAsset.src} alt="" /></div>
+        <img class="orbit__pulse" data-hero-pulse src={pulseAsset.src} alt="" />
+        <img class="orbit__flash" data-hero-flash src={flashAsset.src} alt="" />
+      </div>
+
+      <div class="orbit__tile">
+        <Icon name="logos/reply-anywhere-mark" width={84.331} height={75.682} />
+      </div>
+
+      {orbitBubbles.map((b) => (
+        <div class="orbit__bubble" data-orbit-bubble={b.id} style={`left:${b.x}px;top:${b.y}px`}>
+          <Icon name={b.icon} width={b.w} height={b.h} />
+        </div>
+      ))}
+
+      {sparks.map((s) => (
+        <div class="orbit__spark" style={`left:${s.x}px;top:${s.y}px`}>
+          <Icon name="hero/spark" width={28.381} height={28.381} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <script type="application/json" data-hero-states is:inline set:html={JSON.stringify(heroStates)} />
+
+  <script>
+    // HERO motion (docs/HERO-MOTION-SPEC.md). transform/opacity only — every
+    // blurred atom is pre-blurred SVG. Pauses off-viewport + on hidden tab.
+    // prefers-reduced-motion: reduce → nothing is created (static design state).
+    import { gsap } from 'gsap';
+
+    const section = document.querySelector<HTMLElement>('section[aria-labelledby="hero-title"]');
+    if (section) initHeroMotion(section);
+
+    function initHeroMotion(root: HTMLElement) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (reduce.matches) return;
+
+      const orbit = root.querySelector<HTMLElement>('[data-hero-orbit]');
+      const wordEl = root.querySelector<HTMLElement>('[data-hero-anim="word"]');
+      const sets = Array.from(root.querySelectorAll<HTMLElement>('[data-hero-bubble-set]'));
+      const statesEl = root.querySelector('[data-hero-states]');
+      if (!orbit || !wordEl || !statesEl || sets.length === 0) return;
+      const states: { word: string; bubbles: string[] }[] = JSON.parse(statesEl.textContent || '[]');
+
+      const net = orbit.querySelector<HTMLElement>('[data-hero-net]');
+      const tightGlow = orbit.querySelector<HTMLElement>('.orbit__glow--tight');
+      const midGlow = orbit.querySelector<HTMLElement>('.orbit__glow--mid');
+      const softGlow = orbit.querySelector<HTMLElement>('.orbit__glow--soft');
+      const wideGlow = orbit.querySelector<HTMLElement>('.orbit__glow--wide');
+      const staticNet = orbit.querySelectorAll<HTMLElement>('.orbit__line, .orbit__spark');
+      if (!net || !tightGlow || !midGlow || !softGlow || !wideGlow) return;
+      const railProto = net.querySelector<HTMLElement>('[data-hero-rail]');
+      const pulseProto = net.querySelector<HTMLElement>('[data-hero-pulse]');
+      const flashProto = net.querySelector<HTMLElement>('[data-hero-flash]');
+      if (!railProto || !pulseProto || !flashProto) return;
+
+      // Client 2026-07-02: several «messages» may fly at once — 3 independent
+      // rail/pulse/flash kits (kit 0 = the authored elements, 1-2 = clones).
+      const kits = [0, 1, 2].map((i) => {
+        const rail = i === 0 ? railProto : (railProto.cloneNode(true) as HTMLElement);
+        const pulse = i === 0 ? pulseProto : (pulseProto.cloneNode(true) as HTMLElement);
+        const flash = i === 0 ? flashProto : (flashProto.cloneNode(true) as HTMLElement);
+        if (i > 0) net.append(rail, pulse, flash);
+        gsap.set(rail, { transformOrigin: '0% 50%' });
+        return { rail, pulse, flash };
+      });
+
+      // Orbit canvas geometry (Figma 31:2808, 613×581)
+      const CX = 297;
+      const CY = 296.72;
+      const BUBBLE_R = 32; // 64px channel disc
+      const RAIL_W = 300; // CSS base width of the rail element
+      const TILE_HIDE = 40; // centre distance at which the pulse is fully under the 136px tile
+      const RAD2DEG = 180 / Math.PI;
+
+      // Deterministic PRNG — mulberry32, fixed seed → same cycle order every load.
+      const mulberry32 = (a: number) => () => {
+        a |= 0;
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+      const rnd = mulberry32(0x2ea11);
+
+      // ── 1. Channel bubbles orbit the three rings (each ring its own speed) ──
+      const bubbles = Array.from(orbit.querySelectorAll<HTMLElement>('[data-orbit-bubble]')).map((el) => {
+        const x0 = parseFloat(el.style.left);
+        const y0 = parseFloat(el.style.top);
+        const dx = x0 + BUBBLE_R - CX;
+        const dy = y0 + BUBBLE_R - CY;
+        const r = Math.hypot(dx, dy);
+        // deg/s per ring (outer 283.8 / mid 208.1 / inner 132.4) — gentle, slightly different
+        const degPerSec = r > 250 ? 360 / 150 : r > 170 ? 360 / 120 : 360 / 95;
+        return {
+          el,
+          id: el.dataset.orbitBubble,
+          dx,
+          dy,
+          r,
+          a0: Math.atan2(dy, dx),
+          w: degPerSec / RAD2DEG,
+          cx: x0 + BUBBLE_R,
+          cy: y0 + BUBBLE_R,
+        };
+      });
+      let running = true;
+      let elapsed = 0;
+      const tick = () => {
+        if (!running) return;
+        elapsed += gsap.ticker.deltaRatio(60) / 60; // seconds, only while running
+        for (const b of bubbles) {
+          const a = b.a0 + b.w * elapsed;
+          b.cx = CX + b.r * Math.cos(a);
+          b.cy = CY + b.r * Math.sin(a);
+          gsap.set(b.el, { x: b.cx - CX - b.dx, y: b.cy - CY - b.dy });
+        }
+      };
+      gsap.ticker.add(tick);
+
+      // ── 2. Centre glow breathes (pre-blurred layers: scale/opacity only) ──
+      const breathe = [
+        gsap.to(midGlow, { scale: 1.12, opacity: 0.8, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+        gsap.to(softGlow, { scale: 1.09, opacity: 0.72, duration: 4.4, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 0.9 }),
+        gsap.to(wideGlow, { scale: 1.15, opacity: 0.85, duration: 5.3, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.7 }),
+      ];
+
+      // The static Figma snapshot ships three frozen rails + sparks — the live
+      // cycle replaces them, so ease them away once motion starts.
+      gsap.to(staticNet, { opacity: 0, duration: 0.9, ease: 'sine.out' });
+
+      // ── 3. Randomised rail + pulse cycles — 3 kits run CONCURRENTLY with
+      //       short staggered gaps (client 2026-07-02: «оживить», messages
+      //       overlap, pauses shorter, reply comes back quicker) ──
+      const cycleAnims: (gsap.core.Timeline | gsap.core.Tween | null)[] = [null, null, null];
+      const activeIdx = new Set<number>();
+
+      const startCycle = (ki: number) => {
+        // pick a channel no other kit is currently talking to
+        let idx = Math.floor(rnd() * bubbles.length);
+        for (let t = 0; activeIdx.has(idx) && t < bubbles.length; t++) idx = (idx + 1) % bubbles.length;
+        activeIdx.add(idx);
+        const b = bubbles[idx];
+        const { rail, pulse, flash } = kits[ki];
+        const k = { v: 1 }; // 1 = at the channel edge, 0 = under the tile
+
+        // Track the live bubble every frame so rail + pulse stay glued to it.
+        const apply = () => {
+          const dx = b.cx - CX;
+          const dy = b.cy - CY;
+          const d = Math.hypot(dx, dy);
+          const ux = dx / d;
+          const uy = dy / d;
+          gsap.set(rail, { rotation: Math.atan2(dy, dx) * RAD2DEG, scaleX: d / RAIL_W });
+          const dist = TILE_HIDE + k.v * (d - BUBBLE_R - TILE_HIDE);
+          gsap.set(pulse, { x: CX + ux * dist, y: CY + uy * dist });
+          gsap.set(flash, { x: b.cx, y: b.cy });
+        };
+
+        const tl = gsap.timeline({
+          onUpdate: apply,
+          onComplete: () => {
+            activeIdx.delete(idx);
+            cycleAnims[ki] = gsap.delayedCall(0.25 + rnd() * 0.9, () => startCycle(ki));
+            cycleAnims[ki]!.paused(!running);
+          },
+        });
+        cycleAnims[ki] = tl;
+
+        tl.set(pulse, { opacity: 0, scale: 0.4 });
+        // a. rail fades in (centre → channel, gradient dies at both ends)
+        tl.to(rail, { opacity: 1, duration: 0.45, ease: 'sine.out' }, 0);
+        // b. pulse: born tiny+transparent at the channel → grows → dives under the tile
+        tl.to(pulse, { opacity: 1, scale: 1, duration: 0.4, ease: 'sine.out' }, 0.3);
+        tl.to(k, { v: 0, duration: 1.05, ease: 'power1.inOut' }, 0.3);
+        tl.to(pulse, { opacity: 0, duration: 0.18, ease: 'sine.in' }, 1.17);
+        // c. tile reacts — a barely-there breath of light (client: «ещё меньше»)
+        tl.to(tightGlow, { scale: 1.07, duration: 0.12, ease: 'power2.out' }, 1.3);
+        tl.to(tightGlow, { scale: 1, duration: 0.35, ease: 'sine.inOut' }, 1.42);
+        // d. the reply departs the INSTANT the signal lands (client: zero delay —
+        //    outbound k ends at 1.35, return k starts at 1.35)
+        tl.to(pulse, { opacity: 1, scale: 1, duration: 0.22, ease: 'sine.out' }, 1.38);
+        tl.to(k, { v: 1, duration: 1.05, ease: 'power1.inOut' }, 1.35);
+        tl.to(pulse, { opacity: 0, duration: 0.25, ease: 'sine.in' }, 2.25);
+        tl.fromTo(flash, { opacity: 0 }, { opacity: 0.8, duration: 0.16, ease: 'power2.out' }, 2.35);
+        tl.to(flash, { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, 2.51);
+        // e. rail fades out
+        tl.to(rail, { opacity: 0, duration: 0.5, ease: 'sine.in' }, 2.65);
+        tl.paused(!running);
+      };
+      // staggered kick-off — alive, but never metronome-synchronised
+      startCycle(0);
+      cycleAnims[1] = gsap.delayedCall(1.0 + rnd() * 0.8, () => startCycle(1));
+      cycleAnims[2] = gsap.delayedCall(2.1 + rnd() * 0.8, () => startCycle(2));
+
+      // ── 4. H1 word rotation: typewriter + macOS-dock bubble inflate ──
+      const bubbleEls = sets.map((s) => Array.from(s.children) as HTMLElement[]);
+      const CHAR = 0.06; // s per character
+      const HOLD = 2.6; // s a fully-typed state stays on screen
+      const wordTl = gsap.timeline({ repeat: -1 });
+
+      states.forEach((st, i) => {
+        const ni = (i + 1) % states.length;
+        const cur = st.word;
+        const nxt = states[ni].word;
+        const erase = { n: cur.length };
+        const type = { n: 0 };
+
+        wordTl.to({}, { duration: HOLD });
+        // Exit (client 2026-07-02, rev 2): bubbles pop away one-by-one
+        // RIGHT → LEFT (the reverse of the pop-in)…
+        wordTl.to(bubbleEls[i], { scale: 0, duration: 0.26, ease: 'back.in(2)', stagger: { each: 0.1, from: 'end' } });
+        // …and only AFTER the last bubble is gone the word erases char-by-char.
+        wordTl.to(
+          erase,
+          {
+            n: 0,
+            duration: cur.length * CHAR,
+            ease: 'none',
+            onUpdate: () => {
+              wordEl.textContent = cur.slice(0, Math.round(erase.n));
+            },
+          },
+          '>'
+        );
+        // …sets swap (next one starts collapsed)…
+        wordTl.call(() => {
+          sets[i].removeAttribute('data-active');
+          sets[ni].setAttribute('data-active', '');
+          gsap.set(bubbleEls[ni], { scale: 0 });
+        });
+        // …next word types…
+        wordTl.to(
+          type,
+          {
+            n: nxt.length,
+            duration: nxt.length * CHAR,
+            ease: 'none',
+            onUpdate: () => {
+              wordEl.textContent = nxt.slice(0, Math.round(type.n));
+            },
+          },
+          '+=0.15'
+        );
+        // …and bubbles inflate dock-style: grow-overshoot → pause → light re-push → settle.
+        wordTl.addLabel(`pop${i}`, '>-0.1');
+        bubbleEls[ni].forEach((el, j) => {
+          const pop = gsap
+            .timeline()
+            .to(el, { scale: 1.14, duration: 0.3, ease: 'back.out(3)' })
+            .to(el, { scale: 1.02, duration: 0.16, ease: 'sine.inOut' })
+            .to(el, { scale: 1.1, duration: 0.14, ease: 'sine.out' }, '+=0.08')
+            .to(el, { scale: 1, duration: 0.2, ease: 'sine.inOut' });
+          wordTl.add(pop, `pop${i}+=${j * 0.12}`);
+        });
+      });
+
+      // ── Pause off-viewport + on hidden tab ──
+      const persistent = [wordTl, ...breathe];
+      let inView = true;
+      const setRunning = (v: boolean) => {
+        if (running === v) return;
+        running = v;
+        persistent.forEach((t) => t.paused(!v));
+        cycleAnims.forEach((a) => a && a.paused(!v));
+      };
+      const io = new IntersectionObserver(
+        ([e]) => {
+          inView = e.isIntersecting;
+          setRunning(inView && !document.hidden);
+        },
+        { rootMargin: '64px' }
+      );
+      io.observe(root);
+      document.addEventListener('visibilitychange', () => setRunning(inView && !document.hidden));
+
+      // If the OS setting flips to reduce mid-session — tear down to the static state.
+      reduce.addEventListener('change', () => {
+        if (!reduce.matches) return;
+        gsap.ticker.remove(tick);
+        io.disconnect();
+        persistent.forEach((t) => t.kill());
+        cycleAnims.forEach((a) => a && a.kill());
+        kits.forEach(({ rail, pulse, flash }) => gsap.set([rail, pulse, flash], { clearProps: 'all' }));
+        gsap.set([tightGlow, midGlow, softGlow, wideGlow], { clearProps: 'all' });
+        gsap.set(staticNet, { clearProps: 'all' });
+        bubbles.forEach((b) => gsap.set(b.el, { clearProps: 'all' }));
+        bubbleEls.forEach((els) => gsap.set(els, { clearProps: 'all' }));
+        wordEl.textContent = states[0].word;
+        sets.forEach((s, i) => (i === 0 ? s.setAttribute('data-active', '') : s.removeAttribute('data-active')));
+      });
+    }
+  </script>
+</section>
+
+<style>
+  /* Client 2026-07-02 (rev 2): the brands strip returns to the first screen —
+     hero centers in the space between the fixed menu (96px) and the strip
+     (234px, SocialProof section right below); copy + orbit stay vertically
+     centered in that zone. On short viewports the orbit's transparent ring
+     edges may kiss the boundaries — by design (Figma overlaps them too). */
+  .hero {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: calc(100svh - 234px);
+    padding-top: 96px; /* fixed-menu zone (island h64 + 2×16 pad) */
+  }
+  .hero__inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: min(var(--container), 100% - 2 * var(--margin-desktop));
+    margin-inline: auto;
+    /* Figma hero content height: the 581px orbit intentionally bleeds ~13px
+       past this box (its ring edges overlap the menu/band zones — as designed). */
+    min-height: 554px;
+  }
+
+  /* ─── Left column (Figma 2:37 · 549w) ───────────────────────── */
+  .hero__copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-10);
+    max-width: 549px;
+  }
+  .hero__heading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+  .hero__title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: var(--fs-h1);
+    line-height: var(--lh-h1);
+    font-weight: var(--fw-regular);
+    letter-spacing: normal;
+    color: var(--text-body);
+  }
+  .hero__accent-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+  }
+  .hero__word {
+    font-weight: var(--fw-semibold);
+    color: var(--violet);
+  }
+  .hero__bubbles {
+    display: inline-flex;
+    gap: var(--sp-1);
+  }
+  /* One set per rotation state — only the active one renders (state 1 by default,
+     which is the reduced-motion / no-JS static design state). */
+  .hero__bubble-set {
+    display: none;
+    gap: var(--sp-1);
+  }
+  .hero__bubble-set[data-active] {
+    display: inline-flex;
+  }
+  .hero__bubble {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: var(--r-pill);
+    background: var(--black);
+  }
+  .hero__sub {
+    max-width: 406px;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--text-body);
+  }
+  .hero__cta {
+    display: flex;
+    gap: var(--sp-1);
+  }
+  .hero__chips {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* ─── Orbit visual (Figma 31:2808 · 613×581 @ x665 y-10) ────── */
+  /* 665 in the 1440 frame = container-left + 585 → right offset 82px. */
+  .orbit {
+    position: absolute;
+    top: 50%;
+    right: 82px;
+    width: 613px;
+    height: 581px;
+    transform: translateY(-50%); /* vertical centre of the screen (client spec) */
+    pointer-events: none;
+  }
+  /* Shared orbit centre: (297, 296.72) on the 613×581 canvas. */
+  .orbit__ring,
+  .orbit__tile {
+    position: absolute;
+    left: 297px;
+    top: 296.72px;
+    transform: translate(-50%, -50%);
+  }
+  /* global.css gives img max-width:100%, which resolves against the unsized
+     absolute ring wrapper and squashes the two largest rings into ellipses —
+     restore the intrinsic width= sizing here. */
+  .orbit__ring :global(img) {
+    max-width: none;
+  }
+
+  /* Triple violet glow behind the app tile + one soft wide wash.
+     Hero orbit is the card master scaled ×1.892 — blur radii are literal
+     because tokens hold the 72px-card scale (see missingTokens in report).
+     NB: Figma layer-blur B ≡ CSS blur(B/2) — Figma's Gaussian σ is half its
+     UI value (verified against Figma's own SVG exports of this node). */
+  .orbit__glow {
+    position: absolute;
+    left: 225.1px;
+    top: 224.82px;
+    width: 143.795px;
+    height: 143.795px;
+    border-radius: 47.301px;
+    background: var(--violet);
+  }
+  .orbit__glow--wide  { filter: blur(86.839px); }  /* Figma 173.678 */
+  .orbit__glow--mid   { filter: blur(44.492px); }  /* Figma 88.983  */
+  .orbit__glow--tight { filter: blur(4.677px); }   /* Figma 9.353   */
+  .orbit__glow--soft {
+    left: 197px;
+    top: 196.72px;
+    width: 200px;
+    height: 200px;
+    border-radius: 65.789px;
+    background: rgba(171, 13, 255, 0.6);
+    filter: blur(87.5px); /* Figma 175 */
+  }
+
+  /* Connector lines: gradient-stroke SVGs rotated inside their Figma boxes. */
+  .orbit__line {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .orbit__line-rot { flex: none; display: flex; }
+  .orbit__line--3 { left: 96.44px;  top: 98.06px;  width: 191.097px; height: 198.665px; }
+  .orbit__line--3 .orbit__line-rot { transform: rotate(-133.89deg); }
+  .orbit__line--1 { left: 287.54px; top: 190.77px; width: 185.42px;  height: 105.955px; }
+  .orbit__line--1 .orbit__line-rot { transform: rotate(-29.74deg); }
+  .orbit__line--2 { left: 287.54px; top: 296.72px; width: 202.449px; height: 75.682px; }
+  .orbit__line--2 .orbit__line-rot { transform: rotate(20.5deg); }
+
+  /* Live rail + pulse layer — everything starts invisible; the motion script
+     positions atoms with transform only (assets are pre-blurred SVGs). */
+  .orbit__net {
+    position: absolute;
+    inset: 0;
+  }
+  .orbit__rail {
+    position: absolute;
+    left: 297px;
+    top: 296.22px; /* centre y − 0.5px line height */
+    width: 300px; /* base length; script scales X to the live centre→channel distance */
+    height: 1px;
+    opacity: 0;
+  }
+  .orbit__rail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .orbit__pulse {
+    position: absolute;
+    left: -14.19px; /* half of the 28.381px asset — transform x/y = canvas coords */
+    top: -14.19px;
+    width: 28.381px;
+    height: 28.381px;
+    opacity: 0;
+  }
+  .orbit__flash {
+    /* Client 2026-07-02: arrival flash must hug the 64px disc, not bloom far
+       beyond it → 96px (was the raw 154.769px asset size). */
+    position: absolute;
+    left: -48px;
+    top: -48px;
+    width: 96px;
+    height: 96px;
+    opacity: 0;
+  }
+
+  /* Center app tile — 5-layer drop shadow at hero (×1.892) scale. */
+  .orbit__tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 136.227px;
+    height: 136.227px;
+    background: var(--black);
+    border: 1px solid var(--border-soft);
+    border-radius: 45.409px;
+    box-shadow: var(--shadow-app-tile-hero);
+  }
+
+  /* Floating channel bubbles (positions inlined per instance). */
+  .orbit__bubble {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--r-pill);
+    background: var(--surface-bubble);
+  }
+  .orbit__spark { position: absolute; }
+</style>

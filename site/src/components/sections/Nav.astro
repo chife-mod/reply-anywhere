@@ -1,0 +1,232 @@
+---
+// Main menu — fixed floating islands (Figma 2:13 · adaptive spec 33:3496,
+// client refinement 2026-07-02 DEFINITIVE: the nav island is centered BETWEEN
+// its two neighbours — the gap to the brand block always EQUALS the gap to the
+// buttons block, at every width, both shrinking together as the browser
+// narrows. flex space-between with exactly 3 children guarantees that.
+// Supersedes Figma state 33:3497 (no docking states).
+// The menu is the ONE grid exception: its own 16px outer padding (--menu-pad).
+// Fluid states, rebuilt only where content stops fitting:
+//   >946       brand |=gap=| nav |=gap=| En+CTA (gaps identical, always)
+//   ≤946       gaps hit minimum → nav replaced by burger island far right
+//   ≤560       En+CTA docks next to brand · burger flush right
+//   ≤536       En+CTA + tagline dropped: logo + wordmark (centered) + burger
+// Burger is a hook only (data-nav-burger) — the drawer lands in Phase D.
+import Button from '../ui/Button.astro';
+import logoMark from '../../assets/brand/logo-mark.svg';
+import wordmark from '../../assets/brand/wordmark.svg';
+
+const links = [
+  { label: 'Features', href: '#features', active: true },
+  { label: 'Channels', href: '#channels' },
+  { label: 'Cases', href: '#cases' },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'Contact', href: '#contact' },
+];
+---
+
+<header class="menu">
+  <div class="menu__brand">
+    <a class="island menu__logo" href="/" aria-label="Reply Anywhere — home">
+      <img src={logoMark.src} width="45" height="40" alt="" />
+    </a>
+    <div class="island menu__wordmark">
+      <img src={wordmark.src} width="102" height="33" alt="Reply Anywhere" />
+      <p class="menu__tagline">Product of SemanticForce</p>
+    </div>
+  </div>
+
+  <nav class="island menu__nav" aria-label="Main">
+    {links.map(({ label, href, active }) => (
+      <a class="menu__item" href={href} aria-current={active ? 'true' : undefined}>{label}</a>
+    ))}
+  </nav>
+
+  <div class="island menu__actions">
+    <button class="menu__lang" type="button" aria-label="Switch language">En</button>
+    <Button href="#demo" label="Book a demo" class="menu__cta" />
+  </div>
+
+  <button class="island menu__burger" type="button" aria-label="Open menu" aria-expanded="false" data-nav-burger>
+    <span class="menu__burger-line"></span>
+    <span class="menu__burger-line"></span>
+  </button>
+</header>
+
+<style>
+  .menu {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    /* Exactly 3 children + space-between ⇒ gap brand↔nav === gap nav↔actions
+       at ANY width, both shrinking together as the viewport narrows (client
+       spec DEFINITIVE: equal side distances, always). */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-1); /* 4px floor — islands never touch */
+    padding: var(--menu-pad);
+    /* Clicks in the gaps between islands fall through to the page. */
+    pointer-events: none;
+  }
+  .menu > * {
+    pointer-events: auto;
+  }
+
+  /* ── Island base — every menu surface floats on this ───────── */
+  .island {
+    display: flex;
+    align-items: center;
+    height: var(--sp-16);
+    flex-shrink: 0;
+    background: var(--surface-island);
+    -webkit-backdrop-filter: blur(var(--island-blur));
+    backdrop-filter: blur(var(--island-blur));
+    border-radius: var(--r-md);
+  }
+
+  /* ── Brand group: logo island + wordmark island ─────────────── */
+  .menu__brand {
+    display: flex;
+    gap: var(--sp-1);
+    flex-shrink: 0;
+  }
+  .menu__logo {
+    justify-content: center;
+    padding: var(--sp-3) var(--sp-4);
+  }
+  .menu__logo img {
+    width: 44.571px;
+    height: 40px;
+  }
+  .menu__wordmark {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: var(--sp-2) var(--sp-45);
+  }
+  .menu__wordmark img {
+    width: 101.945px;
+    height: 33px;
+  }
+  .menu__tagline {
+    font-size: var(--fs-pill-label);
+    line-height: var(--lh-body);
+    color: var(--text-tagline);
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  /* ── Nav island ─────────────────────────────────────────────── */
+  .menu__nav {
+    gap: var(--sp-2);
+    padding: var(--sp-2);
+  }
+  .menu__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sp-4);
+    border-radius: var(--r-item);
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    color: var(--text-hi);
+    white-space: nowrap;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .menu__item:hover {
+    color: var(--text-body);
+  }
+  .menu__item[aria-current]::after {
+    content: '';
+    position: absolute;
+    bottom: var(--sp-1);
+    left: 50%;
+    translate: -50% 0;
+    width: 6px; /* Figma ellipse 6×6 — no token */
+    height: 6px;
+    border-radius: var(--r-pill);
+    background: var(--violet);
+  }
+
+  /* ── Right island: language + CTA ───────────────────────────── */
+  .menu__actions {
+    gap: var(--sp-6);
+    padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-6);
+  }
+  .menu__lang {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--text-hi);
+  }
+  .menu__actions :global(.menu__cta) {
+    height: var(--sp-12);
+    border: 0; /* neutralise the deprecated global .btn scaffold's transparent border */
+  }
+
+  /* ── Burger island (≤947 only) ──────────────────────────────── */
+  .menu__burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px; /* Figma line centres 8px apart − 2px stroke */
+    width: var(--sp-16);
+    padding: 0;
+    border: none;
+    cursor: pointer;
+  }
+  .menu__burger-line {
+    width: var(--sp-6);
+    height: 2px; /* Figma stroke weight — no token */
+    background: var(--text-hi);
+  }
+
+  /* ── Fluid rebuild points (spec 33:3496 + client refinement) ── */
+  @media (max-width: 946px) {
+    /* Content floors + min gaps no longer fit (16+239.57+4+473+4+194+16 ≈ 947)
+       — nav is replaced by the burger island. Grid → flex for burger states. */
+    .menu {
+      display: flex;
+    }
+    .menu__nav {
+      display: none;
+    }
+    .menu__burger {
+      display: flex;
+      align-items: center;
+    }
+    .menu__actions {
+      margin-left: auto;
+      margin-right: var(--sp-1);
+    }
+  }
+  @media (max-width: 560px) {
+    /* En+CTA docks next to the brand (gap 4, Figma state 4), burger flush right. */
+    .menu__actions {
+      margin-left: var(--sp-1);
+      margin-right: 0;
+    }
+    .menu__burger {
+      margin-left: auto;
+    }
+  }
+  @media (max-width: 536px) {
+    /* Tightest: logo + wordmark (tagline dropped, mark centred) + burger.
+       537px = Figma state-4 reference (33:3295) — the exact just-fits width
+       of brand + En/CTA + burger, so the rebuild fires only below it. */
+    .menu__actions {
+      display: none;
+    }
+    .menu__tagline {
+      display: none;
+    }
+  }
+</style>

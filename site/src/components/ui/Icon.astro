@@ -1,0 +1,32 @@
+---
+// Shared icon renderer. SVGs live as FILES in src/icons/** (exported 1:1 from
+// Figma) and are referenced by URL — never inlined, so they can't distort.
+// Vite content-hashes them; _headers caches them immutable.
+// Usage: <Icon name="tabler/bolt" size={24} />  ·  <Icon name="logos/tiktok" size={30} />
+const icons = import.meta.glob<{ default: ImageMetadata }>('../../icons/**/*.svg', {
+  eager: true,
+});
+
+interface Props {
+  name: string; // path under src/icons/, no extension: "tabler/bolt", "logos/google-g"
+  size?: number; // square render size in px (Figma sizes: 20/24/30/34)
+  width?: number; // non-square override
+  height?: number;
+  alt?: string; // empty = decorative (aria-hidden)
+  class?: string;
+}
+const { name, size = 24, width, height, alt = '', class: cls } = Astro.props;
+const mod = icons[`../../icons/${name}.svg`];
+if (!mod) throw new Error(`[Icon] not found: src/icons/${name}.svg`);
+---
+
+<img
+  src={mod.default.src}
+  width={width ?? size}
+  height={height ?? size}
+  alt={alt}
+  aria-hidden={alt === '' ? 'true' : undefined}
+  class={cls}
+  loading="lazy"
+  decoding="async"
+/>

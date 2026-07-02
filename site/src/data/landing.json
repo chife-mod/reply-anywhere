@@ -1,0 +1,19 @@
+{
+  "home": {
+    "eyebrow": "Omnichannel review & message management",
+    "headline": "Reply **anywhere**. Every review, every DM — one inbox.",
+    "sub": "Others manage reviews. Reply Anywhere manages reviews **and** social comments and DMs — because it runs on the Semantic Force stack. 50+ channels, one window.",
+    "ctaPrimary": "Request your free demo",
+    "ctaSecondary": "See how it works",
+    "channels": [
+      "Marketplaces",
+      "App Stores",
+      "Google Maps",
+      "E-commerce reviews",
+      "Instagram",
+      "TikTok",
+      "Messenger",
+      "WhatsApp"
+    ]
+  }
+}

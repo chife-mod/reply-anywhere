@@ -115,7 +115,9 @@ const pills: Pill[] = [
      both sections stick at top:0 inside the tall scene wrapper, PlatformIntro
      overlays Constellation via margin-top:-100vh, ScrollTrigger only scrubs. */
   [data-scene='one-platform'].is-scene {
-    height: 450vh; /* ≈350vh of scrub distance for the timeline */
+    /* 450vh → 360vh (client 2026-07-02): −20% wheel distance + merged
+       body/chips beat — the scene reads brisk, not «скролл ради скролла». */
+    height: 360vh; /* ≈260vh of scrub distance for the timeline */
   }
   .is-scene [data-scene-part='constellation'] {
     position: sticky;
@@ -278,16 +280,18 @@ const pills: Pill[] = [
     });
 
     // 5 — pills clear the stage; the headline stays put (spec §5).
-    tl.to(pills, { opacity: 0, scale: 0.92, duration: 0.8, ease: 'power1.in', stagger: 0.015 }, 7.0);
+    // (client 2026-07-02: dead gaps trimmed — the scene must not feel like
+    // «скролл ради скролла»)
+    tl.to(pills, { opacity: 0, scale: 0.92, duration: 0.8, ease: 'power1.in', stagger: 0.015 }, 6.4);
 
-    // 6 — description fades in bottom-up (spec §6).
-    tl.to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 8.1);
+    // 6+7 MERGED (client 2026-07-02): the explanation arrives as ONE composed
+    // beat — body fades up and the three chips чик-чик-чик right on top of it
+    // (stagger kept, just tighter), no separate scroll floor for the chips.
+    tl.to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 7.2);
+    tl.to(chips, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.3 }, 7.35);
 
-    // 7 — three chips: чик-чик-чик (spec §7).
-    tl.to(chips, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.45 }, 9.0);
-
-    // 8 — settle beat before the unpin (spec §8: normal scroll resumes).
-    tl.to({}, { duration: 1 }, 10.4);
+    // 8 — short settle before the unpin (spec §8: normal scroll resumes).
+    tl.to({}, { duration: 0.6 }, 8.6);
   }
 
   const scene = document.querySelector<HTMLElement>('[data-scene="one-platform"]');

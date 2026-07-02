@@ -24,6 +24,10 @@
   accessible markup that passes any senior front-end review.
 - **SVG icons as FILES, not inline.** Exported from Figma components into the repo (inline
   distorts/stretches). One `<Icon>` pattern, not bespoke markup per use.
+- **Raster images: 2x sources → AVIF.** (client policy 2026-07-02) Export photos/raster
+  from Figma at 2x, serve via `astro:assets` `<Image format="avif" quality={70}
+  densities={[1,2]}>` — maximum compression, no visible quality loss (~90% smaller than
+  PNG in practice). No raw `<img>` for raster.
 - **Objective verification.** Pixel-perfect proven by a measure loop (computed-style
   assertions + pixel/ΔE diff at matched scale), not by eyeballing a screenshot. Gate =
   token-check green AND diff-gate true.

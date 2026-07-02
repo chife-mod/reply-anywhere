@@ -219,12 +219,18 @@ const links = [
     }
   }
   @media (max-width: 536px) {
-    /* Tightest: logo + wordmark (tagline dropped, mark centred) + burger.
-       537px = Figma state-4 reference (33:3295) — the exact just-fits width
-       of brand + En/CTA + burger, so the rebuild fires only below it. */
+    /* En+CTA no longer fit (537px = Figma 33:3295, the exact just-fits width
+       of brand + En/CTA + burger) — the tagline SURVIVES this rebuild. */
     .menu__actions {
       display: none;
     }
+  }
+  @media (max-width: 339px) {
+    /* Client 2026-07-02: the tagline stays visible on mobile until the burger
+       is pressed within <4px of the brand block. Collision point:
+       16 + 239.57 (brand w/ tagline) + 4 + 64 (burger) + 16 = 339.57 → hide
+       only below ~340. Figma state 5 (320, tagline gone, wordmark centred)
+       agrees. The wordmark island auto-centres once the tagline drops. */
     .menu__tagline {
       display: none;
     }

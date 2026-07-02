@@ -31,7 +31,7 @@ const quote =
         // Two identical copies of the strip → translateX(-50%) wraps seamlessly.
         // Copy 2 is decorative filler, hidden from the a11y tree.
         [0, 1].map((copy) => (
-          <ul class="social-proof__group" aria-hidden={copy === 1 ? 'true' : undefined}>
+          <ul class="social-proof__group" role="list" aria-hidden={copy === 1 ? 'true' : undefined}>
             <li class="sp-tile sp-tile--green sp-tile--logo-ajax">
               <Icon name="logos/client-ajax" width={96} height={20} alt="Ajax Systems" />
             </li>

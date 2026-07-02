@@ -25,7 +25,7 @@ const sitekey = import.meta.env.PUBLIC_TURNSTILE_SITEKEY;
         <textarea id="message" name="message" rows="3"></textarea>
       </div>
       {sitekey && <div class="cf-turnstile" data-sitekey={sitekey}></div>}
-      <button class="btn btn--primary" type="submit">Request demo</button>
+      <button class="demo__submit" type="submit">Request demo</button>
       <p class="demo__status" role="status" aria-live="polite"></p>
     </form>
 
@@ -76,36 +76,53 @@ const sitekey = import.meta.env.PUBLIC_TURNSTILE_SITEKEY;
 </script>
 
 <style>
+  /* Dark-theme placeholder styling on the REAL token set (final form design
+     lands with its Figma section; the /api/demo wiring is production-ready). */
   .demo {
-    padding-block: var(--space-24);
-    background: var(--color-white);
-    border-top: 1px solid var(--color-line);
+    padding-block: var(--sp-24);
+    border-top: 1px solid var(--border-line);
   }
   .demo__inner { max-width: 640px; }
-  .demo__title { font-size: var(--text-h2); }
-  .demo__lede { margin-top: var(--space-3); color: var(--color-mute); }
+  .demo__title {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    font-weight: var(--fw-regular);
+    color: var(--text-body);
+  }
+  .demo__lede { margin-top: var(--sp-3); color: var(--text-dim); }
   .demo__form {
-    margin-top: var(--space-8);
+    margin-top: var(--sp-8);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
+    gap: var(--sp-4);
   }
-  .field { display: grid; gap: var(--space-2); }
+  .field { display: grid; gap: var(--sp-2); }
   .field--wide, .cf-turnstile, .demo__form > button, .demo__status { grid-column: 1 / -1; }
-  label { font-size: var(--text-small); font-weight: 600; }
+  label { font-size: var(--fs-ui); font-weight: var(--fw-medium); }
   input, textarea {
-    padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
-    background: var(--color-paper);
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--surface-tile);
+    color: var(--text-hi);
     resize: vertical;
   }
-  input:focus-visible, textarea:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 1px;
+  .demo__submit {
+    justify-self: start;
+    padding: var(--sp-4);
+    background: var(--violet);
+    color: var(--text-hi);
+    border: none;
+    border-radius: var(--r-md);
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    cursor: pointer;
+    transition: filter var(--dur-fast) var(--ease-out);
   }
-  .demo__form > button { justify-self: start; }
-  .demo__status { min-height: 1.2em; font-size: var(--text-small); color: var(--color-primary-deep); font-weight: 600; }
+  .demo__submit:hover { filter: brightness(1.12); }
+  .demo__status { min-height: 1.2em; font-size: var(--fs-ui); color: var(--violet-light); font-weight: var(--fw-medium); }
+  .scaffold-note { margin-top: var(--sp-6); font-size: var(--fs-chip); color: var(--text-dim); }
   @media (max-width: 560px) {
     .demo__form { grid-template-columns: 1fr; }
   }

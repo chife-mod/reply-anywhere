@@ -44,5 +44,5 @@ const { href, variant = 'primary', label, class: cls } = Astro.props;
     padding: 11px; /* Figma: 11px pad + 24px icon = 46px square */
   }
   .btn:hover { filter: brightness(1.12); }
-  .btn:focus-visible { outline: 2px solid var(--violet-light); outline-offset: 2px; }
+  /* focus ring comes from the ONE global :focus-visible convention (global.css) */
 </style>

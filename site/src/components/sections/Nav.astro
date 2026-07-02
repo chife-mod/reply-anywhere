@@ -38,7 +38,7 @@ const links = [
 
   <nav class="island menu__nav" aria-label="Main">
     {links.map(({ label, href, active }) => (
-      <a class="menu__item" href={href} aria-current={active ? 'true' : undefined}>{label}</a>
+      <a class="menu__item" href={href} aria-current={active ? 'page' : undefined}>{label}</a>
     ))}
   </nav>
 
@@ -168,8 +168,7 @@ const links = [
     color: var(--text-hi);
   }
   .menu__actions :global(.menu__cta) {
-    height: var(--sp-12);
-    border: 0; /* neutralise the deprecated global .btn scaffold's transparent border */
+    height: var(--sp-12); /* Figma 13:810: Book a demo is h48 */
   }
 
   /* ── Burger island (≤947 only) ──────────────────────────────── */

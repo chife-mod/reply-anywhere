@@ -109,23 +109,4 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-fast: 180ms; --dur-normal: 280ms;
 
-  /* ══ DEPRECATED ALIASES — scaffold-only, removed at assembly ══
-     (keep old placeholder pages compiling; DO NOT use in new code) */
-  --color-primary: var(--violet);
-  --color-primary-deep: #8A0BCC;
-  --color-primary-soft: rgba(171, 13, 255, 0.12);
-  --ra-violet-50: #F5F3FF; --ra-violet-100: rgba(171,13,255,0.10);
-  --ra-violet-400: var(--violet-light); --ra-violet-500: var(--violet);
-  --ra-violet-700: #8A0BCC;
-  --color-ink: var(--text-hi); --color-mute: var(--text-dim);
-  --color-white: #FFFFFF; --color-paper: var(--bg); --color-line: var(--border-card);
-  --text-display: var(--fs-h1); --text-h2: var(--fs-h2); --text-h3: var(--fs-lead);
-  --text-small: var(--fs-ui); --text-caption: var(--fs-chip);
-  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px;
-  --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px;
-  --space-16: 64px; --space-20: 80px; --space-24: 96px;
-  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 20px;
-  --radius-pill: 999px;
-  --shadow-card: none; --shadow-accent: none;
-  --dur-slow: 600ms; --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 }

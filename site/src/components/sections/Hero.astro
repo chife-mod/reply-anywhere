@@ -558,9 +558,9 @@ const sparks = [
     border-radius: 47.301px;
     background: var(--violet);
   }
-  .orbit__glow--wide  { filter: blur(86.839px); }  /* Figma 173.678 */
-  .orbit__glow--mid   { filter: blur(44.492px); }  /* Figma 88.983  */
-  .orbit__glow--tight { filter: blur(4.677px); }   /* Figma 9.353   */
+  .orbit__glow--wide  { filter: blur(calc(var(--glow-hero-wide) / 2)); }
+  .orbit__glow--mid   { filter: blur(calc(var(--glow-hero-mid) / 2)); }
+  .orbit__glow--tight { filter: blur(calc(var(--glow-hero-tight) / 2)); }
   .orbit__glow--soft {
     left: 197px;
     top: 196.72px;
@@ -568,7 +568,7 @@ const sparks = [
     height: 200px;
     border-radius: 65.789px;
     background: rgba(171, 13, 255, 0.6);
-    filter: blur(87.5px); /* Figma 175 */
+    filter: blur(calc(var(--glow-hero-extra) / 2)); /* Figma blur B ≡ CSS B/2 */
   }
 
   /* Connector lines: gradient-stroke SVGs rotated inside their Figma boxes. */

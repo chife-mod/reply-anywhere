@@ -1,4 +1,5 @@
-/* Reply Anywhere — base / reset. Minimal, modern, token-driven. */
+/* Reply Anywhere — base / reset. Minimal, token-driven (the REAL token set —
+   the deprecated scaffold aliases are gone; components own their type). */
 
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; }
@@ -18,30 +19,32 @@ html {
 
 body {
   font-family: var(--font-sans);
-  font-size: var(--text-body);
-  line-height: 1.6;
-  color: var(--color-ink);
-  background: var(--color-paper);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-body);
+  color: var(--text-hi);
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3, h4 { line-height: 1.1; font-weight: 650; letter-spacing: -0.02em; }
+/* Type is owned by components (SectionHeading & friends) — base only resets. */
+h1, h2, h3, h4 { font-size: inherit; font-weight: inherit; }
 a { color: inherit; text-decoration: none; }
 img, picture, svg, video { display: block; max-width: 100%; }
 button, input, textarea, select { font: inherit; color: inherit; }
 
-:where(a, button):focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 3px;
-  border-radius: var(--radius-sm);
+/* ONE focus convention for every interactive element (review 2026-07-02). */
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--violet-light);
+  outline-offset: 2px;
+  border-radius: var(--r-item);
 }
 
 .container {
   width: 100%;
   max-width: var(--container);
   margin-inline: auto;
-  padding-inline: var(--space-6);
+  padding-inline: var(--sp-6);
 }
 
 /* Accessible skip-link (SEO/a11y baseline, carried from Verifly). */
@@ -49,42 +52,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
   position: absolute;
   left: -9999px;
   top: 0;
-  padding: var(--space-2) var(--space-4);
-  background: var(--color-primary);
-  color: var(--color-white);
-  border-radius: 0 0 var(--radius-md) 0;
-  z-index: 100;
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--violet);
+  color: var(--text-hi);
+  border-radius: 0 0 var(--r-md) 0;
+  z-index: 200; /* above the fixed menu */
 }
 .skip-link:focus { left: 0; }
-
-/* ─── Buttons · shared utility ──────────────────────────────── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-6);
-  font-size: var(--text-small);
-  font-weight: 600;
-  border-radius: var(--radius-pill);
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: transform var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out),
-    background var(--dur-fast) var(--ease-out);
-}
-.btn:active { transform: translateY(1px); }
-
-.btn--primary {
-  background: var(--color-primary);
-  color: var(--color-white);
-  box-shadow: var(--shadow-accent);
-}
-.btn--primary:hover { background: var(--color-primary-deep); }
-
-.btn--ghost {
-  background: var(--color-white);
-  color: var(--color-ink);
-  border-color: var(--color-line);
-}
-.btn--ghost:hover { border-color: var(--ra-violet-400); color: var(--color-primary-deep); }

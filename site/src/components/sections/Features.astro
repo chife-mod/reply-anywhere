@@ -58,7 +58,7 @@ const avatars = [avatar1, avatar2, avatar3];
       </p>
     </header>
 
-    <ul class="features__grid">
+    <ul class="features__grid" role="list">
       {cards.map((card) => (
         <li class:list={['card', { 'card--dim': card.dim }]}>
           <div class="card__head">
@@ -120,7 +120,7 @@ const avatars = [avatar1, avatar2, avatar3];
         <p class="cta__trust">Trusted by teams at Ajax,<br />Samsung and Volia</p>
         <div class="cta__avatars">
           {avatars.map((a) => (
-            <img src={a.src} width="80" height="80" alt="" loading="lazy" decoding="async" />
+            <img src={a.src} width="80" height="80" alt="" aria-hidden="true" loading="lazy" decoding="async" />
           ))}
         </div>
         <Button href="#demo" variant="dark" label="Request a free demo" />

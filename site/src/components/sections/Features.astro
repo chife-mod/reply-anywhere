@@ -3,6 +3,8 @@
 // Header row (H2 left + lead right 416px) → 3 feature cards 416×562 (master
 // 25:1109; instances 25:1110 / 25:1129 show the orbit visual at 20% opacity)
 // → CTA band (25:1860). All copy verbatim from Figma.
+// IMAGE POLICY (client 2026-07-02): 2x raster sources → AVIF via astro:assets.
+import { Image } from 'astro:assets';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
@@ -120,7 +122,7 @@ const avatars = [avatar1, avatar2, avatar3];
         <p class="cta__trust">Trusted by teams at Ajax,<br />Samsung and Volia</p>
         <div class="cta__avatars">
           {avatars.map((a) => (
-            <img src={a.src} width="80" height="80" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <Image src={a} alt="" aria-hidden="true" width={80} height={80} densities={[1, 2]} format="avif" quality={70} loading="lazy" />
           ))}
         </div>
         <Button href="#demo" variant="dark" label="Request a free demo" />

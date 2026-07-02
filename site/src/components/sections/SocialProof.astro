@@ -5,17 +5,22 @@
 // keyframe — the tile group renders TWICE (second copy aria-hidden) so the
 // wrap is seamless; a tiny script pauses it off-viewport / on hidden tab, and
 // prefers-reduced-motion parks it static at the Figma x7 offset.
-// Tiles left→right: Ajax logo · testimonial · «8 connected channels» stat ·
-// avatar · role · Samsung logo · testimonial · «24 connected channels» blue
-// stat (client add-on 2026-07-02) · avatar. Brand-color tiles (green #1DCF94 /
-// blue #1998FF) carry black 14px/1.3 text.
+// Tiles left→right (Figma 49:4952, client rev 2026-07-02): Ajax logo ·
+// testimonial · «8 connected channels» stat · portrait · role · Samsung logo ·
+// WIDER testimonial (406px text = always 3 lines) · «24 connected channels» ·
+// portrait 2 · «Head of Customer Support / Samsung Electronics» role card.
+// Brand-color tiles (green #1DCF94 / blue #1998FF) carry black 14px/1.3 text.
+// IMAGE POLICY (client 2026-07-02): raster sources at 2x → served as AVIF via
+// astro:assets (max compression, no visible quality loss).
+import { Image } from 'astro:assets';
 import Icon from '../ui/Icon.astro';
-import avatar from '../../assets/avatars/avatar-1.png';
+import portrait1 from '../../assets/avatars/portrait-1.png';
+import portrait2 from '../../assets/avatars/portrait-2.png';
 
-// Figma reuses ONE portrait for both marquee avatars (19:168 + 19:209 share
-// the same source image — verified by hash), so one asset serves both.
-const quote =
+const quoteGreen =
   'Reply Anywhere helped us keep every customer conversation in one place. Our team responds faster and with much more consistency.';
+const quoteBlue =
+  'Reply Anywhere helped us bring every customer conversation into one place. Our team responds faster, stays consistent and delivers a much better customer experience.';
 ---
 
 <section class="social-proof" id="social-proof" aria-label="Social proof">
@@ -37,7 +42,7 @@ const quote =
             </li>
             <li class="sp-tile sp-tile--green sp-tile--quote">
               <blockquote>
-                <p>{quote}</p>
+                <p>{quoteGreen}</p>
               </blockquote>
               <Icon name="quote-mark" width={66} height={48} class="sp-quote-mark" />
             </li>
@@ -50,7 +55,7 @@ const quote =
               </p>
             </li>
             <li class="sp-avatar">
-              <img src={avatar.src} width="88" height="88" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+              <Image src={portrait1} alt="" aria-hidden="true" width={88} height={88} densities={[1, 2]} format="avif" quality={70} loading="lazy" />
             </li>
             <li class="sp-tile sp-tile--green sp-tile--role">
               <p>
@@ -60,9 +65,9 @@ const quote =
             <li class="sp-tile sp-tile--blue sp-tile--logo-samsung">
               <Icon name="logos/client-samsung" width={130} height={29} alt="Samsung" />
             </li>
-            <li class="sp-tile sp-tile--blue sp-tile--quote sp-tile--quote-over">
+            <li class="sp-tile sp-tile--blue sp-tile--quote sp-tile--quote-wide sp-tile--quote-over">
               <blockquote>
-                <p>{quote}</p>
+                <p>{quoteBlue}</p>
               </blockquote>
               <Icon name="quote-mark" width={66} height={48} class="sp-quote-mark" />
             </li>
@@ -75,7 +80,13 @@ const quote =
               </p>
             </li>
             <li class="sp-avatar">
-              <img src={avatar.src} width="88" height="88" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+              <Image src={portrait2} alt="" aria-hidden="true" width={88} height={88} densities={[1, 2]} format="avif" quality={70} loading="lazy" />
+            </li>
+            <li class="sp-tile sp-tile--blue sp-tile--role sp-tile--role-rich">
+              <p>
+                <strong>Head of Customer Support</strong>
+                <span>Samsung Electronics</span>
+              </p>
             </li>
           </ul>
         ))
@@ -179,17 +190,20 @@ const quote =
   .sp-tile--logo-samsung { width: 178px; }
   .sp-tile--logo-ajax, .sp-tile--logo-samsung { justify-content: center; }
 
-  /* Testimonial tiles (19:188 · 19:206) — 336px quote + watermark quote-mark */
+  /* Testimonial tiles (49:4913 · 49:4936) — quote text + watermark quote-mark */
   .sp-tile--quote {
     position: relative;
-    width: 384px;
+    width: 384px; /* 24 + 336 + 24 */
     padding-inline: var(--sp-6);
   }
   .sp-tile--quote blockquote {
-    position: relative; /* keeps text above the watermark (Figma 19:188 order) */
+    position: relative; /* keeps text above the watermark (Figma z-order) */
     margin: 0;
     width: 336px;
   }
+  /* Blue testimonial is WIDER (client 2026-07-02: 406px text ⇒ always 3 lines) */
+  .sp-tile--quote-wide { width: 454px; /* 24 + 406 + 24 */ }
+  .sp-tile--quote-wide blockquote { width: 406px; }
   /* (:global — the img lives inside the shared <Icon> component) */
   .sp-tile--quote :global(.sp-quote-mark) {
     position: absolute; /* Figma: x318 y20, 65.524×48 */
@@ -199,7 +213,8 @@ const quote =
     height: 48px;
     opacity: 0.3; /* white glyph @ .3 on green (Figma fill-opacity) */
   }
-  /* Blue testimonial: mark @ .2 and painted ABOVE the text (Figma 19:206 z-order) */
+  .sp-tile--quote-wide :global(.sp-quote-mark) { left: 388px; /* Figma 49:4938 */ }
+  /* Blue testimonial: mark @ .2 and painted ABOVE the text (Figma z-order) */
   .sp-tile--quote-over :global(.sp-quote-mark) { opacity: 0.2; z-index: 1; }
 
   /* Stat tiles — «8/24 Connected channels». Client 2026-07-02: icon strips
@@ -223,10 +238,23 @@ const quote =
     line-height: 1.19; /* Figma 32:3130 */
   }
 
-  /* Role tile (19:194) */
+  /* Role tiles — hug content (Figma 49:4930 / 49:5010: p24 + nowrap text) */
   .sp-tile--role {
-    width: 211px;
     padding-inline: var(--sp-6);
+    white-space: nowrap;
+  }
+  /* Samsung role card: bold 14 title over regular 12 subtitle (49:5011/49:5015) */
+  .sp-tile--role-rich p {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sp-tile--role-rich strong {
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-ui);
+  }
+  .sp-tile--role-rich span {
+    font-size: var(--fs-chip);
   }
 
   /* Avatars (19:168 · 19:209) — 88px portrait discs */

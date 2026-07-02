@@ -112,8 +112,9 @@ const links = [
   .menu__tagline {
     font-size: var(--fs-pill-label);
     line-height: var(--lh-body);
+    /* Figma stacked opacity .7 on #7E90A3 → ~3.5:1, below AA for 10px text.
+       Full-strength --text-tagline reads ~5.5:1 and passes (fix batch 2026-07-02). */
     color: var(--text-tagline);
-    opacity: 0.7;
     white-space: nowrap;
   }
 

@@ -95,7 +95,7 @@ const sparks = [
       </div>
       <ul class="hero__chips" role="list">
         <li><Chip icon="tabler/bolt" line1="All channels" line2="in one place" /></li>
-        <li><Chip icon="tabler/message" line1="Faster responces" line2="happy customers" /></li>
+        <li><Chip icon="tabler/message" line1="Faster responses" line2="happy customers" /></li>
         <li><Chip icon="tabler/chart-bar-popular" line1="Better insights" line2="smarter decisions" /></li>
       </ul>
     </div>
@@ -308,7 +308,7 @@ const sparks = [
         tl.to(pulse, { opacity: 1, scale: 1, duration: 0.22, ease: 'sine.out' }, 1.38);
         tl.to(k, { v: 1, duration: 1.05, ease: 'power1.inOut' }, 1.35);
         tl.to(pulse, { opacity: 0, duration: 0.25, ease: 'sine.in' }, 2.25);
-        tl.fromTo(flash, { opacity: 0 }, { opacity: 0.8, duration: 0.16, ease: 'power2.out' }, 2.35);
+        tl.fromTo(flash, { opacity: 0 }, { opacity: 0.9, duration: 0.16, ease: 'power2.out' }, 2.35);
         tl.to(flash, { opacity: 0, duration: 0.45, ease: 'sine.inOut' }, 2.51);
         // e. rail fades out
         tl.to(rail, { opacity: 0, duration: 0.5, ease: 'sine.in' }, 2.65);
@@ -614,13 +614,14 @@ const sparks = [
     opacity: 0;
   }
   .orbit__flash {
-    /* Client 2026-07-02: arrival flash must hug the 64px disc, not bloom far
-       beyond it → 96px (was the raw 154.769px asset size). */
+    /* Client 2026-07-02 (rev 2): 96px hid the halo entirely behind the opaque
+       64px disc — back up to 124px so a clear ~30px glow ring reads around the
+       logo, still well short of the original 154.769px bloom. */
     position: absolute;
-    left: -48px;
-    top: -48px;
-    width: 96px;
-    height: 96px;
+    left: -62px;
+    top: -62px;
+    width: 124px;
+    height: 124px;
     opacity: 0;
   }
 

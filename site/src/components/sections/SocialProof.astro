@@ -48,14 +48,6 @@ const quote =
                   Connected<br />channels
                 </span>
               </p>
-              <div class="sp-stat__strip" aria-hidden="true">
-                <Icon name="tabler/brand-telegram" size={20} />
-                <Icon name="tabler/brand-whatsapp" size={20} />
-                <Icon name="tabler/brand-messenger" size={20} />
-                <Icon name="tabler/brand-amazon" size={20} />
-                <Icon name="tabler/brand-instagram" size={20} />
-                <Icon name="tabler/brand-facebook" size={20} />
-              </div>
             </li>
             <li class="sp-avatar">
               <img src={avatar.src} width="88" height="88" alt="" aria-hidden="true" loading="lazy" decoding="async" />
@@ -74,21 +66,13 @@ const quote =
               </blockquote>
               <Icon name="quote-mark" width={66} height={48} class="sp-quote-mark" />
             </li>
-            <li class="sp-tile sp-tile--blue sp-tile--stat sp-tile--stat-blue">
+            <li class="sp-tile sp-tile--blue sp-tile--stat">
               <p class="sp-stat">
                 <span class="sp-stat__num">24</span>
                 <span class="sp-stat__label">
                   Connected<br />channels
                 </span>
               </p>
-              <div class="sp-stat__strip" aria-hidden="true">
-                <Icon name="tabler/brand-telegram" size={20} />
-                <Icon name="tabler/brand-whatsapp" size={20} />
-                <Icon name="tabler/brand-messenger" size={20} />
-                <Icon name="tabler/brand-amazon" size={20} />
-                <Icon name="tabler/brand-instagram" size={20} />
-                <Icon name="tabler/brand-facebook" size={20} />
-              </div>
             </li>
             <li class="sp-avatar">
               <img src={avatar.src} width="88" height="88" alt="" aria-hidden="true" loading="lazy" decoding="async" />
@@ -105,7 +89,6 @@ const quote =
     /* Client-brand tile colors — Figma literals, no token yet (see missingTokens) */
     --tile-green: #1dcf94;
     --tile-blue: #1998ff;
-    --strip-fade: #1ecf94; /* Figma 32:3177/32:3178 fade rects (1 off from tile green — as designed) */
     padding-block: var(--sp-10); /* heading y40 · band bottom inset 40 */
     overflow: hidden; /* strip is 1718px wide — viewport clips the marquee */
   }
@@ -219,27 +202,17 @@ const quote =
   /* Blue testimonial: mark @ .2 and painted ABOVE the text (Figma 19:206 z-order) */
   .sp-tile--quote-over :global(.sp-quote-mark) { opacity: 0.2; z-index: 1; }
 
-  /* Stat tiles — «8/24 Connected channels» + clipped channel-icon strip.
-     Green = Figma 28:2510; blue «24» = client add-on 2026-07-02 (same anatomy,
-     Samsung-blue fill, fades tinted to match). */
+  /* Stat tiles — «8/24 Connected channels». Client 2026-07-02: icon strips
+     removed, content dead-centered, width hugs content (+24px side padding). */
   .sp-tile--stat {
-    --_fade: var(--strip-fade);
-    --_fade0: rgba(30, 207, 148, 0);
-    flex-direction: column;
-    align-items: flex-start;
     justify-content: center;
-    gap: var(--sp-1);
-    width: 157px;
-  }
-  .sp-tile--stat-blue {
-    --_fade: var(--tile-blue);
-    --_fade0: rgba(25, 152, 255, 0);
   }
   .sp-stat {
     display: flex;
     align-items: center;
     gap: var(--sp-2);
     padding-inline: var(--sp-6);
+    white-space: nowrap;
   }
   .sp-stat__num {
     font-size: 44px; /* Figma 28:2511 (no token) */
@@ -248,33 +221,6 @@ const quote =
   .sp-stat__label {
     font-size: var(--fs-ui);
     line-height: 1.19; /* Figma 32:3130 */
-  }
-  .sp-stat__strip {
-    position: relative;
-    display: flex;
-    gap: var(--sp-2);
-    width: 138px; /* 6th icon (facebook) parked outside the clip — Figma 32:3176 */
-    height: var(--sp-5);
-    overflow: hidden;
-  }
-  .sp-stat__strip > :global(img) { flex: none; }
-  /* Edge fades (32:3177 / 32:3178) — 30×20 rects melting icons into the tile */
-  .sp-stat__strip::before,
-  .sp-stat__strip::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 30px;
-    height: var(--sp-5);
-    pointer-events: none;
-  }
-  .sp-stat__strip::before {
-    left: 0;
-    background: linear-gradient(90deg, var(--_fade), var(--_fade0));
-  }
-  .sp-stat__strip::after {
-    right: 0;
-    background: linear-gradient(-90deg, var(--_fade), var(--_fade0));
   }
 
   /* Role tile (19:194) */

@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "cf:dev": "astro build && wrangler dev",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "PREVIEW_NOINDEX=1 astro build && printf '\\n# preview gate — removed by deploy:live\\n/*\\n  X-Robots-Tag: noindex\\n' >> dist/_headers && wrangler deploy",
+    "deploy:live": "astro build && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

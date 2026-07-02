@@ -9,6 +9,13 @@ import type { APIRoute } from 'astro';
 // through to the final `*: Allow`; flip those to `Disallow` if the client opts out
 // of model training (orthogonal to answer-engine citeability).
 export const GET: APIRoute = ({ site }) => {
+  // Preview builds (PREVIEW_NOINDEX=1 → workers.dev) close the whole host:
+  // belt (robots Disallow) + braces (per-page <meta noindex> from Layout).
+  if (import.meta.env.PREVIEW_NOINDEX === '1') {
+    return new Response('User-agent: *\nDisallow: /\n', {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    });
+  }
   const sitemapUrl = new URL('sitemap-index.xml', site).href;
   const allowAll = (ua: string) => [`User-agent: ${ua}`, 'Allow: /', ''];
   const body = [

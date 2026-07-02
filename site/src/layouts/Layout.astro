@@ -18,6 +18,10 @@ interface Props {
 }
 const { title, description, ogImage, canonical, noindex = false, jsonLd = false } = Astro.props;
 
+// Preview deployments (workers.dev, PREVIEW_NOINDEX=1 build) are gated from
+// indexing on EVERY page; the go-live build lifts this in one flag.
+const noindexFinal = noindex || import.meta.env.PREVIEW_NOINDEX === '1';
+
 // Cloudflare Web Analytics — privacy-first, zero-cookie. Only injected when a
 // beacon token is configured, so no broken beacon ships in dev.
 const cfAnalytics = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
@@ -31,7 +35,7 @@ const cfAnalytics = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#111322" />
     <meta name="generator" content={Astro.generator} />
-    <SEO title={title} description={description} ogImage={ogImage} canonical={canonical} noindex={noindex} />
+    <SEO title={title} description={description} ogImage={ogImage} canonical={canonical} noindex={noindexFinal} />
     {jsonLd && <JsonLd />}
   </head>
   <body>

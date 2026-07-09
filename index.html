@@ -24,14 +24,14 @@
     title:   "Reply Anywhere · Design Dashboard",
 
     previews: [
-      { tag: "Active · Latest", title: "Wireframe", href: "wireframe/",
-        desc: "Sandbox-rail wireframe (Verifly pattern) — clean screen content on the left; a per-section narrative rail on the right with notes, RU translation and reference tags. Neutral; brand/violet lands at the Design stage." },
+      { tag: "Active · Latest", title: "Production build", href: "https://reply-anywhere.semanticforce.workers.dev",
+        desc: "Live preview of the production site — Astro 6 + GSAP: hero orbit motion, pinned «One platform» scroll scene, guaranteed first screen on every desktop/tablet height, responsive down to phones. Deployed on Cloudflare Workers behind a noindex gate." },
+      { tag: "Active · Stage 03 · Figma", title: "Design", href: "https://www.figma.com/design/aZ3lUbOhOeEJbVC7VdR1VD/reply-anywhere-design",
+        desc: "High-fidelity visual design in Semantic Force style — violet brand palette, real copy and motion specs. Lives in Figma; sections land in the build as they are approved." },
+      { tag: "Done · Stage 02", title: "Wireframe", href: "wireframe/",
+        desc: "Sandbox-rail wireframe (Verifly pattern) — clean screen content on the left; a per-section narrative rail on the right with notes, RU translation and reference tags. Superseded by the production build." },
       { tag: "Foundation · UI Kit", title: "UI Kit", href: "uikit/",
-        desc: "Typography, colours, spacing, components, states, motion — shared foundations. Edit shared/tokens.css or shared/components.css and every page picks it up." },
-      { tag: "Planned · Stage 03", title: "Design", status: "planned",
-        desc: "High-fidelity visual design in Semantic Force style — violet brand palette, real copy, product screenshots and motion. Starts after the wireframe is approved." },
-      { tag: "Planned · Stage 04", title: "Front-end", status: "planned",
-        desc: "Production build — responsive + animated, same stack as other SF landings. Starts after design sign-off." }
+        desc: "Typography, colours, spacing, components, states, motion — shared foundations of the wireframe stage. The production build runs on its own token set synced from Figma variables." }
     ],
 
     docs: [
@@ -45,14 +45,15 @@
 
     stages: [
       { name: "Brief & content",  status: "done",    progress: 100, label: "Done" },
-      { name: "Wireframe",        status: "active",  progress: 60,  label: "In progress" },
-      { name: "Design (SF style)",status: "pending", progress: 0,   label: "Pending" },
-      { name: "Front-end build",  status: "pending", progress: 0,   label: "Pending" },
-      { name: "Deploy & handoff", status: "pending", progress: 0,   label: "Pending" }
+      { name: "Wireframe",        status: "done",    progress: 100, label: "Done" },
+      { name: "Design (SF style)",status: "active",  progress: 70,  label: "In progress" },
+      { name: "Front-end build",  status: "active",  progress: 75,  label: "In progress" },
+      { name: "Deploy & handoff", status: "active",  progress: 25,  label: "Preview live" }
     ],
 
     meta: [
-      { dt: "Stack", dd: "HTML · CSS · vanilla JS — same stack as other SF landings · violet brand per SF" },
+      { dt: "Stack", dd: "Astro 6 SSG · GSAP · self-hosted fonts · Cloudflare Workers Static Assets · violet brand per SF" },
+      { dt: "Preview", label: "reply-anywhere.semanticforce.workers.dev", href: "https://reply-anywhere.semanticforce.workers.dev" },
       { dt: "Production target", label: "www.replyanywhere.com", href: "https://www.replyanywhere.com" }
     ],
 

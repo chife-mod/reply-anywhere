@@ -1,0 +1,21 @@
+{
+  "outDir": "screens",
+  "concurrency": 2,
+  "jpegQuality": 55,
+  "chromePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "pages": {
+    "home": "http://localhost:4323/"
+  },
+  "viewports": [
+    { "name": "big2560", "width": 2560, "height": 1305, "dsf": 1, "mobile": false },
+    { "name": "fhd1920", "width": 1920, "height": 1080, "dsf": 1, "mobile": false },
+    { "name": "mac1440", "width": 1440, "height": 900, "dsf": 1, "mobile": false },
+    { "name": "surface1368", "width": 1368, "height": 912, "dsf": 1, "mobile": false },
+    { "name": "short1440x760", "width": 1440, "height": 760, "dsf": 1, "mobile": false },
+    { "name": "short1440x620", "width": 1440, "height": 620, "dsf": 1, "mobile": false },
+    { "name": "ipadh1024", "width": 1024, "height": 768, "dsf": 2, "mobile": true },
+    { "name": "ipadv810", "width": 810, "height": 1080, "dsf": 2, "mobile": true },
+    { "name": "iphonev390", "width": 390, "height": 844, "dsf": 2, "mobile": true },
+    { "name": "iphoneh844", "width": 844, "height": 390, "dsf": 2, "mobile": true }
+  ]
+}

@@ -438,4 +438,47 @@ const avatars = [avatar1, avatar2, avatar3];
   .cta__avatars img:not(:last-child) {
     margin-right: -12px; /* Figma overlap — no negative spacing token */
   }
+
+  /* ── Adaptive (QA audit 2026-07-08; no mobile Figma frames yet — the
+     desktop composition degrades by best practice: stack, don't squeeze) ── */
+  @media (max-width: 946px) {
+    /* Header row: title + lead side-by-side no longer breathe — stack. */
+    .features__head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .features__lead {
+      width: auto;
+      max-width: 549px; /* hero copy column width — same reading measure */
+    }
+    /* Cards: 3-up flex row squeezed words into vertical rubble on phones —
+       stack full-width (562px card height + inner orbit survive intact). */
+    .features__grid {
+      flex-direction: column;
+    }
+  }
+  @media (max-width: 900px) {
+    /* CTA band: intro and meta collided (overlapping text on 810/390 shots)
+       — stack; meta spreads under the copy. */
+    .cta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .cta__meta {
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      row-gap: var(--sp-4);
+    }
+  }
+  @media (max-width: 560px) {
+    .cta__intro {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .cta__sub :global(br),
+    .cta__trust :global(br) {
+      display: none; /* hard breaks fight narrow widths — let text flow */
+    }
+  }
 </style>

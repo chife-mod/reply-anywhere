@@ -10,8 +10,8 @@
     {
       "name": "site",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "site", "run", "dev"],
-      "port": 4321
+      "runtimeArgs": ["--prefix", "site", "run", "dev", "--", "--port", "4323"],
+      "port": 4323
     }
   ]
 }

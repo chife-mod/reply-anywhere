@@ -68,8 +68,19 @@
 
   /* ─── GRID ────────────────────────────────────────────────── */
   --container: 1280px;  /* content width @1440 (80px side margins) */
-  --margin-desktop: 80px;
+  /* Side margins: 80px at the 1440 Figma reference and above (5.556vw × 1440
+     = 80), easing down fluidly on narrower screens so content stops being
+     strangled on tablets/phones (QA audit 2026-07-08); floor 20px. */
+  --margin-desktop: clamp(20px, 5.556vw, 80px);
   --menu-pad: 16px;     /* menu island offset — menu's OWN rule    */
+  /* First-screen air around the brands strip (client 2026-07-08):
+     the heading→band and band→fold gaps are the FIRST thing that gives
+     way on short viewports — 40px (Figma) breathing down to 16px, before
+     any element starts shrinking. 804 = menu 96 + hero content 554 +
+     strip chrome 154 (pad-top 40 + heading 25 + band 88 + 1px slack) —
+     i.e. the fold budget minus these two gaps. Shared by Hero (fold
+     budget) + SocialProof (the gaps themselves). */
+  --band-gap: clamp(16px, calc((100svh - 804px) / 2), 40px);
 
   /* ─── EFFECTS · многосоставные тени и свечения ────────────── */
   /* 5-layer tile shadow (center app tile): */

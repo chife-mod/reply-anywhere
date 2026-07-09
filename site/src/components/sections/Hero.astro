@@ -33,7 +33,7 @@ const wordIconDims: Record<string, { w: number; h: number }> = {
 };
 
 // Orbit channel bubbles — 1:1 sync with Figma 31:2808 (client update
-// 2026-07-02: walmart/ebay/etsy added, dupes gone, 14 channels total).
+// 2026-07-08: etsy out, rozetka + best-buy in, 15 channels total).
 // x/y = top-left of the 64px disc; logo rendered at its exact Figma size inside.
 const orbitBubbles = [
   { id: 'tiktok',      icon: 'logos/tiktok',      x: 64.44,  y: 66.06,  w: 30.333, h: 35 },
@@ -44,9 +44,10 @@ const orbitBubbles = [
   { id: 'trustpilot',  icon: 'logos/trustpilot',  x: 130.66, y: 431.22, w: 40,     h: 38.039 },
   { id: 'whatsapp',    icon: 'logos/whatsapp',    x: 53.09,  y: 264.72, w: 40,     h: 40 },
   { id: 'facebook',    icon: 'logos/facebook',    x: 457.99, y: 336.62, w: 40,     h: 40 },
+  { id: 'bestbuy',     icon: 'logos/best-buy',    x: 473,    y: 447,    w: 40,     h: 24 },
   { id: 'amazon',      icon: 'logos/amazon-round',x: 439,    y: 154,    w: 40,     h: 40 },
   { id: 'maps',        icon: 'logos/google-maps', x: 288,    y: 133,    w: 27.906, h: 40 },
-  { id: 'etsy',        icon: 'logos/etsy',        x: 279,    y: 57,     w: 35,     h: 35 },
+  { id: 'rozetka',     icon: 'logos/rozetka',     x: 279,    y: 57,     w: 40,     h: 39 },
   { id: 'ebay',        icon: 'logos/ebay',        x: 146,    y: 326,    w: 40,     h: 16 },
   { id: 'google',      icon: 'logos/google',      x: 348,    y: 450,    w: 40,     h: 40 },
   { id: 'play',        icon: 'logos/google-play', x: 178,    y: 0,      w: 28.8,   h: 31.78 },
@@ -66,7 +67,7 @@ const sparks = [
     <div class="hero__copy">
       <div class="hero__heading">
         <h1 class="hero__title" id="hero-title">
-          <span>Respond to every</span>
+          <span>Reply to every</span>
           <span class="hero__accent-row">
             <strong class="hero__word" data-hero-anim="word">Review</strong>
             <span class="hero__bubbles" data-hero-anim="bubbles" aria-hidden="true">
@@ -429,7 +430,9 @@ const sparks = [
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    min-height: calc(100svh - 234px);
+    /* 154px = strip chrome (pad-top 40 + heading 25 + band 88 + 1px slack);
+       + the two --band-gap airs → full SocialProof height. */
+    min-height: calc(100svh - 154px - 2 * var(--band-gap));
     padding-top: 96px; /* fixed-menu zone (island h64 + 2×16 pad) */
   }
   .hero__inner {
@@ -439,9 +442,44 @@ const sparks = [
     width: min(var(--container), 100% - 2 * var(--margin-desktop));
     margin-inline: auto;
     /* Figma hero content height: the 581px orbit intentionally bleeds ~13px
-       past this box (its ring edges overlap the menu/band zones — as designed). */
-    min-height: 554px;
+       past this box (its ring edges overlap the menu/band zones — as designed).
+       On short viewports the box gives way to the guaranteed-fold budget:
+       menu 96 + hero zone + brands strip = 100svh (client 2026-07-08);
+       250 = menu 96 + strip chrome 154. */
+    min-height: min(554px, calc(100svh - 250px - 2 * var(--band-gap)));
   }
+
+  /* ── Guaranteed first screen (client 2026-07-08, rev 2): message + brands
+     strip visible on ALL desktop/tablet viewports. Shrink order as the
+     viewport gets shorter:
+     1. 884 → 836px: the strip's two --band-gap airs breathe 40 → 16
+        (tokens.css) — nothing else moves;
+     2. 836 → 735px: the orbit dives under the menu and the strip — up to
+        64px each side (it paints BEHIND both: menu z-100, strip positioned
+        later in tree) — still at full size;
+     3. below 735px: the orbit scales down PROPORTIONALLY (menu-spec
+        philosophy) in height bands — kh = (band floor − 154) / 581, i.e.
+        the scaled canvas exactly fills hero zone (svh − 96 − 186) + 128px
+        dive allowance at every height in the band;
+     4. below 639px the copy column itself no longer fits — fluid adaptive
+        (client 2026-07-08: no zoom/transform on UI): ONLY the H1 font
+        (48 → 36) and the copy's vertical gaps (40 → 24, 24 → 16) ramp down
+        linearly over 639 → 586px viewport heights via svh clamp()s below.
+        Buttons, icons, body text keep their exact Figma sizes.
+     Width axis (independent, final scale = min(kh, kw)): kw = (band floor −
+     697) / 613 — the orbit's viewport-left is W − scrollbar 15 − container
+     margin 80 − right offset 82 − 613·kw and must stay ≥ 520 (copy content
+     ends at 498 + clearance) so orbit bubbles never fly over the message.
+     Below the 946px burger point the hero has no adaptive design yet — kw
+     parks at the last band. */
+  @media (max-height: 734px) { .orbit { --orbit-kh: 0.931; } }
+  @media (max-height: 694px) { .orbit { --orbit-kh: 0.862; } }
+  @media (max-height: 654px) { .orbit { --orbit-kh: 0.793; } }
+  @media (max-height: 614px) { .orbit { --orbit-kh: 0.733; } }
+  @media (max-width: 1309px) { .orbit { --orbit-kw: 0.820; } }
+  @media (max-width: 1199px) { .orbit { --orbit-kw: 0.657; } }
+  @media (max-width: 1099px) { .orbit { --orbit-kw: 0.494; } }
+  @media (max-width: 999px)  { .orbit { --orbit-kw: 0.408; } }
 
   /* ─── Left column (Figma 2:37 · 549w) ───────────────────────── */
   .hero__copy {
@@ -450,19 +488,24 @@ const sparks = [
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--sp-10);
+    /* 40px; fluid 40 → 24 over 639 → 586svh (fold-fit stage 4 above) */
+    gap: clamp(var(--sp-6), calc(30.19svh - 152.9px), var(--sp-10));
     max-width: 549px;
   }
   .hero__heading {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-6);
+    /* 24px; fluid 24 → 16 over 639 → 586svh (fold-fit stage 4 above) */
+    gap: clamp(var(--sp-4), calc(15.09svh - 72.4px), var(--sp-6));
   }
   .hero__title {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    font-size: var(--fs-h1);
+    /* 48px; fluid 48 → 36 over 639 → 586svh — the ONLY type that shrinks
+       (fold-fit stage 4 above); word bubbles stay 50px, so the accent row
+       keeps its height and only line 1 actually gives space back */
+    font-size: clamp(36px, calc(22.64svh - 96.7px), var(--fs-h1));
     line-height: var(--lh-h1);
     font-weight: var(--fw-regular);
     letter-spacing: normal;
@@ -470,6 +513,7 @@ const sparks = [
   }
   .hero__accent-row {
     display: flex;
+    flex-wrap: wrap; /* «Comment» + bubbles > 390px — wrap instead of overflow */
     align-items: center;
     gap: var(--sp-1);
   }
@@ -511,8 +555,9 @@ const sparks = [
   }
   .hero__chips {
     display: flex;
+    flex-wrap: wrap; /* narrow screens: chips flow to the next line (QA 2026-07-08) */
     align-items: center;
-    gap: var(--sp-6);
+    gap: var(--sp-3) var(--sp-6);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -526,7 +571,11 @@ const sparks = [
     right: 82px;
     width: 613px;
     height: 581px;
-    transform: translateY(-50%); /* vertical centre of the screen (client spec) */
+    /* vertical centre of the screen (client spec); the min(kh, kw) scale
+       shrinks the whole canvas proportionally on short/narrow viewports
+       (fold-guarantee bands above), pinned to the Figma right:82 anchor */
+    transform: translateY(-50%) scale(min(var(--orbit-kh, 1), var(--orbit-kw, 1)));
+    transform-origin: 100% 50%;
     pointer-events: none;
   }
   /* Shared orbit centre: (297, 296.72) on the 613×581 canvas. */
@@ -650,4 +699,43 @@ const sparks = [
     background: var(--surface-bubble);
   }
   .orbit__spark { position: absolute; }
+
+  /* ── Burger-zone adaptive, ≤946px (QA audit 2026-07-08). No hero mobile
+     frames in Figma yet — engineering degrade by best practice: single
+     column, copy first at full reading width, the orbit becomes a centered
+     showpiece BELOW the copy instead of floating over it. The desktop
+     fold-guarantee machinery (svh min-heights, kh/kw scale bands) is
+     switched off — the page simply flows; --orbit-m width bands keep the
+     613px canvas inside the viewport, the margin math collapses the layout
+     box to the scaled visual so no dead gaps and no page overflow. */
+  @media (max-width: 946px) {
+    .hero {
+      min-height: auto;
+      padding-bottom: var(--sp-6);
+      overflow: clip; /* orbit box may exceed narrow viewports — visual is scaled to fit */
+    }
+    .hero__inner {
+      display: block;
+      min-height: auto;
+    }
+    .orbit {
+      position: relative;
+      top: auto;
+      right: auto;
+      transform: scale(var(--orbit-m, 1));
+      transform-origin: 50% 0;
+      /* center the fixed 613px canvas box; bubbles orbit to the very top of
+         the canvas, so keep a real gap under the chips — only the bottom
+         carries ~48px of transparent ring padding to tuck away */
+      margin-top: var(--sp-2);
+      margin-inline: calc((100% - 613px) / 2);
+      /* collapse the box to the scaled visual height */
+      margin-bottom: calc(581px * (var(--orbit-m, 1) - 1) - 48px);
+    }
+  }
+  @media (max-width: 652px) { .orbit { --orbit-m: 0.85; } }
+  @media (max-width: 560px) { .orbit { --orbit-m: 0.72; } }
+  @media (max-width: 480px) { .orbit { --orbit-m: 0.62; } }
+  @media (max-width: 419px) { .orbit { --orbit-m: 0.54; } }
+  @media (max-width: 370px) { .orbit { --orbit-m: 0.48; } }
 </style>

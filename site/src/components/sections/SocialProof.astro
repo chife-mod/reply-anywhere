@@ -101,16 +101,26 @@ const quoteBlue =
     /* Client-brand tile colors — Figma literals, no token yet (see missingTokens) */
     --tile-green: #1dcf94;
     --tile-blue: #1998ff;
-    padding-block: var(--sp-10); /* heading y40 · band bottom inset 40 */
+    /* heading y40 · band bottom inset 40 → 16 on short viewports (--band-gap:
+       these gaps yield FIRST in the first-screen fit, client 2026-07-08) */
+    padding-block: var(--sp-10) var(--band-gap);
+    /* paint above the hero orbit — on short viewports it may dive under the
+       strip (client 2026-07-08); positioned + later in tree ⇒ orbit stays behind */
+    position: relative;
     overflow: hidden; /* strip is 1718px wide — viewport clips the marquee */
   }
 
   /* ── Heading — 24px one-liner, words spaced by explicit 8px gaps (19:175) ── */
   .social-proof__title {
     display: flex;
+    /* words may wrap as WHOLE words on narrow screens (QA 2026-07-08: the
+       spans used to wrap mid-phrase into a broken two-column look) */
+    flex-wrap: wrap;
     justify-content: center;
-    gap: var(--sp-2);
+    gap: var(--sp-1) var(--sp-2);
     margin: 0;
+    padding-inline: var(--menu-pad);
+    text-align: center;
     font-size: var(--fs-card-title); /* 24px — same step as card titles; no band-title token */
     line-height: var(--lh-h2); /* 1.05 */
     font-weight: var(--fw-regular);
@@ -123,7 +133,7 @@ const quoteBlue =
 
   /* ── Marquee band (19:170) ── */
   .social-proof__band {
-    margin-top: var(--sp-10); /* heading ends y65 → band y106 */
+    margin-top: var(--band-gap); /* heading ends y65 → band y106 (40 → 16 when tight) */
   }
   /* Track = two identical groups side by side sliding left by exactly one
      group width for a seamless wrap. Client 2026-07-02 (rev 2): ~30% slower

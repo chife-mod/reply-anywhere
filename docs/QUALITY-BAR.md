@@ -24,6 +24,12 @@
   accessible markup that passes any senior front-end review.
 - **SVG icons as FILES, not inline.** Exported from Figma components into the repo (inline
   distorts/stretches). One `<Icon>` pattern, not bespoke markup per use.
+- **Sanitize every Figma SVG export.** (client-caught, 2026-07-02) Figma instance exports
+  BAKE parent context into the file: a full-viewBox `#1E1E1E` backdrop rect, the page
+  canvas rect (`width="1440"`), pill/disc context rects — invisible on dark surfaces,
+  visible on glow. After export: strip context rects, but NEVER touch rects inside
+  `<clipPath>` (they're clip areas — emptying them clips the icon to nothing). Verify
+  CONTENT (`grep '#1E1E1E\|width="1440"'`), not just file format.
 - **Raster images: 2x sources → AVIF.** (client policy 2026-07-02) Export photos/raster
   from Figma at 2x, serve via `astro:assets` `<Image format="avif" quality={70}
   densities={[1,2]}>` — maximum compression, no visible quality loss (~90% smaller than

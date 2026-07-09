@@ -115,9 +115,11 @@ const pills: Pill[] = [
      both sections stick at top:0 inside the tall scene wrapper, PlatformIntro
      overlays Constellation via margin-top:-100vh, ScrollTrigger only scrubs. */
   [data-scene='one-platform'].is-scene {
-    /* 450vh → 360vh (client 2026-07-02): −20% wheel distance + merged
-       body/chips beat — the scene reads brisk, not «скролл ради скролла». */
-    height: 360vh; /* ≈260vh of scrub distance for the timeline */
+    /* 450 → 360 (2026-07-02) → 300 → 260vh (client 2026-07-08 rev 3: «ещё
+       чуть-чуть сократить»): the timeline starts while the first screen is
+       still leaving (trigger top-bottom), so the WHOLE 260vh is live scrub —
+       no dead dark stretch before the words. */
+    height: 260vh; /* 100vh pre-pin reveal + 160vh pinned */
   }
   .is-scene [data-scene-part='constellation'] {
     position: sticky;
@@ -240,58 +242,70 @@ const pills: Pill[] = [
     gsap.set(body, { opacity: 0, y: 40 });
     gsap.set(chips, { opacity: 0, y: 24 });
 
-    // One scrubbed timeline; position values are abstract beats mapped onto
-    // the ~350vh scrub distance by ScrollTrigger.
+    // One scrubbed timeline; position values are abstract beats (9.6 total)
+    // mapped onto the full 260vh track (beat ≈ 27vh; the pin engages at ~3.7).
+    // Trigger starts the moment the scene peeks in from below (client
+    // 2026-07-08: no dead dark stretch). scrub 0.6 = soft catch-up: on a fast
+    // wheel flick the states PLAY toward the target instead of teleporting —
+    // without it the headline just «appears» fully formed (client 2026-07-08
+    // rev 2: «не вкручивается»).
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: scene,
-        start: 'top top',
+        start: 'top bottom',
         end: 'bottom bottom',
-        scrub: true,
+        scrub: 0.6,
       },
     });
 
-    // 1 — headline part 1 «types» in word by word (spec §1).
-    tl.to(line1, { opacity: 1, duration: 0.12, stagger: 0.16 }, 0);
+    // 1 — headline part 1 «types» in word by word (spec §1). Beat 1.6 on the
+    // 260vh track ≈ the headline's Y crossing the fold (515px below the scene
+    // top) — the first word or two light up a breath below the edge (client
+    // 2026-07-08 rev 3: «ещё немножечко раньше»), the rest visibly types as
+    // the line rides up and the brands strip is still leaving.
+    tl.to(line1, { opacity: 1, duration: 0.12, stagger: 0.16 }, 1.6);
 
     // 2 — wave 1: the 3 dark pills fly in — opacity 0 + scale 1.6 → settle,
     // each with its own seeded duration/delay (branch.computer feel, spec §2).
+    // Launches pre-pin, right on the typing's tail — tags arriving as the
+    // strip's last rows exit (client 2026-07-08).
     wave1.forEach((pill, i) => {
       const r = mulberry32(i + 1);
       tl.to(
         pill,
-        { opacity: 1, scale: 1, duration: 0.9 + r() * 0.7, ease: 'power2.out' },
-        1.1 + r() * 0.5
+        { opacity: 1, scale: 1, duration: 0.8 + r() * 0.6, ease: 'power2.out' },
+        2.5 + r() * 0.5
       );
     });
 
     // 3 — headline part 2 (violet bold) types in (spec §3).
-    tl.to(line2, { opacity: 1, duration: 0.12, stagger: 0.16 }, 3.2);
+    tl.to(line2, { opacity: 1, duration: 0.12, stagger: 0.16 }, 4.0);
 
     // 4 — wave 2: the 10 violet pills, same effect (spec §4).
     wave2.forEach((pill, i) => {
       const r = mulberry32(101 + i);
       tl.to(
         pill,
-        { opacity: 1, scale: 1, duration: 0.8 + r() * 0.8, ease: 'power2.out' },
-        4.1 + r() * 0.9
+        { opacity: 1, scale: 1, duration: 0.7 + r() * 0.6, ease: 'power2.out' },
+        4.8 + r() * 0.7
       );
     });
 
     // 5 — pills clear the stage; the headline stays put (spec §5).
     // (client 2026-07-02: dead gaps trimmed — the scene must not feel like
     // «скролл ради скролла»)
-    tl.to(pills, { opacity: 0, scale: 0.92, duration: 0.8, ease: 'power1.in', stagger: 0.015 }, 6.4);
+    tl.to(pills, { opacity: 0, scale: 0.92, duration: 0.7, ease: 'power1.in', stagger: 0.015 }, 7.0);
 
     // 6+7 MERGED (client 2026-07-02): the explanation arrives as ONE composed
     // beat — body fades up and the three chips чик-чик-чик right on top of it
     // (stagger kept, just tighter), no separate scroll floor for the chips.
-    tl.to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 7.2);
-    tl.to(chips, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.3 }, 7.35);
+    tl.to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 7.8);
+    tl.to(chips, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.25 }, 7.95);
 
-    // 8 — short settle before the unpin (spec §8: normal scroll resumes).
-    tl.to({}, { duration: 0.6 }, 8.6);
+    // 8 — settle before the unpin (spec §8: normal scroll resumes) — the
+    // finished block rests for the last ~7% of the track.
+    tl.to({}, { duration: 0.65 }, 8.95);
   }
 
   const scene = document.querySelector<HTMLElement>('[data-scene="one-platform"]');

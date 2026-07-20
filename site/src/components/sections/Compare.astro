@@ -1,377 +1,494 @@
 ---
-// Compare (no Figma frame — designed in-code per client ask 2026-07-20, in the
-// site's own language). Sprinklr vs gominga vs Reply Anywhere, honest table.
-// Content basis: adversarially verified public facts (research 2026-07-20:
-// sprinklr.com product pages + Help Center, gominga.com, G2/Capterra/Vendr) +
-// BRIEF.md for Reply Anywhere capabilities. UX rules per the comparison-table
-// digest (Baymard/NN/g/Smashing, docs in the refboard run 2026-07-08):
-// grouped rows · distinct icon SHAPES for yes/partial/no + sr-only text ·
-// annotated cells instead of bare marks · honest crosses in our own column ·
-// price as $-glyphs WITH a legend · real <table> semantics, sticky header.
+// Compare — implemented 1:1 from Oleg's Claude Design file «Comparison Table.html»
+// (project 9e24ba3d «Reply Anywhere comparison table», designed on the synced
+// design-language bundle, imported 2026-07-21). Design decisions are the file's:
+// eyebrow + one-line H2 with inline accent, $-tier in each vendor header,
+// violet zebra rows, flat row list (no group headers), quantitative-first
+// cells with big numbers, qualifier pills (Add-on / Q4), honest «no» in our
+// own column, legend with real $ mappings. This build adds only what the
+// design canvas has no context for: the fixed-menu sticky offset, #demo
+// anchors, SVG marks as repo files, and the ≤946/≤760 adaptive.
+// Data flags pending Vsevolod's sign-off are tracked in the session report
+// (channel counts, «12 languages», gominga benchmarking cell, trial claim).
 import Icon from '../ui/Icon.astro';
-import Button from '../ui/Button.astro';
-import SectionHeading from '../ui/SectionHeading.astro';
 
-type Mark = { s: 'yes' | 'partial' | 'no'; note?: string };
-type Cell = Mark | { text: string; note?: string } | { price: number };
-type Row =
-  | { group: string }
-  | { name: string; sub?: string; cells: [Cell, Cell, Cell] };
+type MarkCell = { mark: 'yes' | 'no'; label: string; qual?: string };
+type NumCell = { num: string; unit?: string; qual?: string };
+type Cell = MarkCell | NumCell;
 
-const columns = ['Sprinklr', 'gominga', 'Reply Anywhere'];
+const vendors = [
+  { name: 'Sprinklr', sub: 'Enterprise CXM suite', tier: 5 },
+  { name: 'Gominga', sub: 'Review management', tier: 3 },
+  { name: 'Reply Anywhere', sub: 'Omnichannel · AI-first', tier: 2, us: true },
+];
 
-// Cell order matches `columns`. Facts flagged as draft are listed in STATUS
-// notes for Vsevolod's sign-off before deploy:live.
-const rows: Row[] = [
-  { group: 'Review channels' },
+const rows: { title: string; sub: string; cells: [Cell, Cell, Cell] }[] = [
   {
-    name: 'Marketplace & e-commerce reviews',
-    sub: 'Amazon, OTTO, Walmart, Rozetka and more',
-    cells: [{ s: 'partial', note: 'Monitoring only' }, { s: 'yes' }, { s: 'yes' }],
+    title: 'Connected channels',
+    sub: 'Review sites, marketplaces & social inboxes in one place',
+    cells: [{ num: '30', unit: '+' }, { num: '20', unit: '+' }, { num: '40', unit: '+' }],
   },
   {
-    name: 'App store reviews',
-    sub: 'App Store · Google Play',
-    cells: [{ s: 'partial', note: 'Replies on Google Play only' }, { s: 'yes' }, { s: 'yes' }],
+    title: 'AI reply languages',
+    sub: "Draft on-brand replies in the customer's language",
+    cells: [{ num: '100', unit: '+', qual: 'Add-on' }, { num: '12' }, { num: '50', unit: '+' }],
   },
   {
-    name: 'Google Maps & location reviews',
-    sub: 'Google Business Profile, Yelp',
-    cells: [{ s: 'yes' }, { s: 'yes', note: '+ Q&A and photos' }, { s: 'yes' }],
-  },
-  {
-    name: 'Customer questions (Q&A)',
-    sub: 'Product questions answered next to reviews',
-    cells: [{ s: 'no', note: 'Not documented' }, { s: 'yes' }, { s: 'yes' }],
-  },
-  { group: 'Social & messaging' },
-  {
-    name: 'Social media comments',
-    sub: 'Instagram, TikTok, Facebook',
-    cells: [{ s: 'yes' }, { s: 'no' }, { s: 'yes' }],
-  },
-  {
-    name: 'Direct messages',
-    sub: 'WhatsApp, Messenger, Instagram DM',
-    cells: [{ s: 'yes' }, { s: 'no' }, { s: 'yes' }],
-  },
-  { group: 'AI & automation' },
-  {
-    name: 'AI-generated replies',
-    sub: 'On-brand answers, drafted in seconds',
-    cells: [{ s: 'yes' }, { s: 'no', note: 'Templates only' }, { s: 'yes' }],
-  },
-  {
-    name: 'Sentiment & intent analysis',
-    sub: 'Understand what customers actually mean',
+    title: 'AI-drafted responses',
+    sub: 'Context-aware draft ready before you open the thread',
     cells: [
-      { s: 'yes', note: 'Enterprise AI suite' },
-      { s: 'yes', note: 'Review texts only' },
-      { s: 'yes', note: 'Semantic Force engine' },
-    ],
-  },
-  { group: 'Fit & pricing' },
-  {
-    name: 'Full enterprise CX suite',
-    sub: 'Voice, marketing, ads and care in one contract',
-    cells: [{ s: 'yes' }, { s: 'no' }, { s: 'no', note: 'By design — focused tool' }],
-  },
-  {
-    name: 'Best for',
-    cells: [
-      { text: 'Global enterprise CX programs' },
-      { text: 'Review management programs' },
-      { text: 'Reviews + social conversations in one' },
+      { mark: 'yes', label: 'Yes, with add-on', qual: 'Add-on' },
+      { mark: 'no', label: 'No' },
+      { mark: 'yes', label: 'Yes' },
     ],
   },
   {
-    name: 'Pricing',
-    sub: 'Relative cost of ownership',
+    title: 'Brand-tone tuning',
+    sub: "Train the model on your voice, do's and don'ts",
+    cells: [{ mark: 'yes', label: 'Yes' }, { mark: 'no', label: 'No' }, { mark: 'yes', label: 'Yes' }],
+  },
+  {
+    title: 'Bulk one-click replies',
+    sub: 'Approve and send drafts across dozens of reviews at once',
+    cells: [{ mark: 'no', label: 'No' }, { mark: 'yes', label: 'Yes' }, { mark: 'yes', label: 'Yes' }],
+  },
+  {
+    title: 'Sentiment analytics',
+    sub: 'Track tone and themes across every channel',
+    cells: [{ mark: 'yes', label: 'Yes' }, { mark: 'yes', label: 'Yes' }, { mark: 'yes', label: 'Yes' }],
+  },
+  {
+    title: 'Competitor benchmarking',
+    sub: 'Compare your ratings against rival locations & brands',
     cells: [
-      { price: 5, note: 'Enterprise contracts' },
-      { price: 3, note: 'Quote-based' },
-      { price: 2, note: 'Accessible plans' },
+      { mark: 'yes', label: 'Yes' },
+      { mark: 'no', label: 'No' },
+      { mark: 'no', label: 'No, on the roadmap', qual: 'Q4' },
     ],
+  },
+  {
+    title: 'Shared team inbox',
+    sub: 'Assign, comment and resolve without leaving the thread',
+    cells: [{ mark: 'yes', label: 'Yes' }, { mark: 'yes', label: 'Yes' }, { mark: 'yes', label: 'Yes' }],
+  },
+  {
+    title: 'Self-serve setup',
+    sub: 'No mandatory onboarding fee or sales call to start',
+    cells: [{ mark: 'no', label: 'No' }, { mark: 'no', label: 'No' }, { mark: 'yes', label: 'Yes' }],
   },
 ];
 
-const markMeta = {
-  yes: { label: 'Yes' },
-  partial: { label: 'Partially' },
-  no: { label: 'No' },
-} as const;
-
-const isGroup = (r: Row): r is { group: string } => 'group' in r;
+const tierGlyphs = (tier: number) => ({ on: '$'.repeat(tier), off: '$'.repeat(5 - tier) });
+const isMark = (c: Cell): c is MarkCell => 'mark' in c;
 ---
 
-<section class="compare" id="compare" aria-labelledby="compare-title">
-  <div class="compare__inner">
-    <header class="compare__head">
-      <div id="compare-title">
-        <SectionHeading line1="Sprinklr vs gominga" accent="vs Reply Anywhere" align="left" />
-      </div>
-      <p class="compare__lead">
-        Three tools, three philosophies: a global enterprise CX suite, a review-management
-        specialist — and Reply Anywhere, which brings reviews and social conversations into
-        one workspace. Here is the honest picture.
-      </p>
-    </header>
+<section class="cmp-section" id="compare" aria-labelledby="cmp-title">
+  <div class="cmp-wrap">
+    <p class="cmp-eyebrow">Compare</p>
+    <h2 class="cmp-h2" id="cmp-title">
+      The same job, done for <strong>a fraction of the price</strong>
+    </h2>
+    <p class="cmp-lead">
+      Sprinklr and Gominga each do part of it well. Reply Anywhere unifies more channels and
+      AI-drafted replies without the enterprise contract — and we mark where the others win.
+    </p>
 
-    <table class="compare__table">
+    <table class="cmp-table">
+      <caption>
+        Feature comparison: Sprinklr vs Gominga vs Reply Anywhere across channels, AI replies,
+        analytics, workflow and pricing.
+      </caption>
+      <colgroup>
+        <col class="col-feature" />
+        <col class="col-vendor" />
+        <col class="col-vendor" />
+        <col class="col-vendor" />
+      </colgroup>
       <thead>
         <tr>
-          <th scope="col" class="c-what"><span class="sr-only">Capability</span></th>
-          {columns.map((c, i) => (
-            <th scope="col" class:list={['c-col', { 'is-us': i === 2 }]}>
-              {i === 2 && <Icon name="logos/reply-anywhere-mark" width={26} height={23} />}
-              <span>{c}</span>
+          <th scope="col" class="head-cell feature-head"></th>
+          {vendors.map((v) => (
+            <th scope="col" class:list={['head-cell', { 'ra-col': v.us }]}>
+              <span class:list={['vendor-logo', { ra: v.us }]}><span>{v.name}</span></span>
+              <div class="vendor-name">{v.sub}</div>
+              <div class:list={['vendor-price', { 'ra-price': v.us }]}>
+                <span aria-hidden="true">{tierGlyphs(v.tier).on}<span class="off">{tierGlyphs(v.tier).off}</span></span>
+                <span class="sr-only">Price tier {v.tier} of 5</span>
+              </div>
             </th>
           ))}
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) =>
-          isGroup(row) ? (
-            <tr class="c-group">
-              <th colspan="4" scope="colgroup">{row.group}</th>
-            </tr>
-          ) : (
-            <tr>
-              <th scope="row" class="c-what">
-                <span class="c-name">{row.name}</span>
-                {row.sub && <span class="c-sub">{row.sub}</span>}
-              </th>
-              {row.cells.map((cell, i) => (
-                <td class:list={[{ 'is-us': i === 2 }]}>
-                  {'s' in cell && (
-                    <span class="c-mark">
+        {rows.map((row) => (
+          <tr class="feat">
+            <th scope="row" class="feat-name">
+              <div class="feat-title">{row.title}</div>
+              <div class="feat-sub">{row.sub}</div>
+            </th>
+            {row.cells.map((cell, i) => (
+              <td class:list={['val', { 'ra-col': i === 2 }]}>
+                {isMark(cell) ? (
+                  <>
+                    <span class="mark" role="img" aria-label={cell.label}>
                       <Icon
-                        name={cell.s === 'yes' ? (i === 2 ? 'compare/yes-us' : 'compare/yes') : `compare/${cell.s}`}
-                        size={24}
+                        name={cell.mark === 'yes' ? (i === 2 ? 'compare/yes-us' : 'compare/yes') : 'compare/no'}
+                        size={28}
                         alt=""
                       />
-                      <span class="sr-only">{markMeta[cell.s].label}</span>
-                      {cell.note && <span class="c-note">{cell.note}</span>}
                     </span>
-                  )}
-                  {'text' in cell && <span class="c-text">{cell.text}</span>}
-                  {'price' in cell && (
-                    <span class="c-mark">
-                      <span class="c-price" aria-hidden="true">
-                        <b>{'$'.repeat(cell.price)}</b>{'$'.repeat(5 - cell.price)}
-                      </span>
-                      <span class="sr-only">{cell.price} of 5 — relative price level</span>
-                      {'note' in cell && cell.note && <span class="c-note">{cell.note}</span>}
-                    </span>
-                  )}
-                </td>
-              ))}
-            </tr>
-          )
-        )}
+                    {cell.qual && (
+                      <>
+                        <br />
+                        <span class="qual">{cell.qual}</span>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <span class="num">{cell.num}</span>
+                    {cell.unit && <span class="unit">{cell.unit}</span>}
+                    {cell.qual && (
+                      <>
+                        <br />
+                        <span class="qual">{cell.qual}</span>
+                      </>
+                    )}
+                  </>
+                )}
+              </td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </table>
 
-    <div class="compare__foot">
-      <p class="compare__legend">
-        $ — entry-level · $$$$$ — enterprise contracts. Based on public product pages, help
-        docs and marketplace data, July 2026.
+    <div class="cmp-cta-row">
+      <a class="foot-cta" href="#demo">Request a free demo</a>
+      <span class="cta-hint">14-day trial · no card · cancel anytime</span>
+    </div>
+
+    <div class="cmp-foot">
+      <div class="legend">
+        <span class="legend-item"><b aria-hidden="true">$$</b> Under $500/mo</span>
+        <span class="legend-sep"></span>
+        <span class="legend-item"><b aria-hidden="true">$$$</b> $500–2k/mo</span>
+        <span class="legend-sep"></span>
+        <span class="legend-item"><b aria-hidden="true">$$$$$</b> Enterprise / custom</span>
+      </div>
+      <p class="cmp-note">
+        Price tiers from each vendor's published plans and public pricing pages, July 2026.
+        Competitor capabilities reflect their standard tiers; add-ons noted.
       </p>
-      <Button href="#demo" label="Request a free demo" />
     </div>
   </div>
 </section>
 
 <style>
-  .compare {
-    padding: var(--sp-10) var(--margin-desktop);
+  .cmp-section {
+    padding: var(--sp-20) var(--margin-desktop) var(--sp-24);
+    scroll-margin-top: 96px; /* #compare anchor lands below the fixed menu */
   }
-  .compare__inner {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-8);
+  .cmp-wrap {
     max-width: var(--container);
     margin-inline: auto;
   }
 
-  /* Header row mirrors the Features pattern: heading left, lead right. */
-  .compare__head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: var(--sp-8);
+  .cmp-eyebrow {
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--violet-light);
+    margin-bottom: var(--sp-4);
   }
-  .compare__lead {
-    width: 416px; /* same measure as features__lead */
-    flex-shrink: 0;
+  .cmp-h2 {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    font-weight: var(--fw-regular);
+    color: var(--text-body);
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+  .cmp-h2 strong {
+    color: var(--violet);
+    font-weight: var(--fw-bold);
+  }
+  .cmp-lead {
+    margin-top: var(--sp-5);
     font-size: var(--fs-lead);
     line-height: var(--lh-body);
-    color: var(--text-body);
+    color: var(--text-dim);
+    max-width: 56ch;
+    text-wrap: pretty;
   }
 
-  /* ── Table ── */
-  .compare__table {
+  /* ── table shell ─────────────────────────────────────────── */
+  .cmp-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
+    margin-top: var(--sp-12);
     table-layout: fixed;
   }
-  .compare__table col,
-  .c-what { text-align: left; }
+  .cmp-table caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .cmp-table col.col-feature { width: 34%; }
+  .cmp-table col.col-vendor { width: 22%; }
 
+  /* ── sticky product header (design top:0 + our fixed-menu zone) ── */
   thead th {
     position: sticky;
-    top: 96px; /* below the fixed menu zone */
-    z-index: 2;
-    padding: var(--sp-4) var(--sp-4) var(--sp-4);
+    top: 96px;
+    z-index: 3;
+  }
+  .head-cell {
     background: var(--bg);
-    font-size: var(--fs-card-sub);
-    font-weight: var(--fw-semibold);
-    color: var(--text-hi);
+    padding: var(--sp-6) var(--sp-5) var(--sp-5);
+    text-align: center;
+    vertical-align: top;
     border-bottom: 1px solid var(--border-line);
   }
-  .c-col {
-    width: 19%;
-    text-align: center;
+  .head-cell.feature-head {
+    text-align: left;
+    vertical-align: bottom;
   }
-  .c-col span { display: block; }
-  .c-col :global(img) { margin: 0 auto var(--sp-1); }
-  /* Our column — violet-tinted band with soft borders, top-rounded at the head. */
-  .is-us {
-    background: linear-gradient(var(--surface-card), var(--surface-card)), var(--bg);
-    box-shadow: inset 1px 0 var(--border-card), inset -1px 0 var(--border-card);
+  .vendor-logo {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--sp-3);
   }
-  thead .is-us {
-    border-radius: var(--r-md) var(--r-md) 0 0;
-    box-shadow:
-      inset 1px 1px var(--border-card),
-      inset -1px 0 var(--border-card);
-    color: var(--violet-light);
+  .vendor-logo span {
+    font-size: 22px; /* design literal — vendor wordmark row */
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.01em;
+    color: var(--text-hi);
   }
-  tbody tr:last-child .is-us {
-    box-shadow:
-      inset 1px -1px var(--border-card),
-      inset -1px 0 var(--border-card);
-    border-radius: 0 0 var(--r-md) var(--r-md);
-  }
-
-  /* Group separators (12px caps, dim — the Baymard grouped-rows pattern). */
-  .c-group th {
-    padding: var(--sp-8) var(--sp-4) var(--sp-2);
+  .vendor-name {
     font-size: var(--fs-chip);
-    font-weight: var(--fw-semibold);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--text-dim);
+    margin-bottom: var(--sp-4);
+    white-space: nowrap;
   }
-  .c-group th { border-bottom: 1px solid var(--border-soft); }
+  .vendor-price {
+    font-size: var(--fs-card-title);
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.06em;
+    color: var(--text-body);
+    font-variant-numeric: tabular-nums;
+  }
+  .vendor-price .off {
+    color: var(--text-dim);
+    opacity: 0.35;
+  }
 
-  tbody th,
-  tbody td {
-    padding: var(--sp-4);
+  /* ── highlighted RA column ───────────────────────────────── */
+  .ra-col {
+    background: var(--surface-pill-social);
+    border-left: 1px solid var(--border-strong);
+    border-right: 1px solid var(--border-strong);
+  }
+  thead .ra-col.head-cell {
+    background: linear-gradient(180deg, rgba(171, 13, 255, 0.22), rgba(171, 13, 255, 0.1));
+    border-top: 1px solid var(--border-strong);
+    border-top-left-radius: var(--r-md);
+    border-top-right-radius: var(--r-md);
+    border-bottom-color: var(--border-strong);
+  }
+  .vendor-logo.ra span { color: var(--text-hi); }
+  .ra-price { color: var(--text-hi); }
+
+  /* ── feature rows: violet zebra (design: RA stripe rides along) ── */
+  tbody tr.feat td,
+  tbody tr.feat th {
     border-bottom: 1px solid var(--border-soft);
-    vertical-align: middle;
   }
-  tbody td { text-align: center; }
-  tbody tr:not(.c-group):hover th,
-  tbody tr:not(.c-group):hover td {
-    background-color: rgba(139, 118, 255, 0.04); /* row guide across 3 columns */
-  }
-  tbody tr:not(.c-group):hover td.is-us {
-    background-color: transparent; /* keep the band's own tint stable */
-  }
+  tbody tr.feat th.feat-name,
+  tbody tr.feat td.val { background: transparent; }
+  tbody tr.feat td.ra-col.val { background: rgba(171, 13, 255, 0.14); }
+  tbody tr.feat:nth-of-type(even) th.feat-name,
+  tbody tr.feat:nth-of-type(even) td.val { background: rgba(139, 118, 255, 0.055); }
+  tbody tr.feat:nth-of-type(even) td.ra-col.val { background: rgba(171, 13, 255, 0.24); }
 
-  .c-name {
-    display: block;
-    font-size: var(--fs-ui);
+  th.feat-name {
+    text-align: left;
+    font-weight: var(--fw-regular);
+    padding: var(--sp-45) var(--sp-4);
+    vertical-align: top;
+  }
+  .feat-title {
+    font-size: var(--fs-card-sub);
     font-weight: var(--fw-medium);
     color: var(--text-hi);
-    line-height: var(--lh-body);
   }
-  .c-sub {
-    display: block;
-    margin-top: 2px;
+  .feat-sub {
+    margin-top: 3px;
     font-size: var(--fs-chip);
-    line-height: var(--lh-chip);
+    line-height: 1.35; /* design literal */
     color: var(--text-dim);
+    max-width: 34ch;
   }
 
-  .c-mark {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sp-1);
-  }
-  .c-mark :global(img) { margin-inline: auto; }
-  .c-note {
-    font-size: var(--fs-chip);
-    line-height: var(--lh-chip);
-    color: var(--text-dim);
-  }
-  .c-text {
-    font-size: var(--fs-ui);
-    line-height: var(--lh-body);
+  td.val {
+    text-align: center;
+    vertical-align: middle;
+    padding: var(--sp-45) var(--sp-4);
+    font-size: var(--fs-card-sub);
     color: var(--text-body);
+    font-variant-numeric: tabular-nums;
   }
-
-  .c-price {
+  td.val .num {
     font-size: var(--fs-card-title);
-    line-height: 1;
-    letter-spacing: 0.04em;
-    font-weight: var(--fw-regular);
-    color: rgba(255, 255, 255, 0.22); /* the unfilled glyphs */
-  }
-  .c-price b {
     font-weight: var(--fw-semibold);
     color: var(--text-hi);
+    letter-spacing: -0.01em;
   }
-  .is-us .c-price b { color: var(--violet-light); }
+  td.val .unit {
+    font-size: var(--fs-chip);
+    color: var(--text-dim);
+  }
+  td.ra-col.val .num { color: var(--violet-light); }
+  .qual {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: var(--fs-pill-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border: 1px solid var(--border-line);
+    border-radius: var(--r-pill);
+    padding: 2px var(--sp-2);
+  }
+
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mark :global(img) {
+    width: 28px;
+    height: 28px;
+  }
 
   .sr-only {
     position: absolute;
     width: 1px;
     height: 1px;
+    padding: 0;
     margin: -1px;
     overflow: hidden;
-    clip: rect(0 0 0 0);
+    clip: rect(0, 0, 0, 0);
     white-space: nowrap;
+    border: 0;
   }
 
-  /* ── Footer: legend left, CTA right (CTA visually closes our column). ── */
-  .compare__foot {
+  /* ── bottom rounding of RA column ────────────────────────── */
+  tbody tr.feat:last-of-type td.ra-col {
+    border-bottom: 1px solid var(--border-strong);
+    border-bottom-left-radius: var(--r-md);
+    border-bottom-right-radius: var(--r-md);
+  }
+
+  /* ── CTA + legend / footnote ─────────────────────────────── */
+  .cmp-cta-row {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-top: var(--sp-10);
+  }
+  .foot-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sp-4) var(--sp-8);
+    background: var(--violet);
+    border-radius: var(--r-md);
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    color: var(--text-hi);
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      background var(--dur-fast) var(--ease-out);
+  }
+  .foot-cta:hover {
+    background: var(--violet-light);
+    color: var(--text-hi);
+    transform: translateY(-1px);
+  }
+  .cta-hint {
+    font-size: var(--fs-chip);
+    color: var(--text-dim);
+  }
+  .cmp-foot {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--sp-6);
-  }
-  .compare__legend {
+    margin-top: var(--sp-8);
+    padding-top: var(--sp-5);
     font-size: var(--fs-chip);
-    line-height: var(--lh-chip);
     color: var(--text-dim);
-    max-width: 520px;
+  }
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+  .legend-item b {
+    color: var(--text-body);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.06em;
+  }
+  .legend-sep {
+    width: 1px;
+    height: 14px;
+    background: var(--border-line);
+  }
+  .cmp-note {
+    margin-left: auto;
+    max-width: 44ch;
+    text-align: right;
+    line-height: 1.4;
   }
 
-  /* ── Adaptive (mirrors the site's ≤946 stack philosophy) ── */
+  /* ── Adaptive (the canvas is desktop-only; same degrade rules as the
+     rest of the site: ≤946 burger zone, ≤760 phone compaction) ── */
   @media (max-width: 946px) {
-    .compare__head {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .compare__lead { width: auto; max-width: 549px; }
-    thead th { top: 0; position: static; } /* burger zone: no sticky under floating menu */
+    .cmp-section { padding-block: var(--sp-16) var(--sp-20); }
+    thead th { position: static; } /* no sticky under the floating burger menu */
   }
   @media (max-width: 760px) {
-    tbody th, tbody td, thead th { padding: var(--sp-3) var(--sp-2); }
-    .c-what { width: 30%; } /* label column narrows, three value columns breathe */
-    .c-col { width: auto; font-size: var(--fs-chip); }
-    .c-sub { display: none; } /* labels carry the row on phones */
-    .c-note { display: none; }
-    .c-text {
-      font-size: var(--fs-chip);
-      hyphens: auto; /* «conversations» must not escape the violet band */
-      overflow-wrap: break-word;
+    .head-cell,
+    th.feat-name,
+    td.val { padding: var(--sp-3) var(--sp-2); }
+    .cmp-table col.col-feature { width: 30%; }
+    .cmp-table col.col-vendor { width: auto; }
+    .vendor-logo { height: auto; margin-bottom: var(--sp-2); }
+    .vendor-logo span { font-size: var(--fs-chip); white-space: normal; }
+    .vendor-name { display: none; }
+    .vendor-price { font-size: var(--fs-ui); letter-spacing: 0; }
+    .feat-sub { display: none; }
+    .feat-title { font-size: var(--fs-ui); }
+    td.val .num { font-size: var(--fs-lead); }
+    .mark :global(img) { width: 24px; height: 24px; }
+    .cmp-note {
+      margin-left: 0;
+      text-align: left;
+      max-width: none;
     }
-    .c-price { font-size: var(--fs-ui); letter-spacing: 0; }
-    .compare__foot { flex-direction: column; align-items: flex-start; }
   }
 </style>

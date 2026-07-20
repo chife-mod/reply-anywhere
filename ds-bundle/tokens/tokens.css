@@ -1,0 +1,123 @@
+/* ════════════════════════════════════════════════════════════════
+   Reply Anywhere — DESIGN TOKENS · THE FOUNDATION CONTRACT
+   ──────────────────────────────────────────────────────────────
+   Extracted 1:1 from Figma (file aZ3lUbOhOeEJbVC7VdR1VD) in Phase A.
+   Source of truth for EVERY section agent. RULES:
+   · A raw hex / px value in a component that exists here = a DEFECT.
+   · Do NOT add tokens ad hoc — extend only via the orchestrator.
+   · Extraction log: scratchpad/figma/extracted-tokens.md
+   ──────────────────────────────────────────────────────────── */
+
+:root {
+  /* ─── BRAND ───────────────────────────────────────────────── */
+  --violet:        #AB0DFF;             /* Figma variable "Violet" */
+  --violet-light:  #C964FF;             /* card subtitles, accents */
+  --violet-pulse:  #D992FF;             /* pulse core (hero anim)  */
+  --violet-soft:   #8B76FF;             /* rails + border-tint base (rgba(139,118,255,…) = this) */
+  --magenta-deep:  rgba(137, 0, 155, 1);/* CTA-band gradient base  */
+
+  /* ─── SURFACES (dark theme) ───────────────────────────────── */
+  --bg:            #111322;             /* page canvas             */
+  --surface-tile:  #111322;             /* icon tiles, dark button */
+  --surface-bubble:#0D0E1A;             /* channel-logo discs      */
+  --surface-fade:  #17182D;             /* card fade gradient from */
+  --surface-island:rgba(0, 0, 0, 0.85); /* menu islands            */
+  --surface-pill:  rgba(0, 0, 0, 0.5);  /* channel pills (wave 1)  */
+  --surface-pill-social: rgba(171, 13, 255, 0.2); /* violet pills (wave 2) */
+  --surface-card:  rgba(139, 118, 255, 0.05);
+  --black:         #000000;             /* hero word bubbles, app tile */
+
+  /* ─── BORDERS · violet-tint family ────────────────────────── */
+  --border-soft:   rgba(139, 118, 255, 0.10);
+  --border-line:   rgba(139, 118, 255, 0.20);
+  --border-card:   rgba(139, 118, 255, 0.24);
+  --border-strong: rgba(139, 118, 255, 0.30);
+  --border-white:  rgba(255, 255, 255, 0.20);
+
+  /* ─── TEXT ────────────────────────────────────────────────── */
+  --text-hi:       #FFFFFF;
+  --text-body:     rgba(255, 255, 255, 0.8);
+  --text-dim:      rgba(255, 255, 255, 0.5);
+  --text-tagline:  #7E90A3;             /* "Product of SemanticForce" */
+
+  /* ─── TYPE · Inter, self-hosted ───────────────────────────── */
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Scale (desktop 1440 reference; fluid clamps set at section level only
+     when the mobile frames land): */
+  --fs-h1: 48px;        --lh-h1: 1.05;  /* hero: Regular + SemiBold accent */
+  --fs-h2: 40px;        --lh-h2: 1.05;  /* sections: Regular + Bold accent */
+  --fs-card-title: 24px;                /* Inter Bold                      */
+  --fs-lead: 18px;      --lh-body: 1.4; /* hero sub / section body         */
+  --fs-card-sub: 16px;
+  --fs-ui: 14px;                        /* buttons, menu, pills (Medium)   */
+  --fs-chip: 12px;      --lh-chip: 1.2; /* feature chips                   */
+  --fs-pill-label: 10px;                /* pill top line                   */
+  --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700;
+
+  /* ─── SPACING (Figma-observed steps) ──────────────────────── */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-25: 10px; --sp-3: 12px; --sp-4: 16px;
+  --sp-45: 18px; --sp-5: 20px; --sp-6: 24px;  --sp-8: 32px; --sp-10: 40px;
+  --sp-12: 48px; --sp-16: 64px; --sp-20: 80px; --sp-24: 96px;
+
+  /* ─── RADII ───────────────────────────────────────────────── */
+  --r-item: 4px;        /* menu items                 */
+  --r-md: 8px;          /* buttons, cards, islands    */
+  --r-tile: 12px;       /* card icon tiles            */
+  --r-app: 24px;        /* center app tile            */
+  --r-pill: 1000px;     /* pills, bubbles, discs      */
+
+  /* ─── GRID ────────────────────────────────────────────────── */
+  --container: 1280px;  /* content width @1440 (80px side margins) */
+  /* Side margins: 80px at the 1440 Figma reference and above (5.556vw × 1440
+     = 80), easing down fluidly on narrower screens so content stops being
+     strangled on tablets/phones (QA audit 2026-07-08); floor 20px. */
+  --margin-desktop: clamp(20px, 5.556vw, 80px);
+  --menu-pad: 16px;     /* menu island offset — menu's OWN rule    */
+  /* First-screen air around the brands strip (client 2026-07-08):
+     the heading→band and band→fold gaps are the FIRST thing that gives
+     way on short viewports — 40px (Figma) breathing down to 16px, before
+     any element starts shrinking. 804 = menu 96 + hero content 554 +
+     strip chrome 154 (pad-top 40 + heading 25 + band 88 + 1px slack) —
+     i.e. the fold budget minus these two gaps. Shared by Hero (fold
+     budget) + SocialProof (the gaps themselves). */
+  --band-gap: clamp(16px, calc((100svh - 804px) / 2), 40px);
+
+  /* ─── EFFECTS · многосоставные тени и свечения ────────────── */
+  /* 5-layer tile shadow (center app tile): */
+  --shadow-app-tile:
+    0 39px 5.5px rgba(0, 0, 0, 0.01),
+    0 25px 5px  rgba(0, 0, 0, 0.09),
+    0 14px 4px  rgba(0, 0, 0, 0.30),
+    0 6px  3px  rgba(0, 0, 0, 0.51),
+    0 2px  1.5px rgba(0, 0, 0, 0.59);
+  /* Layered violet glow behind the app tile — stacked pre-blurred squares
+     (animate opacity/scale of layers, NEVER animate the blur itself).
+     CARD scale (76px r25 squares, feature cards): */
+  --glow-blur-wide: 91.794px;
+  --glow-blur-mid:  47.03px;
+  --glow-blur-tight: 4.943px;
+  /* HERO scale (Figma 40:4162 "Layers"): 3× #AB0DFF squares 143.795 r47.301
+     + 1× rgba(171,13,255,.6) square 200px r65.789: */
+  --glow-hero-tight: 9.353px;
+  --glow-hero-mid:   88.983px;
+  --glow-hero-wide:  173.678px;
+  --glow-hero-extra: 175px;
+  /* HERO-scale 5-layer tile shadow (tile 136.227 r45.409): */
+  --shadow-app-tile-hero:
+    0 73.79px 10.406px rgba(0, 0, 0, 0.01),
+    0 47.301px 9.46px  rgba(0, 0, 0, 0.09),
+    0 26.489px 7.568px rgba(0, 0, 0, 0.30),
+    0 11.352px 5.676px rgba(0, 0, 0, 0.51),
+    0 3.784px  2.838px rgba(0, 0, 0, 0.59);
+  --island-blur: 10px;   /* menu backdrop-filter */
+  /* CTA band gradient: */
+  --grad-cta:
+    linear-gradient(90deg, rgba(137,0,155,0.15) 51.602%, rgba(137,0,155,0.06) 100%),
+    linear-gradient(90deg, rgba(171,13,255,0.3) 0%, rgba(171,13,255,0.3) 100%);
+  --grad-card-fade: linear-gradient(to bottom, var(--surface-fade), rgba(23,24,45,0));
+
+  /* ─── MOTION (placeholders until Phase D motion pass) ─────── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 180ms; --dur-normal: 280ms;
+
+}

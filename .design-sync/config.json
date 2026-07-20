@@ -1,0 +1,6 @@
+{
+  "projectId": "3405a553-2eb9-4361-844b-08a60022ff9a",
+  "projectName": "Reply Anywhere",
+  "shape": "package",
+  "note": "Hand-authored tokens+styles-only layout (no components): the site is Astro, .astro components cannot run in Claude Design's React runtime. Ships design language only: tokens, fonts, base styles, guidelines. No _ds_bundle.js, no _ds_sync.json (honest omission per skill — every future sync re-verifies)."
+}

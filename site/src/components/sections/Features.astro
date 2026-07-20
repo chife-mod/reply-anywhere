@@ -114,12 +114,14 @@ const avatars = [avatar1, avatar2, avatar3];
         <div class="cta__copy">
           <h3 class="cta__title">See Reply Anywhere in action.</h3>
           <p class="cta__sub">
-            Discover how leading brands manage every<br />customer conversation from one workspace.
+            {/* trailing space before <br/> keeps words separated when the break
+                is display:none'd on narrow screens */}
+            Discover how leading brands manage every {''}<br />customer conversation from one workspace.
           </p>
         </div>
       </div>
       <div class="cta__meta">
-        <p class="cta__trust">Trusted by teams at Ajax,<br />Samsung and Volia</p>
+        <p class="cta__trust">Trusted by teams at Ajax, {''}<br />Samsung and Volia</p>
         <div class="cta__avatars">
           {avatars.map((a) => (
             <Image src={a} alt="" aria-hidden="true" width={80} height={80} densities={[1, 2]} format="avif" quality={70} loading="lazy" />

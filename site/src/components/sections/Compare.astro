@@ -1,0 +1,377 @@
+---
+// Compare (no Figma frame — designed in-code per client ask 2026-07-20, in the
+// site's own language). Sprinklr vs gominga vs Reply Anywhere, honest table.
+// Content basis: adversarially verified public facts (research 2026-07-20:
+// sprinklr.com product pages + Help Center, gominga.com, G2/Capterra/Vendr) +
+// BRIEF.md for Reply Anywhere capabilities. UX rules per the comparison-table
+// digest (Baymard/NN/g/Smashing, docs in the refboard run 2026-07-08):
+// grouped rows · distinct icon SHAPES for yes/partial/no + sr-only text ·
+// annotated cells instead of bare marks · honest crosses in our own column ·
+// price as $-glyphs WITH a legend · real <table> semantics, sticky header.
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+type Mark = { s: 'yes' | 'partial' | 'no'; note?: string };
+type Cell = Mark | { text: string; note?: string } | { price: number };
+type Row =
+  | { group: string }
+  | { name: string; sub?: string; cells: [Cell, Cell, Cell] };
+
+const columns = ['Sprinklr', 'gominga', 'Reply Anywhere'];
+
+// Cell order matches `columns`. Facts flagged as draft are listed in STATUS
+// notes for Vsevolod's sign-off before deploy:live.
+const rows: Row[] = [
+  { group: 'Review channels' },
+  {
+    name: 'Marketplace & e-commerce reviews',
+    sub: 'Amazon, OTTO, Walmart, Rozetka and more',
+    cells: [{ s: 'partial', note: 'Monitoring only' }, { s: 'yes' }, { s: 'yes' }],
+  },
+  {
+    name: 'App store reviews',
+    sub: 'App Store · Google Play',
+    cells: [{ s: 'partial', note: 'Replies on Google Play only' }, { s: 'yes' }, { s: 'yes' }],
+  },
+  {
+    name: 'Google Maps & location reviews',
+    sub: 'Google Business Profile, Yelp',
+    cells: [{ s: 'yes' }, { s: 'yes', note: '+ Q&A and photos' }, { s: 'yes' }],
+  },
+  {
+    name: 'Customer questions (Q&A)',
+    sub: 'Product questions answered next to reviews',
+    cells: [{ s: 'no', note: 'Not documented' }, { s: 'yes' }, { s: 'yes' }],
+  },
+  { group: 'Social & messaging' },
+  {
+    name: 'Social media comments',
+    sub: 'Instagram, TikTok, Facebook',
+    cells: [{ s: 'yes' }, { s: 'no' }, { s: 'yes' }],
+  },
+  {
+    name: 'Direct messages',
+    sub: 'WhatsApp, Messenger, Instagram DM',
+    cells: [{ s: 'yes' }, { s: 'no' }, { s: 'yes' }],
+  },
+  { group: 'AI & automation' },
+  {
+    name: 'AI-generated replies',
+    sub: 'On-brand answers, drafted in seconds',
+    cells: [{ s: 'yes' }, { s: 'no', note: 'Templates only' }, { s: 'yes' }],
+  },
+  {
+    name: 'Sentiment & intent analysis',
+    sub: 'Understand what customers actually mean',
+    cells: [
+      { s: 'yes', note: 'Enterprise AI suite' },
+      { s: 'yes', note: 'Review texts only' },
+      { s: 'yes', note: 'Semantic Force engine' },
+    ],
+  },
+  { group: 'Fit & pricing' },
+  {
+    name: 'Full enterprise CX suite',
+    sub: 'Voice, marketing, ads and care in one contract',
+    cells: [{ s: 'yes' }, { s: 'no' }, { s: 'no', note: 'By design — focused tool' }],
+  },
+  {
+    name: 'Best for',
+    cells: [
+      { text: 'Global enterprise CX programs' },
+      { text: 'Review management programs' },
+      { text: 'Reviews + social conversations in one' },
+    ],
+  },
+  {
+    name: 'Pricing',
+    sub: 'Relative cost of ownership',
+    cells: [
+      { price: 5, note: 'Enterprise contracts' },
+      { price: 3, note: 'Quote-based' },
+      { price: 2, note: 'Accessible plans' },
+    ],
+  },
+];
+
+const markMeta = {
+  yes: { label: 'Yes' },
+  partial: { label: 'Partially' },
+  no: { label: 'No' },
+} as const;
+
+const isGroup = (r: Row): r is { group: string } => 'group' in r;
+---
+
+<section class="compare" id="compare" aria-labelledby="compare-title">
+  <div class="compare__inner">
+    <header class="compare__head">
+      <div id="compare-title">
+        <SectionHeading line1="Sprinklr vs gominga" accent="vs Reply Anywhere" align="left" />
+      </div>
+      <p class="compare__lead">
+        Three tools, three philosophies: a global enterprise CX suite, a review-management
+        specialist — and Reply Anywhere, which brings reviews and social conversations into
+        one workspace. Here is the honest picture.
+      </p>
+    </header>
+
+    <table class="compare__table">
+      <thead>
+        <tr>
+          <th scope="col" class="c-what"><span class="sr-only">Capability</span></th>
+          {columns.map((c, i) => (
+            <th scope="col" class:list={['c-col', { 'is-us': i === 2 }]}>
+              {i === 2 && <Icon name="logos/reply-anywhere-mark" width={26} height={23} />}
+              <span>{c}</span>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) =>
+          isGroup(row) ? (
+            <tr class="c-group">
+              <th colspan="4" scope="colgroup">{row.group}</th>
+            </tr>
+          ) : (
+            <tr>
+              <th scope="row" class="c-what">
+                <span class="c-name">{row.name}</span>
+                {row.sub && <span class="c-sub">{row.sub}</span>}
+              </th>
+              {row.cells.map((cell, i) => (
+                <td class:list={[{ 'is-us': i === 2 }]}>
+                  {'s' in cell && (
+                    <span class="c-mark">
+                      <Icon
+                        name={cell.s === 'yes' ? (i === 2 ? 'compare/yes-us' : 'compare/yes') : `compare/${cell.s}`}
+                        size={24}
+                        alt=""
+                      />
+                      <span class="sr-only">{markMeta[cell.s].label}</span>
+                      {cell.note && <span class="c-note">{cell.note}</span>}
+                    </span>
+                  )}
+                  {'text' in cell && <span class="c-text">{cell.text}</span>}
+                  {'price' in cell && (
+                    <span class="c-mark">
+                      <span class="c-price" aria-hidden="true">
+                        <b>{'$'.repeat(cell.price)}</b>{'$'.repeat(5 - cell.price)}
+                      </span>
+                      <span class="sr-only">{cell.price} of 5 — relative price level</span>
+                      {'note' in cell && cell.note && <span class="c-note">{cell.note}</span>}
+                    </span>
+                  )}
+                </td>
+              ))}
+            </tr>
+          )
+        )}
+      </tbody>
+    </table>
+
+    <div class="compare__foot">
+      <p class="compare__legend">
+        $ — entry-level · $$$$$ — enterprise contracts. Based on public product pages, help
+        docs and marketplace data, July 2026.
+      </p>
+      <Button href="#demo" label="Request a free demo" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .compare {
+    padding: var(--sp-10) var(--margin-desktop);
+  }
+  .compare__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-8);
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+
+  /* Header row mirrors the Features pattern: heading left, lead right. */
+  .compare__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--sp-8);
+  }
+  .compare__lead {
+    width: 416px; /* same measure as features__lead */
+    flex-shrink: 0;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-body);
+    color: var(--text-body);
+  }
+
+  /* ── Table ── */
+  .compare__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+  }
+  .compare__table col,
+  .c-what { text-align: left; }
+
+  thead th {
+    position: sticky;
+    top: 96px; /* below the fixed menu zone */
+    z-index: 2;
+    padding: var(--sp-4) var(--sp-4) var(--sp-4);
+    background: var(--bg);
+    font-size: var(--fs-card-sub);
+    font-weight: var(--fw-semibold);
+    color: var(--text-hi);
+    border-bottom: 1px solid var(--border-line);
+  }
+  .c-col {
+    width: 19%;
+    text-align: center;
+  }
+  .c-col span { display: block; }
+  .c-col :global(img) { margin: 0 auto var(--sp-1); }
+  /* Our column — violet-tinted band with soft borders, top-rounded at the head. */
+  .is-us {
+    background: linear-gradient(var(--surface-card), var(--surface-card)), var(--bg);
+    box-shadow: inset 1px 0 var(--border-card), inset -1px 0 var(--border-card);
+  }
+  thead .is-us {
+    border-radius: var(--r-md) var(--r-md) 0 0;
+    box-shadow:
+      inset 1px 1px var(--border-card),
+      inset -1px 0 var(--border-card);
+    color: var(--violet-light);
+  }
+  tbody tr:last-child .is-us {
+    box-shadow:
+      inset 1px -1px var(--border-card),
+      inset -1px 0 var(--border-card);
+    border-radius: 0 0 var(--r-md) var(--r-md);
+  }
+
+  /* Group separators (12px caps, dim — the Baymard grouped-rows pattern). */
+  .c-group th {
+    padding: var(--sp-8) var(--sp-4) var(--sp-2);
+    font-size: var(--fs-chip);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .c-group th { border-bottom: 1px solid var(--border-soft); }
+
+  tbody th,
+  tbody td {
+    padding: var(--sp-4);
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: middle;
+  }
+  tbody td { text-align: center; }
+  tbody tr:not(.c-group):hover th,
+  tbody tr:not(.c-group):hover td {
+    background-color: rgba(139, 118, 255, 0.04); /* row guide across 3 columns */
+  }
+  tbody tr:not(.c-group):hover td.is-us {
+    background-color: transparent; /* keep the band's own tint stable */
+  }
+
+  .c-name {
+    display: block;
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    color: var(--text-hi);
+    line-height: var(--lh-body);
+  }
+  .c-sub {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--fs-chip);
+    line-height: var(--lh-chip);
+    color: var(--text-dim);
+  }
+
+  .c-mark {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-1);
+  }
+  .c-mark :global(img) { margin-inline: auto; }
+  .c-note {
+    font-size: var(--fs-chip);
+    line-height: var(--lh-chip);
+    color: var(--text-dim);
+  }
+  .c-text {
+    font-size: var(--fs-ui);
+    line-height: var(--lh-body);
+    color: var(--text-body);
+  }
+
+  .c-price {
+    font-size: var(--fs-card-title);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    font-weight: var(--fw-regular);
+    color: rgba(255, 255, 255, 0.22); /* the unfilled glyphs */
+  }
+  .c-price b {
+    font-weight: var(--fw-semibold);
+    color: var(--text-hi);
+  }
+  .is-us .c-price b { color: var(--violet-light); }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* ── Footer: legend left, CTA right (CTA visually closes our column). ── */
+  .compare__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-6);
+  }
+  .compare__legend {
+    font-size: var(--fs-chip);
+    line-height: var(--lh-chip);
+    color: var(--text-dim);
+    max-width: 520px;
+  }
+
+  /* ── Adaptive (mirrors the site's ≤946 stack philosophy) ── */
+  @media (max-width: 946px) {
+    .compare__head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .compare__lead { width: auto; max-width: 549px; }
+    thead th { top: 0; position: static; } /* burger zone: no sticky under floating menu */
+  }
+  @media (max-width: 760px) {
+    tbody th, tbody td, thead th { padding: var(--sp-3) var(--sp-2); }
+    .c-what { width: 30%; } /* label column narrows, three value columns breathe */
+    .c-col { width: auto; font-size: var(--fs-chip); }
+    .c-sub { display: none; } /* labels carry the row on phones */
+    .c-note { display: none; }
+    .c-text {
+      font-size: var(--fs-chip);
+      hyphens: auto; /* «conversations» must not escape the violet band */
+      overflow-wrap: break-word;
+    }
+    .c-price { font-size: var(--fs-ui); letter-spacing: 0; }
+    .compare__foot { flex-direction: column; align-items: flex-start; }
+  }
+</style>

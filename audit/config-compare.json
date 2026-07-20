@@ -1,0 +1,32 @@
+{
+  "outDir": "screens",
+  "concurrency": 2,
+  "jpegQuality": 55,
+  "chromePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "pages": {
+    "home": "http://localhost:4323/"
+  },
+  "viewports": [
+    {
+      "name": "mac1440",
+      "width": 1440,
+      "height": 900,
+      "dsf": 1,
+      "mobile": false
+    },
+    {
+      "name": "ipadv810",
+      "width": 810,
+      "height": 1080,
+      "dsf": 2,
+      "mobile": true
+    },
+    {
+      "name": "iphonev390",
+      "width": 390,
+      "height": 844,
+      "dsf": 2,
+      "mobile": true
+    }
+  ]
+}

@@ -51,7 +51,7 @@ card-sub 16 · ui 14 Medium · chip 12/1.2 · pill-label 10. Веса 400/500/60
 | Chip (md 12 / lg 14) | `ui/Chip.astro` | md — фичи-чипсы hero; lg — пункты сцены «One platform» |
 | ChannelPill (dark/social) | `ui/ChannelPill.astro` | сцена «One platform» |
 | Icon | `ui/Icon.astro` | все иконки (файлы из `src/icons/**`) |
-| Compare marks | `icons/compare/{yes-us,yes,no}.svg` + `.qual` пилюля | ячейки таблицы сравнения |
+| Compare marks | `icons/compare/{yes-us,yes,no}.svg` | ячейки таблицы сравнения |
 
 ## 5. Секции-паттерны
 
@@ -66,8 +66,9 @@ card-sub 16 · ui 14 Medium · chip 12/1.2 · pill-label 10. Веса 400/500/60
   строк, RA-колонка `--surface-pill-social` + границы `--border-strong` +
   скругления r-md сверху/снизу, числа `--fs-card-title` SemiBold. Ячейки — только
   метки/числа/$-глифы, без бейджей-квалификаторов (убраны 2026-07-21). Шапка
-  таблицы НЕ sticky (плавающие острова меню дают грязный двойной слой).
-  Честность: кресты и в нашей колонке.
+  таблицы sticky (докается под меню на 96px): ячейки полностью непрозрачны +
+  «козырёк» ::before закрывает щель меню — строки скроллятся в своём фрейме и
+  не всплывают над шапкой; ≤946 — static. Честность: кресты и в нашей колонке.
 
 ## 6. Эффекты и моушн
 

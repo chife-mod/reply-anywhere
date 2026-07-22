@@ -6,8 +6,8 @@ const puppeteer = require('puppeteer-core');
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const URL = 'http://localhost:4323/';
-const TOTAL_BEATS = 8.6;
-const BEATS = [4.6, 6.5]; // part2+body+chips landed · full assembly (wave 2 in)
+const TOTAL_BEATS = 7.2;
+const BEATS = [4.6, 7.0]; // part2+body+chips landed · settle (pills must STAY visible)
 const VIEWPORTS = [
   { name: 'desktop1440', width: 1440, height: 900 },
   { name: 'ipadv810', width: 810, height: 1080 },

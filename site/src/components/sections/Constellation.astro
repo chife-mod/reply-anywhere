@@ -123,11 +123,12 @@ const pills: Pill[] = [
      both sections stick at top:0 inside the tall scene wrapper, PlatformIntro
      overlays Constellation via margin-top:-100vh, ScrollTrigger only scrubs. */
   [data-scene='one-platform'].is-scene {
-    /* 450 → 360 (2026-07-02) → 300 → 260vh (client 2026-07-08 rev 3: «ещё
-       чуть-чуть сократить»): the timeline starts while the first screen is
-       still leaving (trigger top-bottom), so the WHOLE 260vh is live scrub —
-       no dead dark stretch before the words. */
-    height: 260vh; /* 100vh pre-pin reveal + 160vh pinned */
+    /* 450 → 360 → 300 → 260 (2026-07-08) → 220vh (client 2026-07-21: the
+       pills-clear beat is gone — the scene assembles and releases; the track
+       shrinks proportionally so the wheel pace per beat stays the same and
+       the screen lets go ~40vh sooner). Timeline starts the moment the scene
+       peeks in from below — the WHOLE track is live scrub. */
+    height: 220vh; /* 100vh pre-pin reveal + 120vh pinned */
   }
   .is-scene [data-scene-part='constellation'] {
     position: sticky;
@@ -250,8 +251,8 @@ const pills: Pill[] = [
     gsap.set(body, { opacity: 0, y: 40 });
     gsap.set(chips, { opacity: 0, y: 24 });
 
-    // One scrubbed timeline; position values are abstract beats (8.6 total)
-    // mapped onto the full 260vh track (beat ≈ 30vh; the pin engages at ~3.3).
+    // One scrubbed timeline; position values are abstract beats (7.2 total)
+    // mapped onto the full 220vh track (beat ≈ 30vh; the pin engages at ~3.3).
     // Trigger starts the moment the scene peeks in from below (client
     // 2026-07-08: no dead dark stretch). scrub 0.6 = soft catch-up: on a fast
     // wheel flick the states PLAY toward the target instead of teleporting —
@@ -305,13 +306,10 @@ const pills: Pill[] = [
       );
     });
 
-    // 5 — pills clear the stage; the assembled headline + explanation stay
-    // (spec §5; body/chips moved up to the part-2 beat, client 2026-07-21).
-    tl.to(pills, { opacity: 0, scale: 0.92, duration: 0.7, ease: 'power1.in', stagger: 0.015 }, 7.0);
-
-    // 6 — settle before the unpin (spec §8: normal scroll resumes) — the
-    // finished block rests for the last ~8% of the track.
-    tl.to({}, { duration: 0.7 }, 7.9);
+    // 5 — NO pills-clear beat (client 2026-07-21: «появились все теги — и всё,
+    // дальше крутим»): the assembled composition — headline, body, chips and
+    // every pill — simply stays, a short settle, and the page releases.
+    tl.to({}, { duration: 0.4 }, 6.8);
   }
 
   const scene = document.querySelector<HTMLElement>('[data-scene="one-platform"]');

@@ -58,7 +58,8 @@ card-sub 16 · ui 14 Medium · chip 12/1.2 · pill-label 10. Веса 400/500/60
 - **Hero**: копи слева (549) + орбита справа (613×581, right 82); фолд-гарантия —
   см. комментарии в Hero.astro (band-gap → нырок → масштаб → fluid H1).
 - **Полоса брендов**: маркиза 88px-тайлов, отступы на `--band-gap` (40→16).
-- **Сцена «One platform»**: sticky-пин 260vh, скраб top-bottom (SCROLL-SCENE-SPEC.md).
+- **Сцена «One platform»**: sticky-пин 220vh, скраб top-bottom; финал = полная
+  композиция, пиллы не исчезают (SCROLL-SCENE-SPEC.md).
 - **Features**: голова-паттерн + 3 карточки 562px + CTA-band (`--grad-cta`).
 - **Compare** (дизайн: Claude Design «Comparison Table.html», 2026-07-21):
   цены $-глифами в шапках колонок (заполненные + `.off` 35%), violet-зебра чётных

@@ -195,7 +195,11 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
   /* Section chrome = the Features pattern verbatim: same paddings, same
      head grid, same heading component, same lead measure and color. */
   .cmp-section {
-    padding: var(--sp-10) var(--margin-desktop);
+    /* Top air is DOUBLE the standard section step (80 instead of 40): the
+       previous block ends with the heavy violet CTA band, and 40+40 read as
+       cramped (client 2026-07-21). 40 (Features' bottom) + 80 = 120px between
+       the CTA band and this section. Sides/bottom stay on the standard step. */
+    padding: var(--sp-20) var(--margin-desktop) var(--sp-10);
     scroll-margin-top: 96px; /* #compare anchor lands below the fixed menu */
   }
   .cmp-wrap {

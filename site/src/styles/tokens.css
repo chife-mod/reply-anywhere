@@ -50,7 +50,10 @@
   --fs-lead: 18px;      --lh-body: 1.4; /* hero sub / section body         */
   --fs-card-sub: 16px;
   --fs-ui: 14px;                        /* buttons, menu, pills (Medium)   */
-  --fs-chip: 12px;      --lh-chip: 1.2; /* feature chips                   */
+  /* Caption floor: 13px. Client 2026-07-21 — «минимальный шрифт подписи 13,
+     не 12»: hero chips, Compare sub-labels/legend, role cards. Figma drew
+     these at 12; the client raised the floor for legibility. */
+  --fs-chip: 13px;      --lh-chip: 1.2; /* feature chips, captions         */
   --fs-pill-label: 10px;                /* pill top line                   */
   --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700;
 

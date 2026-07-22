@@ -22,6 +22,12 @@ const { href, variant = 'primary', label, class: cls } = Astro.props;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    /* ONE height for EVERY button on the site — 48 (--sp-12, Figma 13:810
+       «Book a demo»). Client 2026-07-21: hero/menu buttons rendered 48 (the
+       icon variant's 11+24+11+2 stretched its flex row) while CTA-band and
+       Compare rendered the padding-only 46 — a two-height fork. Height is
+       owned HERE; sections must never re-declare it. */
+    min-height: var(--sp-12);
     border-radius: var(--r-md);
     font-family: var(--font-sans);
     font-size: var(--fs-ui);
@@ -41,7 +47,7 @@ const { href, variant = 'primary', label, class: cls } = Astro.props;
   }
   .btn--icon {
     border: 1px solid var(--violet);
-    padding: 11px; /* Figma: 11px pad + 24px icon = 46px square */
+    padding: 11px; /* 11 + 24 icon + 11 + 2 border = the same 48px, square */
   }
   .btn:hover { filter: brightness(1.12); }
   /* focus ring comes from the ONE global :focus-visible convention (global.css) */

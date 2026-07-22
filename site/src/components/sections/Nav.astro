@@ -168,9 +168,8 @@ const links = [
     text-transform: uppercase;
     color: var(--text-hi);
   }
-  .menu__actions :global(.menu__cta) {
-    height: var(--sp-12); /* Figma 13:810: Book a demo is h48 */
-  }
+  /* (no .menu__cta height override — the 48px height is Button's own, for
+     every button on the site; client 2026-07-21 «одна кнопка, один размер») */
 
   /* ── Burger island (≤947 only) ──────────────────────────────── */
   .menu__burger {

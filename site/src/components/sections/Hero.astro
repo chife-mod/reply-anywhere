@@ -430,9 +430,11 @@ const sparks = [
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    /* 154px = strip chrome (pad-top 40 + heading 25 + band 88 + 1px slack);
-       + the two --band-gap airs → full SocialProof height. */
-    min-height: calc(100svh - 154px - 2 * var(--band-gap));
+    /* 157px = strip chrome (pad-top 40 + heading 25 + band 88 + 4px slack);
+       + the two --band-gap airs → full SocialProof height. Slack went 1 → 4
+       when captions moved to 13px (client 2026-07-21): the taller hero chips
+       cost ~2px and the fold guarantee must keep a margin, not squeak by. */
+    min-height: calc(100svh - 157px - 2 * var(--band-gap));
     padding-top: 96px; /* fixed-menu zone (island h64 + 2×16 pad) */
   }
   .hero__inner {
@@ -446,7 +448,7 @@ const sparks = [
        On short viewports the box gives way to the guaranteed-fold budget:
        menu 96 + hero zone + brands strip = 100svh (client 2026-07-08);
        250 = menu 96 + strip chrome 154. */
-    min-height: min(554px, calc(100svh - 250px - 2 * var(--band-gap)));
+    min-height: min(554px, calc(100svh - 253px - 2 * var(--band-gap)));
   }
 
   /* ── Guaranteed first screen (client 2026-07-08, rev 2): message + brands
@@ -488,24 +490,27 @@ const sparks = [
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* 40px; fluid 40 → 24 over 639 → 586svh (fold-fit stage 4 above) */
-    gap: clamp(var(--sp-6), calc(30.19svh - 152.9px), var(--sp-10));
+    /* 40px; fluid 40 → 24 over 665 → 600svh (fold-fit stage 4 above).
+       Start raised 639 → 665 (client 2026-07-21): 13px captions made the copy
+       column taller, so it began outgrowing the hero zone before the old
+       ramp switched on. */
+    gap: clamp(var(--sp-6), calc(24.62svh - 123.72px), var(--sp-10));
     max-width: 549px;
   }
   .hero__heading {
     display: flex;
     flex-direction: column;
-    /* 24px; fluid 24 → 16 over 639 → 586svh (fold-fit stage 4 above) */
-    gap: clamp(var(--sp-4), calc(15.09svh - 72.4px), var(--sp-6));
+    /* 24px; fluid 24 → 16 over 665 → 600svh (fold-fit stage 4 above) */
+    gap: clamp(var(--sp-4), calc(12.31svh - 57.86px), var(--sp-6));
   }
   .hero__title {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* 48px; fluid 48 → 36 over 639 → 586svh — the ONLY type that shrinks
+    /* 48px; fluid 48 → 36 over 665 → 600svh — the ONLY type that shrinks
        (fold-fit stage 4 above); word bubbles stay 50px, so the accent row
        keeps its height and only line 1 actually gives space back */
-    font-size: clamp(36px, calc(22.64svh - 96.7px), var(--fs-h1));
+    font-size: clamp(36px, calc(18.46svh - 74.77px), var(--fs-h1));
     line-height: var(--lh-h1);
     font-weight: var(--fw-regular);
     letter-spacing: normal;

@@ -214,9 +214,28 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
   .cmp-table col.col-feature { width: 34%; }
   .cmp-table col.col-vendor { width: 22%; }
 
-  /* ── product header row (client 2026-07-21: NOT sticky — the table
-     scrolls inside its own block; sticky under the floating menu islands
-     produced a broken-looking double layer) ── */
+  /* ── sticky product header (client 2026-07-21 rev 2: «стыкающуюся строку
+     оставим — но контент скроллится в своём фрейме и не залазит под Reply
+     Anywhere»). The fix vs the first attempt: every header cell is fully
+     OPAQUE (--bg underlay, RA gradient painted on top of it), so the rows
+     disappear cleanly beneath the header instead of showing through it. ── */
+  thead th {
+    position: sticky;
+    top: 96px; /* below the fixed-menu zone */
+    z-index: 3;
+  }
+  /* Opaque visor above the docked header: rows must vanish under the header
+     edge, not resurface in the 96px menu gap above it («не залазить под
+     Reply Anywhere»). Page bg = --bg, so the band itself is invisible. */
+  thead th::before {
+    content: '';
+    position: absolute;
+    left: -1px; /* cover the RA band's 1px column borders too */
+    right: -1px;
+    top: -96px;
+    height: 96px;
+    background: var(--bg);
+  }
   .head-cell {
     background: var(--bg);
     padding: var(--sp-6) var(--sp-5) var(--sp-5);
@@ -266,7 +285,11 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     border-right: 1px solid var(--border-strong);
   }
   thead .ra-col.head-cell {
-    background: linear-gradient(180deg, rgba(171, 13, 255, 0.22), rgba(171, 13, 255, 0.1));
+    /* opaque --bg underlay beneath the violet gradient — sticky header must
+       fully hide the rows scrolling under it */
+    background:
+      linear-gradient(180deg, rgba(171, 13, 255, 0.22), rgba(171, 13, 255, 0.1)),
+      var(--bg);
     border-top: 1px solid var(--border-strong);
     border-top-left-radius: var(--r-md);
     border-top-right-radius: var(--r-md);
@@ -413,6 +436,7 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
       align-items: flex-start;
     }
     .cmp-lead { width: auto; max-width: 549px; }
+    thead th { position: static; } /* burger zone: no fixed 96px band to dock under */
   }
   @media (max-width: 760px) {
     .head-cell,

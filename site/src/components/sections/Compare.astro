@@ -92,6 +92,9 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
       </p>
     </header>
 
+    <!-- 1px sentinel: when it passes under the 96px menu zone the header is
+         docked — only then the visor may exist (see script below) -->
+    <div class="cmp-sentinel" aria-hidden="true"></div>
     <table class="cmp-table">
       <caption>
         Feature comparison: Sprinklr vs Gominga vs Reply Anywhere across channels, AI replies,
@@ -169,6 +172,25 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
   </div>
 </section>
 
+<script>
+  // Visor arming (client-caught 2026-07-21: a permanent visor covered the
+  // section heading while the table was still in flow). The sentinel sits
+  // right above the table; once it has scrolled ~140px under the top, the
+  // header has long been docked (dock happens at 96px) and the visor arms —
+  // comfortably BEFORE any row can resurface above the header (first row
+  // reaches the gap only ~250px after docking). transform-free, IO-driven.
+  const cmpTable = document.querySelector('#compare .cmp-table');
+  const cmpSentinel = document.querySelector('#compare .cmp-sentinel');
+  if (cmpTable && cmpSentinel) {
+    new IntersectionObserver(
+      ([e]) => {
+        cmpTable.classList.toggle('is-docked', !e.isIntersecting && e.boundingClientRect.top < 140);
+      },
+      { rootMargin: '-140px 0px 0px 0px' }
+    ).observe(cmpSentinel);
+  }
+</script>
+
 <style>
   /* Section chrome = the Features pattern verbatim: same paddings, same
      head grid, same heading component, same lead measure and color. */
@@ -226,15 +248,24 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
   }
   /* Opaque visor above the docked header: rows must vanish under the header
      edge, not resurface in the 96px menu gap above it («не залазить под
-     Reply Anywhere»). Page bg = --bg, so the band itself is invisible. */
-  thead th::before {
-    content: '';
-    position: absolute;
-    left: -1px; /* cover the RA band's 1px column borders too */
-    right: -1px;
-    top: -96px;
-    height: 96px;
-    background: var(--bg);
+     Reply Anywhere»). Page bg = --bg, so the band itself is invisible.
+     CRITICAL: exists ONLY while the header is actually docked (.is-docked
+     via the sentinel script) — a permanent visor covers the section heading
+     while the table is still in flow (client-caught 2026-07-21). */
+  .cmp-sentinel {
+    height: 1px;
+    margin-bottom: -1px;
+  }
+  @media (min-width: 947px) {
+    .cmp-table.is-docked thead th::before {
+      content: '';
+      position: absolute;
+      left: -1px; /* cover the RA band's 1px column borders too */
+      right: -1px;
+      top: -96px;
+      height: 96px;
+      background: var(--bg);
+    }
   }
   .head-cell {
     background: var(--bg);

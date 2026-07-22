@@ -163,7 +163,6 @@ const channelLogos = [
         <span class="markbox"><Icon name="compare/yes-us" size={28} alt="Yes (us)" /><code>yes-us</code></span>
         <span class="markbox"><Icon name="compare/yes" size={28} alt="Yes" /><code>yes</code></span>
         <span class="markbox"><Icon name="compare/no" size={28} alt="No" /><code>no</code></span>
-        <span class="markbox"><span class="kit-qual">Add-on</span><code>.qual</code></span>
         <span class="markbox"><span class="kit-price">$$<span class="off">$$$</span></span><code>price tier</code></span>
       </div>
 
@@ -314,12 +313,7 @@ const channelLogos = [
   .kit__stage--tall { min-height: 180px; }
 
   .markbox { display: inline-flex; flex-direction: column; align-items: center; gap: var(--sp-2); }
-  /* образцы из Compare — те же метрики, что в секции */
-  .kit-qual {
-    display: inline-block; font-size: var(--fs-pill-label); letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--text-dim);
-    border: 1px solid var(--border-line); border-radius: var(--r-pill); padding: 2px var(--sp-2);
-  }
+  /* образец из Compare — те же метрики, что в секции */
   .kit-price {
     font-size: var(--fs-card-title); font-weight: var(--fw-bold); letter-spacing: 0.06em;
     color: var(--text-hi); font-variant-numeric: tabular-nums;

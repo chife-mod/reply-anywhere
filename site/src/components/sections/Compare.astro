@@ -18,8 +18,10 @@ import Icon from '../ui/Icon.astro';
 import Button from '../ui/Button.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 
-type MarkCell = { mark: 'yes' | 'no'; label: string; qual?: string };
-type NumCell = { num: string; unit?: string; qual?: string };
+// Client 2026-07-21: qualifier pills (Add-on / Q4) removed — canvas additions
+// that were never in the task; cells are marks, numbers and $-tiers only.
+type MarkCell = { mark: 'yes' | 'no'; label: string };
+type NumCell = { num: string; unit?: string };
 type Cell = MarkCell | NumCell;
 
 const vendors = [
@@ -37,16 +39,12 @@ const rows: { title: string; sub: string; cells: [Cell, Cell, Cell] }[] = [
   {
     title: 'AI reply languages',
     sub: "Draft on-brand replies in the customer's language",
-    cells: [{ num: '100', unit: '+', qual: 'Add-on' }, { num: '12' }, { num: '50', unit: '+' }],
+    cells: [{ num: '100', unit: '+' }, { num: '12' }, { num: '50', unit: '+' }],
   },
   {
     title: 'AI-drafted responses',
     sub: 'Context-aware draft ready before you open the thread',
-    cells: [
-      { mark: 'yes', label: 'Yes, with add-on', qual: 'Add-on' },
-      { mark: 'no', label: 'No' },
-      { mark: 'yes', label: 'Yes' },
-    ],
+    cells: [{ mark: 'yes', label: 'Yes' }, { mark: 'no', label: 'No' }, { mark: 'yes', label: 'Yes' }],
   },
   {
     title: 'Brand-tone tuning',
@@ -66,11 +64,7 @@ const rows: { title: string; sub: string; cells: [Cell, Cell, Cell] }[] = [
   {
     title: 'Competitor benchmarking',
     sub: 'Compare your ratings against rival locations & brands',
-    cells: [
-      { mark: 'yes', label: 'Yes' },
-      { mark: 'no', label: 'No' },
-      { mark: 'no', label: 'No, on the roadmap', qual: 'Q4' },
-    ],
+    cells: [{ mark: 'yes', label: 'Yes' }, { mark: 'no', label: 'No' }, { mark: 'no', label: 'No' }],
   },
   {
     title: 'Shared team inbox',
@@ -134,31 +128,17 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
             {row.cells.map((cell, i) => (
               <td class:list={['val', { 'ra-col': i === 2 }]}>
                 {isMark(cell) ? (
-                  <>
-                    <span class="mark" role="img" aria-label={cell.label}>
-                      <Icon
-                        name={cell.mark === 'yes' ? (i === 2 ? 'compare/yes-us' : 'compare/yes') : 'compare/no'}
-                        size={28}
-                        alt=""
-                      />
-                    </span>
-                    {cell.qual && (
-                      <>
-                        <br />
-                        <span class="qual">{cell.qual}</span>
-                      </>
-                    )}
-                  </>
+                  <span class="mark" role="img" aria-label={cell.label}>
+                    <Icon
+                      name={cell.mark === 'yes' ? (i === 2 ? 'compare/yes-us' : 'compare/yes') : 'compare/no'}
+                      size={28}
+                      alt=""
+                    />
+                  </span>
                 ) : (
                   <>
                     <span class="num">{cell.num}</span>
                     {cell.unit && <span class="unit">{cell.unit}</span>}
-                    {cell.qual && (
-                      <>
-                        <br />
-                        <span class="qual">{cell.qual}</span>
-                      </>
-                    )}
                   </>
                 )}
               </td>
@@ -183,7 +163,7 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
       </div>
       <p class="cmp-note">
         Price tiers from each vendor's published plans and public pricing pages, July 2026.
-        Competitor capabilities reflect their standard tiers; add-ons noted.
+        Competitor capabilities reflect their standard tiers.
       </p>
     </div>
   </div>
@@ -345,17 +325,6 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     color: var(--text-dim);
   }
   td.ra-col.val .num { color: var(--violet-light); }
-  .qual {
-    display: inline-block;
-    margin-top: 4px;
-    font-size: var(--fs-pill-label);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    border: 1px solid var(--border-line);
-    border-radius: var(--r-pill);
-    padding: 2px var(--sp-2);
-  }
 
   .mark {
     display: inline-flex;

@@ -47,6 +47,20 @@ button, input, textarea, select { font: inherit; color: inherit; }
   padding-inline: var(--sp-6);
 }
 
+/* Island — THE floating surface primitive (Figma 2:13). The menu invented it;
+   the footer rhymes with it. Shared here so both use ONE definition — never
+   re-declare the surface in a section (DESIGN.md §0). Height is per-context:
+   the menu's islands are h64, the footer's hug their content. */
+.island {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  background: var(--surface-island);
+  -webkit-backdrop-filter: blur(var(--island-blur));
+  backdrop-filter: blur(var(--island-blur));
+  border-radius: var(--r-md);
+}
+
 /* Accessible skip-link (SEO/a11y baseline, carried from Verifly). */
 .skip-link {
   position: absolute;

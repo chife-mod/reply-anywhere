@@ -73,16 +73,10 @@ const links = [
     pointer-events: auto;
   }
 
-  /* ── Island base — every menu surface floats on this ───────── */
+  /* ── Island base lives in global.css (shared primitive — the footer uses
+     the same one). Here only the menu's own height applies. ───────────── */
   .island {
-    display: flex;
-    align-items: center;
     height: var(--sp-16);
-    flex-shrink: 0;
-    background: var(--surface-island);
-    -webkit-backdrop-filter: blur(var(--island-blur));
-    backdrop-filter: blur(var(--island-blur));
-    border-radius: var(--r-md);
   }
 
   /* ── Brand group: logo island + wordmark island ─────────────── */

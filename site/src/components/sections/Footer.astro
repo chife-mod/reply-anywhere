@@ -1,0 +1,333 @@
+---
+// Footer — designed in-code 2026-07-21 (client ask: «классный, подходящий к
+// хедеру и ко всему дизайну»). Concept: THE MENU ISLANDS LAND.
+// The header floats islands at the top of the page; the footer is where they
+// come to rest — same .island primitive (global.css), same brand pair (logo
+// island + wordmark island with the tagline), same violet accent, plus the
+// site's two other signatures: the channel discs of the hero orbit and one
+// soft violet glow. Chrome is 100% shared: Button, tokens, Icon (DESIGN.md §0).
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import logoMark from '../../assets/brand/logo-mark.svg';
+import wordmark from '../../assets/brand/wordmark.svg';
+
+// Same anchors as the menu — one navigation truth.
+const columns = [
+  {
+    title: 'Product',
+    links: [
+      { label: 'Features', href: '#features' },
+      { label: 'Channels', href: '#channels' },
+      { label: 'Cases', href: '#cases' },
+      { label: 'Pricing', href: '#pricing' },
+      { label: 'Compare', href: '#compare' },
+    ],
+  },
+  {
+    title: 'Channels',
+    links: [
+      { label: 'Marketplace reviews', href: '#channels' },
+      { label: 'App store reviews', href: '#channels' },
+      { label: 'Google Maps & locations', href: '#channels' },
+      { label: 'Social comments', href: '#channels' },
+      { label: 'Direct messages', href: '#channels' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'Semantic Force', href: 'https://semanticforce.ai', external: true },
+      { label: 'Omnichannel HelpDesk', href: 'https://semanticforce.ai/products/omnichannel-helpdesk', external: true },
+      { label: 'Contact', href: '#contact' },
+      { label: 'Book a demo', href: '#demo' },
+    ],
+  },
+];
+
+// Channel discs — the hero orbit's cast, in one quiet row (decorative).
+// Non-square marks keep their intrinsic aspect (same rule as the hero orbit:
+// a flat 20×20 would squash eBay and stretch Maps).
+const D = 20; // long side
+const channels: { n: string; w: number; h: number }[] = [
+  { n: 'google-g', w: D, h: D },
+  { n: 'amazon', w: D, h: D },
+  { n: 'appstore', w: D, h: 17.7 },
+  { n: 'google-play', w: 18.1, h: D },
+  { n: 'google-maps', w: 14, h: D },
+  { n: 'trustpilot', w: D, h: 19 },
+  { n: 'instagram', w: D, h: D },
+  { n: 'facebook', w: D, h: D },
+  { n: 'messenger', w: D, h: D },
+  { n: 'whatsapp', w: D, h: D },
+  { n: 'tiktok', w: 17.3, h: D },
+  { n: 'walmart', w: 17.3, h: D },
+  { n: 'ebay', w: D, h: 8 },
+  { n: 'rozetka', w: D, h: 19.5 },
+];
+
+const year = 2026; // build-time constant — no client-side date drift
+---
+
+<footer class="footer" id="contact">
+  <div class="footer__glow" aria-hidden="true"></div>
+
+  <div class="footer__inner">
+    <!-- ── Top: brand islands (the menu's, landed) + CTA ── -->
+    <div class="footer__top">
+      <div class="footer__brand">
+        <div class="footer__islands">
+          <span class="island footer__logo">
+            <img src={logoMark.src} width="45" height="40" alt="" />
+          </span>
+          <span class="island footer__wordmark">
+            <img src={wordmark.src} width="102" height="33" alt="Reply Anywhere" />
+            <span class="footer__tagline">Product of SemanticForce</span>
+          </span>
+        </div>
+        <p class="footer__claim">
+          One workspace for every customer conversation — reviews, comments,
+          direct messages and questions, answered anywhere.
+        </p>
+      </div>
+
+      <nav class="footer__cols" aria-label="Footer">
+        {columns.map((col) => (
+          <div class="footer__col">
+            <h2 class="footer__col-title">{col.title}</h2>
+            <ul role="list">
+              {col.links.map((l) => (
+                <li>
+                  <a
+                    href={l.href}
+                    target={l.external ? '_blank' : undefined}
+                    rel={l.external ? 'noopener' : undefined}
+                  >{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    </div>
+
+    <!-- ── Channels row: the orbit's discs, resting in a line ── -->
+    <div class="footer__channels" aria-hidden="true">
+      {channels.map((c) => (
+        <span class="footer__disc"><Icon name={`logos/${c.n}`} width={c.w} height={c.h} /></span>
+      ))}
+      <span class="footer__channels-more">+ more</span>
+    </div>
+
+    <!-- ── Bottom bar ── -->
+    <div class="footer__bar">
+      <p class="footer__copy">
+        © {year} Reply Anywhere — a product of
+        <a href="https://semanticforce.ai" target="_blank" rel="noopener">Semantic Force</a>.
+      </p>
+      <div class="footer__meta">
+        <a href="#privacy">Privacy Policy</a>
+        <span class="footer__dot" aria-hidden="true"></span>
+        <a href="#terms">Terms</a>
+        <span class="footer__dot" aria-hidden="true"></span>
+        <button class="footer__lang" type="button" aria-label="Switch language">En</button>
+      </div>
+      <Button href="#demo" label="Request a free demo" class="footer__cta" />
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    isolation: isolate;
+    overflow: clip; /* the glow never widens the page */
+    padding: var(--sp-20) var(--margin-desktop) var(--sp-10);
+    border-top: 1px solid var(--border-line);
+  }
+  /* One soft violet wash behind the brand — the site's signature glow, at its
+     quietest (pre-blurred square idiom, DESIGN.md §6). */
+  .footer__glow {
+    position: absolute;
+    z-index: -1;
+    left: max(var(--margin-desktop), 6%);
+    top: -60px;
+    width: 320px;
+    height: 320px;
+    border-radius: 100px;
+    background: var(--violet);
+    opacity: 0.14;
+    filter: blur(calc(var(--glow-hero-mid) / 2));
+    pointer-events: none;
+  }
+  .footer__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-12);
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+
+  /* ── Top row: brand block + evenly-spread link columns (grid, not
+     space-between — the latter left a dead 400px hole between them) ── */
+  .footer__top {
+    display: grid;
+    grid-template-columns: minmax(280px, 360px) 1fr;
+    align-items: start;
+    gap: var(--sp-16);
+  }
+  .footer__brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+  }
+  .footer__islands {
+    display: flex;
+    gap: var(--sp-1); /* the menu's own 4px floor between islands */
+  }
+  .footer__logo {
+    justify-content: center;
+    padding: var(--sp-3) var(--sp-4);
+  }
+  .footer__logo img { width: 44.571px; height: 40px; }
+  .footer__wordmark {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: var(--sp-2) var(--sp-45);
+  }
+  .footer__wordmark img { width: 101.945px; height: 33px; }
+  .footer__tagline {
+    font-size: var(--fs-pill-label); /* settled exception to the 13px floor */
+    line-height: var(--lh-body);
+    color: var(--text-tagline);
+    white-space: nowrap;
+  }
+  .footer__claim {
+    font-size: var(--fs-card-sub);
+    line-height: var(--lh-body);
+    color: var(--text-dim);
+  }
+
+  /* ── Link columns ── */
+  .footer__cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-8);
+  }
+  .footer__col ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    margin: var(--sp-5) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .footer__col-title {
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-semibold);
+    line-height: 1;
+    color: var(--text-hi);
+  }
+  .footer__col a {
+    font-size: var(--fs-chip);
+    line-height: var(--lh-body);
+    color: var(--text-dim);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .footer__col a:hover { color: var(--text-hi); }
+
+  /* ── Channels row ── */
+  .footer__channels {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    padding-top: var(--sp-8);
+    border-top: 1px solid var(--border-soft);
+  }
+  .footer__disc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--sp-8); /* 32px disc — the orbit's 64 at half scale */
+    height: var(--sp-8);
+    background: var(--surface-bubble);
+    border-radius: var(--r-pill);
+  }
+  .footer__channels-more {
+    margin-left: var(--sp-1);
+    font-size: var(--fs-chip);
+    color: var(--text-dim);
+  }
+
+  /* ── Bottom bar ── */
+  .footer__bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* the row wraps before anything inside it is squeezed */
+    gap: var(--sp-6);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--border-soft);
+  }
+  /* Layout hint only — never restyle the button (DESIGN.md §0). Without it a
+     tight row shrank the CTA and its label wrapped to two lines → 60px tall. */
+  .footer__cta { flex-shrink: 0; }
+  .footer__copy {
+    font-size: var(--fs-chip);
+    line-height: var(--lh-body);
+    color: var(--text-dim);
+  }
+  .footer__copy a {
+    color: var(--text-body);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .footer__copy a:hover { color: var(--violet-light); }
+  .footer__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-left: auto;
+    font-size: var(--fs-chip);
+    color: var(--text-dim);
+  }
+  .footer__meta a,
+  .footer__lang {
+    color: var(--text-dim);
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .footer__meta a:hover,
+  .footer__lang:hover { color: var(--text-hi); }
+  .footer__dot {
+    width: 3px;
+    height: 3px;
+    border-radius: var(--r-pill);
+    background: var(--border-strong);
+  }
+
+  /* ── Adaptive: the site's ≤946 / ≤760 degrade rules ── */
+  @media (max-width: 946px) {
+    .footer { padding-top: var(--sp-16); }
+    .footer__top {
+      grid-template-columns: 1fr;
+      gap: var(--sp-12);
+    }
+    .footer__brand { max-width: 549px; }
+  }
+  @media (max-width: 760px) {
+    .footer__inner { gap: var(--sp-10); }
+    .footer__cols {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--sp-8) var(--sp-6);
+    }
+    .footer__bar {
+      flex-wrap: wrap;
+      gap: var(--sp-4);
+    }
+    .footer__meta { margin-left: 0; width: 100%; }
+    .footer__cta { width: 100%; }
+  }
+</style>

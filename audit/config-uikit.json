@@ -1,0 +1,18 @@
+{
+  "outDir": "screens",
+  "concurrency": 2,
+  "jpegQuality": 55,
+  "chromePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "pages": {
+    "uikit": "http://localhost:4323/preview/uikit"
+  },
+  "viewports": [
+    {
+      "name": "mac1440",
+      "width": 1440,
+      "height": 900,
+      "dsf": 1,
+      "mobile": false
+    }
+  ]
+}

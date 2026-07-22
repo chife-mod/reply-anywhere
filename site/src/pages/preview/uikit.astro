@@ -1,0 +1,372 @@
+---
+// UI Kit — визуальный сторибук ПРОДАКШН-компонентов (не копий!).
+// Правило (docs/DESIGN.md): каждый компонент рендерится отсюда тем же кодом,
+// что и на лендинге. Новый стиль/вариант появляется сначала здесь и в
+// DESIGN.md, потом в секциях. Страница noindex, живёт на /preview/uikit.
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/ui/Button.astro';
+import Chip from '../../components/ui/Chip.astro';
+import ChannelPill from '../../components/ui/ChannelPill.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import Icon from '../../components/ui/Icon.astro';
+
+const colors = [
+  { t: 'Brand', items: [
+    ['--violet', '#AB0DFF'], ['--violet-light', '#C964FF'], ['--violet-pulse', '#D992FF'],
+    ['--violet-soft', '#8B76FF'], ['--magenta-deep', 'rgba(137,0,155,1)'],
+  ]},
+  { t: 'Surfaces', items: [
+    ['--bg', '#111322'], ['--surface-tile', '#111322'], ['--surface-bubble', '#0D0E1A'],
+    ['--surface-island', 'rgba(0,0,0,.85)'], ['--surface-card', 'rgba(139,118,255,.05)'],
+    ['--surface-pill', 'rgba(0,0,0,.5)'], ['--surface-pill-social', 'rgba(171,13,255,.2)'],
+    ['--black', '#000000'],
+  ]},
+  { t: 'Borders', items: [
+    ['--border-soft', 'rgba(139,118,255,.10)'], ['--border-line', 'rgba(139,118,255,.20)'],
+    ['--border-card', 'rgba(139,118,255,.24)'], ['--border-strong', 'rgba(139,118,255,.30)'],
+    ['--border-white', 'rgba(255,255,255,.20)'],
+  ]},
+  { t: 'Text', items: [
+    ['--text-hi', '#FFFFFF'], ['--text-body', 'rgba(255,255,255,.8)'],
+    ['--text-dim', 'rgba(255,255,255,.5)'], ['--text-tagline', '#7E90A3'],
+  ]},
+];
+
+const typeScale = [
+  { name: 'H1 · --fs-h1 48 / 1.05', cls: 'sp-h1', sample: 'Reply to every Review' },
+  { name: 'H2 · --fs-h2 40 / 1.05', cls: 'sp-h2', sample: 'Everything you need' },
+  { name: 'Card title · --fs-card-title 24', cls: 'sp-card-title', sample: 'All Channels' },
+  { name: 'Lead · --fs-lead 18 / 1.4', cls: 'sp-lead', sample: 'Respond to reviews, comments, messages and customer questions.' },
+  { name: 'Card sub · --fs-card-sub 16', cls: 'sp-card-sub', sample: 'Everything in one place' },
+  { name: 'UI · --fs-ui 14 · Medium', cls: 'sp-ui', sample: 'Request a free demo' },
+  { name: 'Chip · --fs-chip 12 / 1.2', cls: 'sp-chip', sample: 'Faster responses · happy customers' },
+  { name: 'Pill label · --fs-pill-label 10', cls: 'sp-pill', sample: 'COMPANY REVIEWS' },
+];
+
+const spacing = [4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96];
+const radii = [
+  ['--r-item', 4], ['--r-md', 8], ['--r-tile', 12], ['--r-app', 24],
+];
+
+const tablerIcons = [
+  'bolt', 'message', 'messages', 'chart-bar-popular', 'bulb', 'inbox', 'sparkles',
+  'layout-grid', 'robot-face', 'send-2', 'arrow-up-right',
+];
+const channelLogos = [
+  'google-g', 'google', 'google-maps', 'google-play', 'amazon', 'amazon-round', 'appstore',
+  'instagram', 'facebook', 'messenger', 'whatsapp', 'tiktok', 'trustpilot', 'ebay', 'walmart',
+  'etsy', 'rozetka', 'best-buy',
+];
+---
+
+<Layout title="Reply Anywhere — UI Kit" description="Production UI kit — live components" noindex>
+  <main id="main" class="kit">
+    <header class="kit__head">
+      <Icon name="logos/reply-anywhere-mark" width={42} height={38} />
+      <div>
+        <h1 class="kit__title">Reply Anywhere · UI Kit</h1>
+        <p class="kit__sub">
+          Живые продакшн-компоненты — рендерятся тем же кодом, что и лендинг.
+          Канон и правила: <code>docs/DESIGN.md</code>. Одна кнопка, один H2, одни токены.
+        </p>
+      </div>
+    </header>
+
+    <!-- ═══ COLORS ═══ -->
+    <section class="kit__section">
+      <h2 class="kit__h2">Colors <span class="kit__hint">tokens.css · 1:1 Figma variables</span></h2>
+      {colors.map((group) => (
+        <div class="kit__block">
+          <h3 class="kit__h3">{group.t}</h3>
+          <div class="kit__swatches">
+            {group.items.map(([name, value]) => (
+              <div class="swatch">
+                <span class="swatch__chip" style={`background: var(${name})`}></span>
+                <code class="swatch__name">{name}</code>
+                <span class="swatch__val">{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <!-- ═══ TYPOGRAPHY ═══ -->
+    <section class="kit__section">
+      <h2 class="kit__h2">Typography <span class="kit__hint">Inter Variable · self-hosted</span></h2>
+      <div class="kit__block kit__typelist">
+        {typeScale.map((t) => (
+          <div class="typerow">
+            <code class="typerow__name">{t.name}</code>
+            <span class={`typerow__sample ${t.cls}`}>{t.sample}</span>
+          </div>
+        ))}
+      </div>
+      <div class="kit__block">
+        <h3 class="kit__h3">SectionHeading — ONE heading component for every section</h3>
+        <div class="kit__stage kit__stage--col">
+          <SectionHeading line1="Everything you need" accent="to respond at scale" align="left" />
+          <SectionHeading line1="One platform for review management" accent="and social customer service" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SPACING & RADII ═══ -->
+    <section class="kit__section">
+      <h2 class="kit__h2">Spacing <span class="kit__hint">--sp-* · Figma-observed steps</span></h2>
+      <div class="kit__block kit__spacing">
+        {spacing.map((px) => (
+          <div class="sprow">
+            <code class="sprow__name">{px}px</code>
+            <span class="sprow__bar" style={`width:${px}px`}></span>
+          </div>
+        ))}
+      </div>
+      <h2 class="kit__h2">Radii <span class="kit__hint">--r-* · pill = 1000</span></h2>
+      <div class="kit__block kit__radii">
+        {radii.map(([name, px]) => (
+          <div class="radbox" style={`border-radius:${px}px`}>
+            <code>{name}</code><span>{px}px</span>
+          </div>
+        ))}
+        <div class="radbox radbox--pill"><code>--r-pill</code><span>1000px</span></div>
+      </div>
+    </section>
+
+    <!-- ═══ COMPONENTS ═══ -->
+    <section class="kit__section">
+      <h2 class="kit__h2">Button <span class="kit__hint">THE button — три варианта, других нет</span></h2>
+      <div class="kit__stage">
+        <Button href="#" label="Request a free demo" />
+        <Button href="#" variant="dark" label="Request a free demo" />
+        <Button href="#" variant="icon">
+          <Icon name="tabler/arrow-up-right" size={24} alt="Open" />
+        </Button>
+      </div>
+
+      <h2 class="kit__h2">Chip <span class="kit__hint">hero feature chips</span></h2>
+      <div class="kit__stage">
+        <Chip icon="tabler/bolt" line1="All channels" line2="in one place" />
+        <Chip icon="tabler/message" line1="Faster responses" line2="happy customers" />
+        <Chip icon="tabler/chart-bar-popular" line1="Better insights" line2="smarter decisions" />
+      </div>
+
+      <h2 class="kit__h2">ChannelPill <span class="kit__hint">dark / social — сцена «One platform»</span></h2>
+      <div class="kit__stage">
+        <ChannelPill icon="logos/google-g" category="Company Reviews" name="Google Reviews" />
+        <ChannelPill icon="logos/instagram" category="Social Comments" name="Instagram Comments" variant="social" />
+        <ChannelPill icon="logos/whatsapp" category="Direct Messages" name="WhatsApp" variant="social" />
+      </div>
+
+      <h2 class="kit__h2">Compare marks <span class="kit__hint">Compare section cells</span></h2>
+      <div class="kit__stage">
+        <span class="markbox"><Icon name="compare/yes-us" size={28} alt="Yes (us)" /><code>yes-us</code></span>
+        <span class="markbox"><Icon name="compare/yes" size={28} alt="Yes" /><code>yes</code></span>
+        <span class="markbox"><Icon name="compare/no" size={28} alt="No" /><code>no</code></span>
+        <span class="markbox"><span class="kit-qual">Add-on</span><code>.qual</code></span>
+        <span class="markbox"><span class="kit-price">$$<span class="off">$$$</span></span><code>price tier</code></span>
+      </div>
+
+      <h2 class="kit__h2">Card surface <span class="kit__hint">Features cards base</span></h2>
+      <div class="kit__stage">
+        <div class="kit-card">
+          <span class="kit-card__tile"><Icon name="tabler/layout-grid" size={24} /></span>
+          <div>
+            <p class="kit-card__title">All Channels</p>
+            <p class="kit-card__sub">Everything in one place</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ ICONS ═══ -->
+    <section class="kit__section">
+      <h2 class="kit__h2">Icons — tabler <span class="kit__hint">файлы из Figma, никогда не инлайн</span></h2>
+      <div class="kit__icons">
+        {tablerIcons.map((n) => (
+          <span class="iconbox"><Icon name={`tabler/${n}`} size={24} alt={n} /><code>{n}</code></span>
+        ))}
+      </div>
+      <h2 class="kit__h2">Icons — channel logos</h2>
+      <div class="kit__icons">
+        {channelLogos.map((n) => (
+          <span class="iconbox iconbox--disc"><Icon name={`logos/${n}`} size={26} alt={n} /><code>{n}</code></span>
+        ))}
+      </div>
+    </section>
+
+    <!-- ═══ EFFECTS ═══ -->
+    <section class="kit__section">
+      <h2 class="kit__h2">Effects <span class="kit__hint">glow · тень тайла · CTA-градиент</span></h2>
+      <div class="kit__stage kit__stage--tall">
+        <div class="fx fx--glow">
+          <span class="fx__glowcore"></span>
+          <code>--glow-blur-*</code>
+        </div>
+        <div class="fx fx--tile">
+          <span class="fx__tile"><Icon name="logos/reply-anywhere-mark" width={45} height={40} /></span>
+          <code>--shadow-app-tile</code>
+        </div>
+        <div class="fx fx--cta">
+          <code>--grad-cta</code>
+        </div>
+      </div>
+    </section>
+
+    <footer class="kit__foot">
+      <p>
+        Канон: <code>docs/DESIGN.md</code> · Токены: <code>src/styles/tokens.css</code> ·
+        Обновлён 2026-07-21. Новые стили — сначала сюда и в DESIGN.md, потом в секции.
+      </p>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  /* Служебный хром кита — только токены, никаких новых продуктовых стилей. */
+  .kit {
+    max-width: var(--container);
+    margin-inline: auto;
+    padding: var(--sp-12) var(--margin-desktop) var(--sp-16);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-12);
+  }
+  .kit__head {
+    display: flex;
+    gap: var(--sp-5);
+    align-items: center;
+    padding-bottom: var(--sp-6);
+    border-bottom: 1px solid var(--border-line);
+  }
+  .kit__title {
+    font-size: var(--fs-card-title);
+    font-weight: var(--fw-bold);
+    color: var(--text-hi);
+  }
+  .kit__sub {
+    margin-top: var(--sp-1);
+    font-size: var(--fs-ui);
+    line-height: var(--lh-body);
+    color: var(--text-dim);
+  }
+  .kit code {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 11px;
+    color: var(--violet-light);
+  }
+
+  .kit__section { display: flex; flex-direction: column; gap: var(--sp-6); }
+  .kit__h2 {
+    font-size: var(--fs-card-sub);
+    font-weight: var(--fw-semibold);
+    color: var(--text-hi);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .kit__hint { font-size: var(--fs-chip); font-weight: var(--fw-regular); color: var(--text-dim); margin-left: var(--sp-2); }
+  .kit__h3 { font-size: var(--fs-ui); font-weight: var(--fw-medium); color: var(--text-body); margin-bottom: var(--sp-3); }
+  .kit__block { margin-bottom: var(--sp-4); }
+
+  .kit__swatches { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
+  .swatch {
+    display: flex; flex-direction: column; gap: var(--sp-1);
+    width: 132px; padding: var(--sp-25);
+    background: var(--surface-card);
+    border: 1px solid var(--border-soft); border-radius: var(--r-md);
+  }
+  .swatch__chip { height: 40px; border-radius: var(--r-item); border: 1px solid var(--border-white); }
+  .swatch__val { font-size: 10px; color: var(--text-dim); }
+
+  .kit__typelist { display: flex; flex-direction: column; gap: var(--sp-4); }
+  .typerow { display: grid; grid-template-columns: 240px 1fr; gap: var(--sp-6); align-items: baseline; }
+  .typerow__name { white-space: nowrap; }
+  .typerow__sample { color: var(--text-hi); }
+  .sp-h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); color: var(--text-body); }
+  .sp-h2 { font-size: var(--fs-h2); line-height: var(--lh-h2); color: var(--text-body); }
+  .sp-card-title { font-size: var(--fs-card-title); font-weight: var(--fw-bold); }
+  .sp-lead { font-size: var(--fs-lead); line-height: var(--lh-body); color: var(--text-body); }
+  .sp-card-sub { font-size: var(--fs-card-sub); color: var(--violet-light); }
+  .sp-ui { font-size: var(--fs-ui); font-weight: var(--fw-medium); }
+  .sp-chip { font-size: var(--fs-chip); line-height: var(--lh-chip); color: var(--text-body); }
+  .sp-pill { font-size: var(--fs-pill-label); letter-spacing: 0.06em; color: var(--text-dim); }
+
+  .kit__spacing { display: flex; flex-direction: column; gap: var(--sp-2); }
+  .sprow { display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: var(--sp-4); }
+  .sprow__bar { height: 14px; background: var(--violet); opacity: 0.75; border-radius: 2px; display: inline-block; }
+
+  .kit__radii { display: flex; gap: var(--sp-4); flex-wrap: wrap; }
+  .radbox {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    width: 108px; height: 76px;
+    background: var(--surface-card); border: 1px solid var(--border-card);
+  }
+  .radbox span { font-size: 10px; color: var(--text-dim); }
+  .radbox--pill { border-radius: var(--r-pill); }
+
+  .kit__stage {
+    display: flex; align-items: center; gap: var(--sp-6); flex-wrap: wrap;
+    padding: var(--sp-6);
+    background: rgba(139, 118, 255, 0.03);
+    border: 1px dashed var(--border-line); border-radius: var(--r-md);
+  }
+  .kit__stage--col { flex-direction: column; align-items: flex-start; }
+  .kit__stage--tall { min-height: 180px; }
+
+  .markbox { display: inline-flex; flex-direction: column; align-items: center; gap: var(--sp-2); }
+  /* образцы из Compare — те же метрики, что в секции */
+  .kit-qual {
+    display: inline-block; font-size: var(--fs-pill-label); letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-dim);
+    border: 1px solid var(--border-line); border-radius: var(--r-pill); padding: 2px var(--sp-2);
+  }
+  .kit-price {
+    font-size: var(--fs-card-title); font-weight: var(--fw-bold); letter-spacing: 0.06em;
+    color: var(--text-hi); font-variant-numeric: tabular-nums;
+  }
+  .kit-price .off { color: var(--text-dim); opacity: 0.35; }
+
+  .kit-card {
+    display: flex; gap: var(--sp-4); align-items: flex-start;
+    width: 320px; padding: var(--sp-8);
+    background: var(--surface-card); border: 1px solid var(--border-card); border-radius: var(--r-md);
+  }
+  .kit-card__tile {
+    display: flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; flex-shrink: 0;
+    background: var(--surface-tile); border: 1px solid var(--border-strong); border-radius: var(--r-tile);
+  }
+  .kit-card__title { font-size: var(--fs-card-title); font-weight: var(--fw-bold); line-height: var(--lh-body); color: var(--text-hi); }
+  .kit-card__sub { font-size: var(--fs-card-sub); line-height: var(--lh-body); color: var(--violet-light); }
+
+  .kit__icons { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
+  .iconbox {
+    display: inline-flex; flex-direction: column; align-items: center; gap: var(--sp-2);
+    width: 96px; padding: var(--sp-3);
+    background: var(--surface-card); border: 1px solid var(--border-soft); border-radius: var(--r-md);
+  }
+  .iconbox--disc { background: var(--surface-bubble); }
+
+  .fx { display: flex; flex-direction: column; align-items: center; gap: var(--sp-3); width: 200px; }
+  .fx--glow { position: relative; min-height: 140px; justify-content: center; }
+  .fx__glowcore {
+    width: 76px; height: 76px; border-radius: 25px; background: var(--violet);
+    filter: blur(calc(var(--glow-blur-mid) / 2));
+  }
+  .fx__tile {
+    display: flex; align-items: center; justify-content: center;
+    width: 72px; height: 72px;
+    background: var(--black); border: 1.25px solid var(--border-soft);
+    border-radius: var(--r-app); box-shadow: var(--shadow-app-tile);
+  }
+  .fx--cta {
+    justify-content: center; min-height: 88px; flex: 1;
+    background: var(--grad-cta); border: 1px solid var(--border-white); border-radius: var(--r-md);
+  }
+  .kit__foot { padding-top: var(--sp-6); border-top: 1px solid var(--border-line); font-size: var(--fs-chip); color: var(--text-dim); }
+
+  @media (max-width: 760px) {
+    .typerow { grid-template-columns: 1fr; gap: var(--sp-1); }
+    .sp-h1 { font-size: var(--fs-h2); }
+  }
+</style>

@@ -10,7 +10,13 @@
 // anchors, SVG marks as repo files, and the ≤946/≤760 adaptive.
 // Data flags pending Vsevolod's sign-off are tracked in the session report
 // (channel counts, «12 languages», gominga benchmarking cell, trial claim).
+// Systemization pass (client 2026-07-21): section chrome = the SAME shared
+// system as every other section — SectionHeading, THE Button, Features' head
+// grid and paddings; sticky thead dropped (the table scrolls inside its own
+// block — the floating menu made sticky read as broken layering).
 import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
 
 type MarkCell = { mark: 'yes' | 'no'; label: string; qual?: string };
 type NumCell = { num: string; unit?: string; qual?: string };
@@ -84,14 +90,13 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
 
 <section class="cmp-section" id="compare" aria-labelledby="cmp-title">
   <div class="cmp-wrap">
-    <p class="cmp-eyebrow">Compare</p>
-    <h2 class="cmp-h2" id="cmp-title">
-      The same job, done for <strong>a fraction of the price</strong>
-    </h2>
-    <p class="cmp-lead">
-      Sprinklr and Gominga each do part of it well. Reply Anywhere unifies more channels and
-      AI-drafted replies without the enterprise contract — and we mark where the others win.
-    </p>
+    <header class="cmp-head" id="cmp-title">
+      <SectionHeading line1="The same job, done for" accent="a fraction of the price" align="left" />
+      <p class="cmp-lead">
+        Sprinklr and Gominga each do part of it well. Reply Anywhere unifies more channels and
+        AI-drafted replies without the enterprise contract — and we mark where the others win.
+      </p>
+    </header>
 
     <table class="cmp-table">
       <caption>
@@ -164,7 +169,7 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     </table>
 
     <div class="cmp-cta-row">
-      <a class="foot-cta" href="#demo">Request a free demo</a>
+      <Button href="#demo" label="Request a free demo" />
       <span class="cta-hint">14-day trial · no card · cancel anytime</span>
     </div>
 
@@ -185,42 +190,31 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
 </section>
 
 <style>
+  /* Section chrome = the Features pattern verbatim: same paddings, same
+     head grid, same heading component, same lead measure and color. */
   .cmp-section {
-    padding: var(--sp-20) var(--margin-desktop) var(--sp-24);
+    padding: var(--sp-10) var(--margin-desktop);
     scroll-margin-top: 96px; /* #compare anchor lands below the fixed menu */
   }
   .cmp-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-8);
     max-width: var(--container);
     margin-inline: auto;
   }
-
-  .cmp-eyebrow {
-    font-size: var(--fs-ui);
-    font-weight: var(--fw-medium);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--violet-light);
-    margin-bottom: var(--sp-4);
-  }
-  .cmp-h2 {
-    font-size: var(--fs-h2);
-    line-height: var(--lh-h2);
-    font-weight: var(--fw-regular);
-    color: var(--text-body);
-    max-width: 22ch;
-    text-wrap: balance;
-  }
-  .cmp-h2 strong {
-    color: var(--violet);
-    font-weight: var(--fw-bold);
+  .cmp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--sp-8);
   }
   .cmp-lead {
-    margin-top: var(--sp-5);
+    width: 416px; /* Figma 24:992 — same measure as features__lead */
+    flex-shrink: 0;
     font-size: var(--fs-lead);
     line-height: var(--lh-body);
-    color: var(--text-dim);
-    max-width: 56ch;
-    text-wrap: pretty;
+    color: var(--text-body);
   }
 
   /* ── table shell ─────────────────────────────────────────── */
@@ -228,7 +222,6 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    margin-top: var(--sp-12);
     table-layout: fixed;
   }
   .cmp-table caption {
@@ -241,12 +234,9 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
   .cmp-table col.col-feature { width: 34%; }
   .cmp-table col.col-vendor { width: 22%; }
 
-  /* ── sticky product header (design top:0 + our fixed-menu zone) ── */
-  thead th {
-    position: sticky;
-    top: 96px;
-    z-index: 3;
-  }
+  /* ── product header row (client 2026-07-21: NOT sticky — the table
+     scrolls inside its own block; sticky under the floating menu islands
+     produced a broken-looking double layer) ── */
   .head-cell {
     background: var(--bg);
     padding: var(--sp-6) var(--sp-5) var(--sp-5);
@@ -404,25 +394,6 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     gap: var(--sp-3);
     margin-top: var(--sp-10);
   }
-  .foot-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--sp-4) var(--sp-8);
-    background: var(--violet);
-    border-radius: var(--r-md);
-    font-size: var(--fs-ui);
-    font-weight: var(--fw-medium);
-    color: var(--text-hi);
-    transition:
-      transform var(--dur-fast) var(--ease-out),
-      background var(--dur-fast) var(--ease-out);
-  }
-  .foot-cta:hover {
-    background: var(--violet-light);
-    color: var(--text-hi);
-    transform: translateY(-1px);
-  }
   .cta-hint {
     font-size: var(--fs-chip);
     color: var(--text-dim);
@@ -468,8 +439,11 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
   /* ── Adaptive (the canvas is desktop-only; same degrade rules as the
      rest of the site: ≤946 burger zone, ≤760 phone compaction) ── */
   @media (max-width: 946px) {
-    .cmp-section { padding-block: var(--sp-16) var(--sp-20); }
-    thead th { position: static; } /* no sticky under the floating burger menu */
+    .cmp-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .cmp-lead { width: auto; max-width: 549px; }
   }
   @media (max-width: 760px) {
     .head-cell,

@@ -1,0 +1,96 @@
+# DESIGN.md — живой дизайн-канон Reply Anywhere
+
+> **Статус:** пополняющийся документ. Каждая новая секция/компонент сверяется с ним ДО
+> вёрстки; каждое новое дизайн-решение вписывается сюда СРАЗУ после утверждения.
+> Визуальный двойник этого файла — **UI Kit на живых компонентах**: `/preview/uikit`
+> (прод: https://reply-anywhere.semanticforce.workers.dev/preview/uikit).
+> Источник значений: `site/src/styles/tokens.css` (1:1 из Figma `aZ3lUbOhOeEJbVC7VdR1VD`).
+
+---
+
+## 0. Главное правило — ОДНА система, ноль дублей
+
+- **ONE Button.** `components/ui/Button.astro` — primary / dark / icon. Любая кнопка на
+  сайте — это он. Новый вариант = правка Button.astro + карточка в UI Kit + строка здесь.
+  Никогда не верстать кнопку локальными стилями секции.
+- **ONE heading.** `SectionHeading.astro` (Regular 40 white/80 + Bold violet accent,
+  center/left). H1 героя — единственное исключение (48, свой паттерн в Hero).
+- **ONE набор токенов.** Сырой hex/px, существующий в tokens.css, в компоненте = дефект.
+- **Иконки — файлами** из Figma (`src/icons/**`), рендер через `<Icon>`. Инлайн-SVG запрещён.
+- **Импорт из Claude Design / Figma-канваса** переносит КОМПОЗИЦИЮ и контент; хром
+  (кнопки, заголовки, отступы секции, сетка) всегда пересобирается из системных
+  компонентов. Кастомные кнопки/тексто-стили из канваса не переносятся.
+  _(Урок 2026-07-21: из канваса уехала своя кнопка CTA и свои отступы секции — больше так не делаем.)_
+
+## 1. Язык
+
+Тёмный премиальный SaaS: канва `--bg` #111322, единственный акцент `--violet` #AB0DFF,
+Inter Variable (self-hosted), много воздуха, мало цветов. Референс тона: semanticforce.ai.
+
+## 2. Сетка и секции
+
+- Контент: `--container` 1280, по центру; боковые поля `--margin-desktop`
+  (fluid clamp 20→80, на 1440+ ровно 80).
+- Секция: `padding: var(--sp-10) var(--margin-desktop)`; внутренний stack `gap: var(--sp-8)`.
+- Голова секции (паттерн Features/Compare): `SectionHeading` слева + лид справа
+  (`width: 416px; flex-shrink: 0; --fs-lead; --text-body`), `align-items: flex-end`.
+- Якоря секций: `scroll-margin-top: 96px` (зона фикс-меню).
+
+## 3. Типографика (полная шкала — в UI Kit)
+
+H1 48/1.05 (hero only) · H2 40/1.05 · card-title 24 Bold · lead 18/1.4 ·
+card-sub 16 · ui 14 Medium · chip 12/1.2 · pill-label 10. Веса 400/500/600/700.
+Акцентная фраза заголовка: violet, Bold (H2) / SemiBold (H1).
+
+## 4. Компоненты (карта)
+
+| Компонент | Файл | Использование |
+|---|---|---|
+| Button (primary/dark/icon) | `ui/Button.astro` | все CTA: меню, hero, CTA-band, Compare |
+| SectionHeading | `ui/SectionHeading.astro` | заголовки всех секций |
+| Chip | `ui/Chip.astro` | фичи-чипсы hero |
+| ChannelPill (dark/social) | `ui/ChannelPill.astro` | сцена «One platform» |
+| Icon | `ui/Icon.astro` | все иконки (файлы из `src/icons/**`) |
+| Compare marks | `icons/compare/{yes-us,yes,no}.svg` + `.qual` пилюля | ячейки таблицы сравнения |
+
+## 5. Секции-паттерны
+
+- **Hero**: копи слева (549) + орбита справа (613×581, right 82); фолд-гарантия —
+  см. комментарии в Hero.astro (band-gap → нырок → масштаб → fluid H1).
+- **Полоса брендов**: маркиза 88px-тайлов, отступы на `--band-gap` (40→16).
+- **Сцена «One platform»**: sticky-пин 260vh, скраб top-bottom (SCROLL-SCENE-SPEC.md).
+- **Features**: голова-паттерн + 3 карточки 562px + CTA-band (`--grad-cta`).
+- **Compare** (дизайн: Claude Design «Comparison Table.html», 2026-07-21):
+  цены $-глифами в шапках колонок (заполненные + `.off` 35%), violet-зебра чётных
+  строк, RA-колонка `--surface-pill-social` + границы `--border-strong` +
+  скругления r-md сверху/снизу, числа `--fs-card-title` SemiBold, квалификаторы
+  `.qual` (pill-label, uppercase, r-pill). Шапка таблицы НЕ sticky (плавающие
+  острова меню дают грязный двойной слой). Честность: кресты и в нашей колонке.
+
+## 6. Эффекты и моушн
+
+- Глоу: стопки пре-блюренных квадратов (`--glow-*`); анимировать opacity/scale, не blur.
+- Тени тайлов: `--shadow-app-tile(-hero)` (5 слоёв).
+- Моушн: transform/opacity only; `--ease-out`, `--dur-fast/normal`; каждая анимация
+  уважает `prefers-reduced-motion` (статика = дизайн-состояние).
+
+## 7. Адаптив (деградация без мобильных фреймов)
+
+≤946 (burger): hero в одну колонку (орбита-шоупис ниже копи), головы секций в стек,
+карточки Features в столбик, CTA-band в колонку. ≤760: компакция таблиц/чипов.
+Механика фолда — только desktop/tablet (≥947).
+
+## 8. Процесс пополнения
+
+1. Новая секция → сверка с этим доком и `/preview/uikit` до вёрстки.
+2. Новый компонент/вариант → сначала карточка в UI Kit + строка в §4/§5, потом секция.
+3. Импорт из Figma/Claude Design → композиция из канваса, хром из системы (§0).
+4. Прогон QA-харнеса (audit/) после каждой вёрстки: overflow/console = 0.
+
+## Журнал
+
+- **2026-07-21** — Compare систематизирован (Button/SectionHeading/Features-грид вместо
+  канвас-хрома; sticky снят). Создан UI Kit `/preview/uikit` + этот документ.
+- **2026-07-20** — Compare реализован из Claude Design; дизайн-язык залит в Claude Design
+  (проект «Reply Anywhere», tokens+fonts+guidelines).
+- **2026-07-08** — фолд-гарантия первого экрана; fluid-адаптив ≤946; сцена 260vh.

@@ -18,23 +18,31 @@ interface Pill {
   violet?: boolean; // rgba(171,13,255,.2) fill variant
 }
 
-// Order = Figma layer order (20:377 … 20:682).
+// Layout rule (client 2026-07-21: «раскидать теги, чтобы гарантированно не
+// налазили» — the body+chips now share the stage with the pills): the centre
+// column (x 340–1100 on the 1440 stage) belongs to the headline/body/chips,
+// so pills live on the TOP ARC (y ≤ 230, above the headline at 283) or on the
+// SIDE WINGS (fully left of x≈340 / right of x≥1110). Narrow viewports clip
+// the wings symmetrically; whatever stays visible is top-arc only — safe on
+// desktop, tablet and phone alike. Original Figma scatter (20:377…20:682)
+// superseded by this client rev.
 const pills: Pill[] = [
+  // top arc
   { x: 198, y: 161, icon: 'logos/google-g', category: 'Company Reviews', name: 'Google Reviews' },
-  { x: 991, y: 418, icon: 'logos/appstore', category: 'App Reviews', name: 'App Store Reviews', iconWidth: 24, iconHeight: 21 },
-  { x: 826, y: 187, icon: 'logos/amazon', category: 'Product Reviews', name: 'Amazon Reviews' },
-  { x: 376, y: 451, icon: 'logos/instagram', category: 'Social Comments', name: 'Instagram Comments', violet: true },
-  { x: 1073, y: 244, icon: 'logos/tiktok', category: 'Social Comments', name: 'TikTok Comments', iconWidth: 21, iconHeight: 24, violet: true },
-  { x: 684, y: 520, icon: 'logos/facebook', category: 'Social Comments', name: 'Facebook Comments', violet: true },
-  { x: 554, y: 196, icon: 'logos/messenger', category: 'Direct Messages', name: 'Messenger', violet: true },
   { x: 442, y: 97, icon: 'logos/google-maps', category: 'Location Reviews', name: 'Google Maps', iconWidth: 17, iconHeight: 24, violet: true },
-  { x: 1102, y: 496, icon: 'logos/trustpilot', category: 'Company Reviews', name: 'Trustpilot', iconWidth: 24, iconHeight: 23, violet: true },
+  { x: 726, y: 60, icon: 'logos/instagram', category: 'Direct Messages', name: 'Instagram DMs', violet: true },
+  { x: 554, y: 182, icon: 'logos/messenger', category: 'Direct Messages', name: 'Messenger', violet: true },
+  { x: 826, y: 187, icon: 'logos/amazon', category: 'Product Reviews', name: 'Amazon Reviews' },
+  { x: 1120, y: 150, icon: 'logos/tiktok', category: 'Social Comments', name: 'TikTok Comments', iconWidth: 21, iconHeight: 24, violet: true },
   { x: 85, y: 225, icon: 'logos/ebay', category: 'Marketplace Reviews', name: 'eBay', iconWidth: 30, iconHeight: 12, violet: true },
-  // category was «Less manual work» in the mockup — a copy-paste slip (client
-  // confirmed 2026-07-02); aligned with the other DM channels.
+  // left wing
   { x: 171, y: 361, icon: 'logos/whatsapp', category: 'Direct Messages', name: 'WhatsApp', violet: true },
-  { x: 213, y: 520, icon: 'logos/etsy', category: 'Marketplace Reviews', name: 'Etsy', violet: true },
-  { x: 726, y: 73, icon: 'logos/instagram', category: 'Direct Messages', name: 'Instagram DMs', violet: true },
+  { x: 90, y: 452, icon: 'logos/instagram', category: 'Social Comments', name: 'Instagram Comments', violet: true },
+  { x: 150, y: 545, icon: 'logos/etsy', category: 'Marketplace Reviews', name: 'Etsy', violet: true },
+  // right wing
+  { x: 1130, y: 370, icon: 'logos/appstore', category: 'App Reviews', name: 'App Store Reviews', iconWidth: 24, iconHeight: 21 },
+  { x: 1115, y: 470, icon: 'logos/trustpilot', category: 'Company Reviews', name: 'Trustpilot', iconWidth: 24, iconHeight: 23, violet: true },
+  { x: 1120, y: 560, icon: 'logos/facebook', category: 'Social Comments', name: 'Facebook Comments', violet: true },
 ];
 ---
 
@@ -242,8 +250,8 @@ const pills: Pill[] = [
     gsap.set(body, { opacity: 0, y: 40 });
     gsap.set(chips, { opacity: 0, y: 24 });
 
-    // One scrubbed timeline; position values are abstract beats (9.6 total)
-    // mapped onto the full 260vh track (beat ≈ 27vh; the pin engages at ~3.7).
+    // One scrubbed timeline; position values are abstract beats (8.6 total)
+    // mapped onto the full 260vh track (beat ≈ 30vh; the pin engages at ~3.3).
     // Trigger starts the moment the scene peeks in from below (client
     // 2026-07-08: no dead dark stretch). scrub 0.6 = soft catch-up: on a fast
     // wheel flick the states PLAY toward the target instead of teleporting —
@@ -279,8 +287,13 @@ const pills: Pill[] = [
       );
     });
 
-    // 3 — headline part 2 (violet bold) types in (spec §3).
+    // 3 — headline part 2 (violet bold) types in — and the explanation
+    // arrives WITH it (client 2026-07-21): body fades up and the three chips
+    // чик-чик-чик right on the second line's heels. Pills never overlap them
+    // — the pill map above keeps the centre column clear.
     tl.to(line2, { opacity: 1, duration: 0.12, stagger: 0.16 }, 4.0);
+    tl.to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 4.05);
+    tl.to(chips, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.25 }, 4.2);
 
     // 4 — wave 2: the 10 violet pills, same effect (spec §4).
     wave2.forEach((pill, i) => {
@@ -292,20 +305,13 @@ const pills: Pill[] = [
       );
     });
 
-    // 5 — pills clear the stage; the headline stays put (spec §5).
-    // (client 2026-07-02: dead gaps trimmed — the scene must not feel like
-    // «скролл ради скролла»)
+    // 5 — pills clear the stage; the assembled headline + explanation stay
+    // (spec §5; body/chips moved up to the part-2 beat, client 2026-07-21).
     tl.to(pills, { opacity: 0, scale: 0.92, duration: 0.7, ease: 'power1.in', stagger: 0.015 }, 7.0);
 
-    // 6+7 MERGED (client 2026-07-02): the explanation arrives as ONE composed
-    // beat — body fades up and the three chips чик-чик-чик right on top of it
-    // (stagger kept, just tighter), no separate scroll floor for the chips.
-    tl.to(body, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 7.8);
-    tl.to(chips, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.25 }, 7.95);
-
-    // 8 — settle before the unpin (spec §8: normal scroll resumes) — the
-    // finished block rests for the last ~7% of the track.
-    tl.to({}, { duration: 0.65 }, 8.95);
+    // 6 — settle before the unpin (spec §8: normal scroll resumes) — the
+    // finished block rests for the last ~8% of the track.
+    tl.to({}, { duration: 0.7 }, 7.9);
   }
 
   const scene = document.querySelector<HTMLElement>('[data-scene="one-platform"]');

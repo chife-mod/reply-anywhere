@@ -48,7 +48,7 @@ card-sub 16 · ui 14 Medium · chip 12/1.2 · pill-label 10. Веса 400/500/60
 |---|---|---|
 | Button (primary/dark/icon) | `ui/Button.astro` | все CTA: меню, hero, CTA-band, Compare |
 | SectionHeading | `ui/SectionHeading.astro` | заголовки всех секций |
-| Chip | `ui/Chip.astro` | фичи-чипсы hero |
+| Chip (md 12 / lg 14) | `ui/Chip.astro` | md — фичи-чипсы hero; lg — пункты сцены «One platform» |
 | ChannelPill (dark/social) | `ui/ChannelPill.astro` | сцена «One platform» |
 | Icon | `ui/Icon.astro` | все иконки (файлы из `src/icons/**`) |
 | Compare marks | `icons/compare/{yes-us,yes,no}.svg` + `.qual` пилюля | ячейки таблицы сравнения |
@@ -90,6 +90,10 @@ card-sub 16 · ui 14 Medium · chip 12/1.2 · pill-label 10. Веса 400/500/60
 
 ## Журнал
 
+- **2026-07-21 (3)** — Сцена «One platform»: body + чипсы появляются ВМЕСТЕ со второй
+  строкой слогана (бит 4.0); пиллы пересажены на «верхнюю дугу + боковые крылья»
+  (центр x340–1100 ниже y230 — чистая зона текста на всех вьюпортах); Chip получил
+  вариант lg (14px) для пунктов сцены; дорожка битов 9.6 → 8.6.
 - **2026-07-21 (2)** — Compare: бейджи-квалификаторы (Add-on / Q4) убраны — канвасная
   добавка вне задачи; механика `.qual` вычищена из секции и UI Kit.
 - **2026-07-21** — Compare систематизирован (Button/SectionHeading/Features-грид вместо

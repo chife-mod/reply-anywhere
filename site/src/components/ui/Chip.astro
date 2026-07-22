@@ -1,17 +1,20 @@
 ---
 // Feature chip (Figma symbol 7:745 «Frame 21066», reused in hero + sections):
-// 24px icon + two-line Inter Regular 12/1.2 — line 1 white, line 2 white@50%.
+// 24px icon + two-line text — line 1 white, line 2 white@50%.
+// Sizes: md = Inter Regular 12/1.2 (hero, Figma 1:1) · lg = 14 (--fs-ui) —
+// scene/PlatformIntro chips (client 2026-07-21: «шрифты крупнее, 14»).
 import Icon from './Icon.astro';
 
 interface Props {
   icon: string; // Icon name, e.g. "tabler/bolt"
   line1: string;
   line2: string;
+  size?: 'md' | 'lg';
 }
-const { icon, line1, line2 } = Astro.props;
+const { icon, line1, line2, size = 'md' } = Astro.props;
 ---
 
-<div class="chip">
+<div class:list={['chip', `chip--${size}`]}>
   <Icon name={icon} size={24} />
   <div class="chip__text">
     <span>{line1}</span>
@@ -31,6 +34,10 @@ const { icon, line1, line2 } = Astro.props;
     font-size: var(--fs-chip);
     line-height: var(--lh-chip);
     color: var(--text-hi);
+  }
+  .chip--lg .chip__text {
+    font-size: var(--fs-ui);
+    line-height: var(--lh-chip);
   }
   .chip__dim { color: var(--text-dim); }
 </style>

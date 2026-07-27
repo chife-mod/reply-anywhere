@@ -59,6 +59,19 @@ button, input, textarea, select { font: inherit; color: inherit; }
   -webkit-backdrop-filter: blur(var(--island-blur));
   backdrop-filter: blur(var(--island-blur));
   border-radius: var(--r-md);
+  /* Own compositing layer: WebKit/Chromium intermittently skip painting the
+     CHILDREN of large backdrop-filter surfaces (footer cards flashed empty,
+     client-caught 2026-07-26); promoting the island pins its layer. */
+  transform: translateZ(0);
+}
+
+/* Section anchors clear the fixed menu — ONE rule for every menu/footer
+   target instead of a per-section declaration (DESIGN.md §2). */
+#channels,
+#features,
+#compare,
+#contact {
+  scroll-margin-top: 96px;
 }
 
 /* Accessible skip-link (SEO/a11y baseline, carried from Verifly). */

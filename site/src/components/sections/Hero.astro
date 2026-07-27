@@ -430,6 +430,11 @@ const sparks = [
     display: flex;
     align-items: center;
     box-sizing: border-box;
+    /* The orbit is allowed to bleed past the right edge — clip it so it can
+       never create a horizontal scrollbar. X only: the orbit's dive under
+       the menu/strip and the glow spill are vertical and must stay visible. */
+    overflow-x: clip;
+    overflow-y: visible;
     /* 157px = strip chrome (pad-top 40 + heading 25 + band 88 + 4px slack);
        + the two --band-gap airs → full SocialProof height. Slack went 1 → 4
        when captions moved to 13px (client 2026-07-21): the taller hero chips
@@ -468,20 +473,19 @@ const sparks = [
         (48 → 36) and the copy's vertical gaps (40 → 24, 24 → 16) ramp down
         linearly over 639 → 586px viewport heights via svh clamp()s below.
         Buttons, icons, body text keep their exact Figma sizes.
-     Width axis (independent, final scale = min(kh, kw)): kw = (band floor −
-     697) / 613 — the orbit's viewport-left is W − scrollbar 15 − container
-     margin 80 − right offset 82 − 613·kw and must stay ≥ 520 (copy content
-     ends at 498 + clearance) so orbit bubbles never fly over the message.
-     Below the 946px burger point the hero has no adaptive design yet — kw
-     parks at the last band. */
+     Width axis (independent, final scale = min(kh, kw)) — REBUILT 2026-07-26
+     (client: «до 1200 не уменьшаем, пусть зарезается справа»): the copy
+     clearance is now guaranteed by the orbit's own `right` formula (see
+     .orbit), so kw is no longer needed to keep bubbles off the message. It
+     only limits how much of the artwork leaves the screen: full size down to
+     1200, then a gentle ramp instead of the old aggressive one (0.82/0.66/
+     0.49/0.41 shrank the visual long before it had to). */
   @media (max-height: 734px) { .orbit { --orbit-kh: 0.931; } }
   @media (max-height: 694px) { .orbit { --orbit-kh: 0.862; } }
   @media (max-height: 654px) { .orbit { --orbit-kh: 0.793; } }
   @media (max-height: 614px) { .orbit { --orbit-kh: 0.733; } }
-  @media (max-width: 1309px) { .orbit { --orbit-kw: 0.820; } }
-  @media (max-width: 1199px) { .orbit { --orbit-kw: 0.657; } }
-  @media (max-width: 1099px) { .orbit { --orbit-kw: 0.494; } }
-  @media (max-width: 999px)  { .orbit { --orbit-kw: 0.408; } }
+  @media (max-width: 1099px) { .orbit { --orbit-kw: 0.88; } }
+  @media (max-width: 999px)  { .orbit { --orbit-kw: 0.78; } }
 
   /* ─── Left column (Figma 2:37 · 549w) ───────────────────────── */
   .hero__copy {
@@ -573,7 +577,21 @@ const sparks = [
   .orbit {
     position: absolute;
     top: 50%;
-    right: 82px;
+    /* Figma anchor is right:82 — kept exactly while the inner box is wide
+       enough. Narrower than that, the orbit does NOT shrink: it slides
+       toward the free space and bleeds off the viewport edge (clipped by
+       .hero), so the artwork stays big as long as possible (client
+       2026-07-26: «пускай иконки улетают за экран, лишь бы не было
+       горизонтального скролла»).
+       1110 = copy CONTENT 440 + 40 clearance + orbit 613. Measured, NOT the
+       549 column cap: the widest real element is the chips row at 440, so
+       anchoring to 549 left a ~110px hole the orbit refused to use and made
+       it start clipping ~250px too early (client 2026-07-26: «двигается,
+       пока не упрётся в блок слева, и только потом зарезается»). */
+    /* …but the bleed is CAPPED at 123px ≈ 20% of the 613 canvas (client
+       2026-07-26: «пусть режется четверть, но не вся иллюстрация»). Past
+       that cap the kw bands below take over and shrink it instead. */
+    right: clamp(-123px, calc(100% - 1110px), 82px);
     width: 613px;
     height: 581px;
     /* vertical centre of the screen (client spec); the min(kh, kw) scale
@@ -737,6 +755,30 @@ const sparks = [
       /* collapse the box to the scaled visual height */
       margin-bottom: calc(581px * (var(--orbit-m, 1) - 1) - 48px);
     }
+  }
+  /* ── Tablet zone 653–946 (client 2026-07-26): the orbit stayed at 1:1 here,
+     so its 613px canvas + 87px-blur glow washed the whole screen violet.
+     Two moves: the CTA sits BESIDE the copy (buys back a row of height) and
+     the orbit is smaller and pulled up. ── */
+  @media (min-width: 653px) and (max-width: 946px) {
+    .hero__copy {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      column-gap: var(--sp-8);
+      max-width: none;
+    }
+    .hero__heading { grid-column: 1; grid-row: 1; }
+    /* Same row as the copy, bottom-aligned with the last line of the sub */
+    .hero__cta { grid-column: 2; grid-row: 1; align-self: end; }
+    .hero__sub { max-width: 46ch; }
+    .hero__chips { grid-column: 1 / -1; grid-row: 2; }
+    .orbit {
+      --orbit-m: 0.78;
+      margin-top: 0;
+    }
+    /* (the violet page wash blamed on these glows was actually Compare's
+       escaped ::after — glows stay at full strength, see Compare.astro) */
   }
   @media (max-width: 652px) { .orbit { --orbit-m: 0.85; } }
   @media (max-width: 560px) { .orbit { --orbit-m: 0.72; } }

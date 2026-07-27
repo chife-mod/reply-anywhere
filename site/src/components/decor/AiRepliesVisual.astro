@@ -1,0 +1,234 @@
+---
+// «Reply with AI» card visual (Figma 78:1410, stage 352×246) — skeleton
+// review cards flow through the AI tile into finished replies with green
+// checks. Same file/token discipline and glow-stack idiom as InsightsVisual;
+// purely decorative (parent hides from AT).
+import { Image } from 'astro:assets';
+import Icon from '../ui/Icon.astro';
+import avatar1 from '../../assets/decor-ai-avatar-1.png';
+import avatar2 from '../../assets/decor-ai-avatar-2.png';
+import avatar3 from '../../assets/decor-ai-avatar-3.png';
+
+const avatars = [avatar1, avatar2, avatar3];
+// Reply cards: Figma widths 120/96/96/120, all right-aligned.
+const replies = [120, 96, 96, 120];
+// Figma dot boxes are 8×8; the glow asset is 15×15 → anchor at box − 3.5.
+const dots = [
+  [120, 63], [110, 119], [116, 197],
+  [208, 54], [238, 89], [225, 133], [224, 217],
+].map(([x, y]) => ({ x: x - 3.5, y: y - 3.5 }));
+---
+
+<div class="av">
+  <!-- Central cluster in ONE fixed 352×246 frame centered in the stage —
+       same fix as InsightsVisual (fixed px on a fluid stage drifted the glow
+       off the tile, client-caught 2026-07-26). -->
+  <div class="av__flow">
+  <!-- flow curves. The in-curve's Figma box carries a 4.64% left inset —
+       the vector really starts at x104 (client-caught 2026-07-26: the dots
+       sat 3.5px off these rails). -->
+  <span class="av__c" style="left:104px; top:37.5px;"><Icon name="decor/ai-curve-in" width={72} height={86} /></span>
+  <span class="av__c av__c--flip" style="left:104px; top:122.5px;"><Icon name="decor/ai-curve-in" width={72} height={86} /></span>
+  <span class="av__c" style="left:44px; top:122.5px;"><Icon name="decor/flow-line" width={132} height={1} /></span>
+  <span class="av__c av__c--mirror" style="left:176px; top:24.5px;"><Icon name="decor/ai-curve-out-far" width={61.4} height={99} /></span>
+  <span class="av__c av__c--turn" style="left:176px; top:123px;"><Icon name="decor/ai-curve-out-far-b" width={61.4} height={99} /></span>
+  <span class="av__c av__c--mirror" style="left:176px; top:88.5px;"><Icon name="decor/ai-curve-out-near" width={80} height={35} /></span>
+  <span class="av__c av__c--turn" style="left:176px; top:123px;"><Icon name="decor/ai-curve-out-near" width={80} height={35} /></span>
+
+  {dots.map((d) => (
+    <span class="av__dot" style={`left:${d.x}px; top:${d.y}px;`}><Icon name="decor/orbit-dot-glow" size={15} /></span>
+  ))}
+
+  <!-- glow stack + AI tile (orbit idiom) -->
+  <span class="av__glow" style="filter: blur(var(--glow-blur-wide));"></span>
+  <span class="av__glow" style="filter: blur(var(--glow-blur-mid));"></span>
+  <span class="av__glow" style="filter: blur(var(--glow-blur-tight));"></span>
+  <!-- The client's exact glyphs (78:1458): robot at 1.5px stroke, FILLED
+       spark — not the repo's outline tabler pair (client-caught 2026-07-26). -->
+  <span class="av__app">
+    <Icon name="decor/ai-robot" width={29.2} height={32.5} />
+    <Icon name="decor/ai-spark" width={10.5} height={10.5} class="av__app-spark" />
+  </span>
+  </div>
+
+  <!-- left rail: incoming review skeletons -->
+  <div class="av__rail av__rail--in">
+    {avatars.map((a, i) => (
+      <span class="av__msg">
+        <span class="av__msg-head">
+          <span class={`av__avatar av__avatar--${i + 1}`}>
+            <Image src={a} alt="" width={80} densities={[1, 2]} format="avif" quality={70} loading="lazy" />
+          </span>
+          <span class="av__lines">
+            <span class="av__line av__line--hi" style="width:100%"></span>
+            <span class="av__line" style="width:29px"></span>
+          </span>
+        </span>
+        <span class="av__lines">
+          <span class="av__line" style="width:100%"></span>
+          <span class="av__line" style="width:61px"></span>
+        </span>
+      </span>
+    ))}
+  </div>
+
+  <!-- right rail: drafted replies with checks -->
+  <div class="av__rail av__rail--out">
+    {replies.map((w) => (
+      <span class="av__reply" style={`width:${w}px`}>
+        <span class="av__line av__line--violet" style="width:61px"></span>
+        <span class="av__lines">
+          <span class="av__line" style="width:100%"></span>
+          <span class="av__line" style="width:61px"></span>
+        </span>
+        <span class="av__check"><Icon name="decor/check-badge" size={18} /></span>
+      </span>
+    ))}
+  </div>
+</div>
+
+<style>
+  .av {
+    position: absolute;
+    inset: 0;
+  }
+  .av > * {
+    position: absolute;
+  }
+  .av__flow {
+    left: 50%;
+    top: 0;
+    width: 352px; /* the Figma stage — inner px coords stay exact */
+    height: 246px;
+    translate: -50% 0;
+  }
+  .av__flow > * {
+    position: absolute;
+  }
+  .av__c :global(img),
+  .av__dot :global(img) {
+    display: block;
+  }
+  /* Mirrors happen IN PLACE (default center origin) — the Figma boxes already
+     sit at their final coords; the bottom half is the top half flipped. */
+  .av__c--flip { transform: scaleY(-1); }
+  .av__c--mirror { transform: scaleX(-1); }
+  .av__c--turn { transform: scale(-1, -1); }
+
+  .av__glow {
+    left: 138px;
+    top: 85px;
+    width: 76px;
+    height: 76px;
+    border-radius: 25px; /* Figma glow square — no token */
+    background: var(--violet);
+  }
+  .av__app {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    width: 72px;
+    height: 72px;
+    background: var(--black);
+    border: 1.25px solid var(--border-soft);
+    border-radius: var(--r-app);
+    box-shadow: var(--shadow-app-tile);
+  }
+  .av__app :global(.av__app-spark) {
+    position: absolute;
+    left: 42.5px;
+    top: 7.5px;
+  }
+
+  /* rails */
+  .av__rail {
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .av__rail--in { left: 0; gap: var(--sp-2); }
+  .av__rail--out { right: 0; gap: var(--sp-4); align-items: flex-end; }
+
+  .av__msg {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 112px;
+    padding: var(--sp-3) var(--sp-2);
+    background: var(--surface-fade);
+    border: 1px solid var(--border-card);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-mini-card);
+  }
+  .av__msg-head {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+  .av__msg-head .av__lines { flex: 1; }
+  /* Avatar discs reproduce the Figma photo CROPS (78:1610/1620/1630) — the
+     raw photos are framed differently per face (client-caught 2026-07-26). */
+  .av__avatar {
+    position: relative;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+    border-radius: var(--r-pill);
+    background: var(--surface-bubble);
+  }
+  .av__avatar :global(img) {
+    position: absolute;
+    display: block;
+    max-width: none;
+    height: auto;
+  }
+  .av__avatar--1 :global(img) { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .av__avatar--2 :global(img) { width: 133.33%; height: 200%; left: -6.99%; top: -19.17%; }
+  .av__avatar--3 :global(img) { width: 333.33%; height: 222.22%; left: -118.33%; top: -45.96%; }
+
+  .av__reply {
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    min-height: 0; /* the rail's 246 wins — content centers, Figma-style
+                      (fixed py pushed the column 18px past the left one,
+                      client-caught 2026-07-26) */
+    flex-direction: column;
+    justify-content: center;
+    gap: 9px; /* Figma 79:1679 — no spacing token */
+    padding: 0 var(--sp-2);
+    background: var(--surface-fade);
+    border: 1px solid var(--border-card);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-mini-card);
+  }
+  .av__check {
+    position: absolute;
+    top: -9px;
+    right: 7px;
+  }
+
+  /* skeleton bars */
+  .av__lines {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+  }
+  .av__line {
+    height: 5px; /* Figma bar — no token */
+    border-radius: var(--r-md);
+    background: var(--skeleton);
+    opacity: 0.2;
+  }
+  .av__line--hi { opacity: 0.5; }
+  .av__line--violet {
+    background: var(--violet-light);
+    opacity: 1;
+  }
+</style>

@@ -2,3 +2,8 @@
 *.log
 node_modules/
 audit/screens/
+# QA harness output — the scripts are tracked, their runs are not
+audit/adaptive-run*/
+audit/dense-*/
+audit/verify-*/
+audit/section-shots/

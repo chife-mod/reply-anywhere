@@ -5,7 +5,7 @@
 // eyebrow + one-line H2 with inline accent, $-tier in each vendor header,
 // violet zebra rows, flat row list (no group headers), quantitative-first
 // cells with big numbers, qualifier pills (Add-on / Q4), honest «no» in our
-// own column, legend with real $ mappings. This build adds only what the
+// own column. This build adds only what the
 // design canvas has no context for: the fixed-menu sticky offset, #demo
 // anchors, SVG marks as repo files, and the ≤946/≤760 adaptive.
 // Data flags pending Vsevolod's sign-off are tracked in the session report
@@ -15,11 +15,12 @@
 // grid and paddings; sticky thead dropped (the table scrolls inside its own
 // block — the floating menu made sticky read as broken layering).
 import Icon from '../ui/Icon.astro';
-import Button from '../ui/Button.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 
 // Client 2026-07-21: qualifier pills (Add-on / Q4) removed — canvas additions
 // that were never in the task; cells are marks, numbers and $-tiers only.
+// Client 2026-07-26: legend ($ mappings) + pricing footnote under the table
+// removed — the section ends on the CTA row.
 type MarkCell = { mark: 'yes' | 'no'; label: string };
 type NumCell = { num: string; unit?: string };
 type Cell = MarkCell | NumCell;
@@ -92,9 +93,6 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
       </p>
     </header>
 
-    <!-- 1px sentinel: when it passes under the 96px menu zone the header is
-         docked — only then the visor may exist (see script below) -->
-    <div class="cmp-sentinel" aria-hidden="true"></div>
     <table class="cmp-table">
       <caption>
         Feature comparison: Sprinklr vs Gominga vs Reply Anywhere across channels, AI replies,
@@ -151,43 +149,29 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
       </tbody>
     </table>
 
-    <div class="cmp-cta-row">
-      <Button href="#demo" label="Request a free demo" />
-      <span class="cta-hint">14-day trial · no card · cancel anytime</span>
-    </div>
-
-    <div class="cmp-foot">
-      <div class="legend">
-        <span class="legend-item"><b aria-hidden="true">$$</b> Under $500/mo</span>
-        <span class="legend-sep"></span>
-        <span class="legend-item"><b aria-hidden="true">$$$</b> $500–2k/mo</span>
-        <span class="legend-sep"></span>
-        <span class="legend-item"><b aria-hidden="true">$$$$$</b> Enterprise / custom</span>
-      </div>
-      <p class="cmp-note">
-        Price tiers from each vendor's published plans and public pricing pages, July 2026.
-        Competitor capabilities reflect their standard tiers.
-      </p>
-    </div>
   </div>
 </section>
 
 <script>
   // Visor arming (client-caught 2026-07-21: a permanent visor covered the
-  // section heading while the table was still in flow). The sentinel sits
-  // right above the table; once it has scrolled ~140px under the top, the
-  // header has long been docked (dock happens at 96px) and the visor arms —
-  // comfortably BEFORE any row can resurface above the header (first row
-  // reaches the gap only ~250px after docking). transform-free, IO-driven.
-  const cmpTable = document.querySelector('#compare .cmp-table');
-  const cmpSentinel = document.querySelector('#compare .cmp-sentinel');
-  if (cmpTable && cmpSentinel) {
-    new IntersectionObserver(
-      ([e]) => {
-        cmpTable.classList.toggle('is-docked', !e.isIntersecting && e.boundingClientRect.top < 140);
-      },
-      { rootMargin: '-140px 0px 0px 0px' }
-    ).observe(cmpSentinel);
+  // section heading while the table was still in flow). Was IO on a 1px
+  // sentinel — a fast scroll (or a programmatic jump) can move the sentinel
+  // across the whole boundary BETWEEN frames, IO never fires and the visor
+  // stays down (client-caught 2026-07-26: «за уголки что-то выезжает»).
+  // Plain scroll geometry can't skip: docked === the table's top has passed
+  // the 96px sticky line. One rect read per scroll frame, passive.
+  const cmpTable = document.querySelector<HTMLElement>('#compare .cmp-table');
+  if (cmpTable) {
+    let docked = false;
+    const arm = () => {
+      const next = cmpTable.getBoundingClientRect().top < 97;
+      if (next !== docked) {
+        docked = next;
+        cmpTable.classList.toggle('is-docked', docked);
+      }
+    };
+    window.addEventListener('scroll', arm, { passive: true });
+    arm();
   }
 </script>
 
@@ -200,7 +184,6 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
        cramped (client 2026-07-21). 40 (Features' bottom) + 80 = 120px between
        the CTA band and this section. Sides/bottom stay on the standard step. */
     padding: var(--sp-20) var(--margin-desktop) var(--sp-10);
-    scroll-margin-top: 96px; /* #compare anchor lands below the fixed menu */
   }
   .cmp-wrap {
     display: flex;
@@ -254,12 +237,8 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
      edge, not resurface in the 96px menu gap above it («не залазить под
      Reply Anywhere»). Page bg = --bg, so the band itself is invisible.
      CRITICAL: exists ONLY while the header is actually docked (.is-docked
-     via the sentinel script) — a permanent visor covers the section heading
-     while the table is still in flow (client-caught 2026-07-21). */
-  .cmp-sentinel {
-    height: 1px;
-    margin-bottom: -1px;
-  }
+     via the scroll-geometry script) — a permanent visor covers the section
+     heading while the table is still in flow (client-caught 2026-07-21). */
   @media (min-width: 947px) {
     .cmp-table.is-docked thead th::before {
       content: '';
@@ -319,16 +298,38 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     border-left: 1px solid var(--border-strong);
     border-right: 1px solid var(--border-strong);
   }
+  /* Two layers, because a border-radius clips the cell's own background and
+     the transparent corner notches let rows peek out while scrolling under
+     the docked header (client-caught 2026-07-26):
+     1) the CELL is a square opaque --bg base — same color as the page, so it
+        is invisible in flow, but nothing shows through the corners;
+     2) ::after paints the rounded violet card (with its borders) above that
+        base and below the content (z-index -1 inside the cell's own stacking
+        context — created by the sticky z-index: 3). */
   thead .ra-col.head-cell {
-    /* opaque --bg underlay beneath the violet gradient — sticky header must
-       fully hide the rows scrolling under it */
-    background:
-      linear-gradient(180deg, rgba(171, 13, 255, 0.22), rgba(171, 13, 255, 0.1)),
-      var(--bg);
-    border-top: 1px solid var(--border-strong);
-    border-top-left-radius: var(--r-md);
-    border-top-right-radius: var(--r-md);
+    background: var(--bg);
+    border-left: none;
+    border-right: none;
     border-bottom-color: var(--border-strong);
+  }
+  thead .ra-col.head-cell::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(171, 13, 255, 0.22), rgba(171, 13, 255, 0.1));
+    border: 1px solid var(--border-strong);
+    border-bottom: none;
+    border-radius: var(--r-md) var(--r-md) 0 0;
+  }
+  /* This absolute layer needs a POSITIONED cell. Above 947 the sticky header
+     provides that; below it the cell is static, so the layer escaped to the
+     initial containing block and painted its violet gradient over the whole
+     page (client-caught 2026-07-26: «почему вся страница стала фиолетовой»).
+     Kept out of the ≥947 cascade so sticky (a class-vs-element specificity
+     fight) is never overridden. */
+  @media (max-width: 946px) {
+    thead .ra-col.head-cell { position: relative; }
   }
   .vendor-logo.ra span { color: var(--text-hi); }
   .ra-price { color: var(--text-hi); }
@@ -413,58 +414,21 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     border-bottom-right-radius: var(--r-md);
   }
 
-  /* ── CTA + legend / footnote ─────────────────────────────── */
-  .cmp-cta-row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sp-3);
-    margin-top: var(--sp-10);
-  }
-  .cta-hint {
-    font-size: var(--fs-chip);
-    color: var(--text-dim);
-  }
-  .cmp-foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--sp-6);
-    margin-top: var(--sp-8);
-    padding-top: var(--sp-5);
-    font-size: var(--fs-chip);
-    color: var(--text-dim);
-  }
-  .legend {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-4);
-    flex-wrap: wrap;
-  }
-  .legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sp-2);
-  }
-  .legend-item b {
-    color: var(--text-body);
-    font-weight: var(--fw-semibold);
-    letter-spacing: 0.06em;
-  }
-  .legend-sep {
-    width: 1px;
-    height: 14px;
-    background: var(--border-line);
-  }
-  .cmp-note {
-    margin-left: auto;
-    max-width: 44ch;
-    text-align: right;
-    line-height: 1.4;
-  }
 
   /* ── Adaptive (the canvas is desktop-only; same degrade rules as the
      rest of the site: ≤946 burger zone, ≤760 phone compaction) ── */
+  /* Content-driven step (not a site breakpoint): «Reply Anywhere» at 22px is
+     ~165px and «Omnichannel · AI-first» ~160px nowrap, while the fixed-layout
+     vendor cell shrinks to ~158px by 810 — the header overflowed the table
+     frame by 3–13px across 761–815 (audit 2026-07-26). 18px + wrapping fit
+     the worst case down to 761, where the ≤760 compaction takes over.
+     NB: this block must sit AFTER the base .vendor-* rules — equal
+     specificity, later-wins (the first attempt sat above them and lost). */
+  @media (max-width: 850px) {
+    .vendor-logo span { font-size: 18px; }
+    .vendor-name { white-space: normal; }
+  }
+
   @media (max-width: 946px) {
     .cmp-head {
       flex-direction: column;
@@ -487,10 +451,5 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     .feat-title { font-size: var(--fs-ui); }
     td.val .num { font-size: var(--fs-lead); }
     .mark :global(img) { width: 24px; height: 24px; }
-    .cmp-note {
-      margin-left: 0;
-      text-align: left;
-      max-width: none;
-    }
   }
 </style>

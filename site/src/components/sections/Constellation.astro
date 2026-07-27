@@ -16,6 +16,8 @@ interface Pill {
   iconWidth?: number; // non-square logos keep their Figma aspect
   iconHeight?: number;
   violet?: boolean; // rgba(171,13,255,.2) fill variant
+  fx: number; // fluid-scatter (947–1439px) % position — self-compensating, see --fx CSS
+  fy: number; // fluid-scatter (947–1439px) px from stage top
 }
 
 // Layout rule (client 2026-07-21: «раскидать теги, чтобы гарантированно не
@@ -26,23 +28,25 @@ interface Pill {
 // the wings symmetrically; whatever stays visible is top-arc only — safe on
 // desktop, tablet and phone alike. Original Figma scatter (20:377…20:682)
 // superseded by this client rev.
+// fx/fy (947–1439px fluid-scatter mode, see MODE B in the stage CSS below):
+// three staggered rows above the heading (top:283) — row fy 36 / 116 / 196.
 const pills: Pill[] = [
   // top arc
-  { x: 198, y: 161, icon: 'logos/google-g', category: 'Company Reviews', name: 'Google Reviews' },
-  { x: 442, y: 97, icon: 'logos/google-maps', category: 'Location Reviews', name: 'Google Maps', iconWidth: 17, iconHeight: 24, violet: true },
-  { x: 726, y: 60, icon: 'logos/instagram', category: 'Direct Messages', name: 'Instagram DMs', violet: true },
-  { x: 554, y: 182, icon: 'logos/messenger', category: 'Direct Messages', name: 'Messenger', violet: true },
-  { x: 826, y: 187, icon: 'logos/amazon', category: 'Product Reviews', name: 'Amazon Reviews' },
-  { x: 1120, y: 150, icon: 'logos/tiktok', category: 'Social Comments', name: 'TikTok Comments', iconWidth: 21, iconHeight: 24, violet: true },
-  { x: 85, y: 225, icon: 'logos/ebay', category: 'Marketplace Reviews', name: 'eBay', iconWidth: 30, iconHeight: 12, violet: true },
+  { x: 198, y: 161, icon: 'logos/google-g', category: 'Company Reviews', name: 'Google Reviews', fx: 2, fy: 116 },
+  { x: 442, y: 97, icon: 'logos/google-maps', category: 'Location Reviews', name: 'Google Maps', iconWidth: 17, iconHeight: 24, violet: true, fx: 28, fy: 36 },
+  { x: 726, y: 60, icon: 'logos/instagram', category: 'Direct Messages', name: 'Instagram DMs', violet: true, fx: 52, fy: 36 },
+  { x: 554, y: 182, icon: 'logos/messenger', category: 'Direct Messages', name: 'Messenger', violet: true, fx: 30, fy: 116 },
+  { x: 826, y: 187, icon: 'logos/amazon', category: 'Product Reviews', name: 'Amazon Reviews', fx: 58, fy: 116 },
+  { x: 1120, y: 150, icon: 'logos/tiktok', category: 'Social Comments', name: 'TikTok Comments', iconWidth: 21, iconHeight: 24, violet: true, fx: 76, fy: 36 },
+  { x: 85, y: 225, icon: 'logos/ebay', category: 'Marketplace Reviews', name: 'eBay', iconWidth: 30, iconHeight: 12, violet: true, fx: 6, fy: 36 },
   // left wing
-  { x: 171, y: 361, icon: 'logos/whatsapp', category: 'Direct Messages', name: 'WhatsApp', violet: true },
-  { x: 90, y: 452, icon: 'logos/instagram', category: 'Social Comments', name: 'Instagram Comments', violet: true },
-  { x: 150, y: 545, icon: 'logos/etsy', category: 'Marketplace Reviews', name: 'Etsy', violet: true },
+  { x: 171, y: 361, icon: 'logos/whatsapp', category: 'Direct Messages', name: 'WhatsApp', violet: true, fx: 12, fy: 196 },
+  { x: 90, y: 452, icon: 'logos/instagram', category: 'Social Comments', name: 'Instagram Comments', violet: true, fx: 40, fy: 196 },
+  { x: 150, y: 545, icon: 'logos/etsy', category: 'Marketplace Reviews', name: 'Etsy', violet: true, fx: 68, fy: 196 },
   // right wing
-  { x: 1130, y: 370, icon: 'logos/appstore', category: 'App Reviews', name: 'App Store Reviews', iconWidth: 24, iconHeight: 21 },
-  { x: 1115, y: 470, icon: 'logos/trustpilot', category: 'Company Reviews', name: 'Trustpilot', iconWidth: 24, iconHeight: 23, violet: true },
-  { x: 1120, y: 560, icon: 'logos/facebook', category: 'Social Comments', name: 'Facebook Comments', violet: true },
+  { x: 1130, y: 370, icon: 'logos/appstore', category: 'App Reviews', name: 'App Store Reviews', iconWidth: 24, iconHeight: 21, fx: 88, fy: 116 },
+  { x: 1115, y: 470, icon: 'logos/trustpilot', category: 'Company Reviews', name: 'Trustpilot', iconWidth: 24, iconHeight: 23, violet: true, fx: 96, fy: 36 },
+  { x: 1120, y: 560, icon: 'logos/facebook', category: 'Social Comments', name: 'Facebook Comments', violet: true, fx: 92, fy: 196 },
 ];
 ---
 
@@ -59,7 +63,7 @@ const pills: Pill[] = [
         pills.map((p) => (
           <li
             class:list={['constellation__spot', { 'constellation__spot--violet': p.violet }]}
-            style={`--x: ${p.x}px; --y: ${p.y}px;`}
+            style={`--x: ${p.x}px; --y: ${p.y}px; --fx: ${p.fx}; --fy: ${p.fy}px;`}
             data-constellation-pill
             data-scene-el="pill"
             data-wave={p.violet ? '2' : '1'}
@@ -113,6 +117,65 @@ const pills: Pill[] = [
   }
   /* Disc size + violet fill now live in the ChannelPill kit (disc 40px default,
      variant="social" → var(--surface-pill-social)) — no scoped overrides. */
+
+  /* MODE B — 947–1439px, "fluid scatter": the fixed 1440 stage clips pills on
+     narrower desktops/tablets, so the stage goes fluid-width and pills place
+     by percent (--fx/--fy, defined per-pill above) instead of Figma px. The
+     child's translateX(-fx%) is a self-compensating edge guard: at fx=0 the
+     pill's own left edge hugs the viewport edge, at fx=100 its right edge
+     does — a pill can never clip off-stage regardless of stage width. This
+     transform MUST live on the li's child, not the li itself — GSAP already
+     animates `transform: scale(...)` on .constellation__spot for the fly-in,
+     and a second transform source on the same element would stomp it. */
+  @media (min-width: 947px) and (max-width: 1439px) {
+    .constellation__stage {
+      width: 100%;
+    }
+    .constellation__spot {
+      left: calc(var(--fx) * 1%);
+      top: var(--fy);
+    }
+    .constellation__spot > :global(*) {
+      transform: translateX(calc(var(--fx) * -1%));
+    }
+  }
+
+  /* MODE C — ≤946px, "cloud": pills stop tracking Figma/percent coordinates
+     altogether and become a centered flex-wrap cloud ABOVE the heading; the
+     heading drops into static flow below it. The scene script measures
+     heading positions at runtime (--pi-shift) — it re-reads the DOM each
+     time, so body/chips follow the relocated heading automatically and
+     don't need touching here. */
+  @media (max-width: 946px) {
+    .constellation__stage {
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-8);
+      padding: 120px var(--menu-pad) var(--sp-6); /* top clears the fixed menu in the pinned scene */
+    }
+    .constellation__heading {
+      position: static;
+      left: auto;
+      transform: none;
+      order: 2;
+      width: 100%;
+    }
+    .constellation__pills {
+      order: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--sp-2);
+      width: 100%;
+    }
+    .constellation__spot {
+      position: static;
+    }
+  }
 </style>
 
 <style is:global>

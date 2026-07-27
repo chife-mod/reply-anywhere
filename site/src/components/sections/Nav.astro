@@ -16,11 +16,16 @@ import Button from '../ui/Button.astro';
 import logoMark from '../../assets/brand/logo-mark.svg';
 import wordmark from '../../assets/brand/wordmark.svg';
 
+// Client 2026-07-26: the real menu — Home, Channels, Features, Compare,
+// Contact. Cases and Pricing dropped (no sections behind them). Every item
+// leads somewhere that exists today: Channels → the «One platform» scene
+// (the channel orbit + pills), Contact → the footer. The footer mirrors
+// this set.
 const links = [
-  { label: 'Features', href: '#features', active: true },
+  { label: 'Home', href: '/', active: true },
   { label: 'Channels', href: '#channels' },
-  { label: 'Cases', href: '#cases' },
-  { label: 'Pricing', href: '#pricing' },
+  { label: 'Features', href: '#features' },
+  { label: 'Compare', href: '#compare' },
   { label: 'Contact', href: '#contact' },
 ];
 ---
@@ -58,6 +63,11 @@ const links = [
     position: fixed;
     inset: 0 0 auto 0;
     z-index: 100;
+    /* Hide-on-scroll (client 2026-07-26): slides away past the top edge on
+       scroll-down, returns on the slightest scroll-up (script below).
+       transform/opacity only, §6. */
+    translate: 0 0;
+    transition: translate var(--dur-normal) var(--ease-out);
     /* Exactly 3 children + space-between ⇒ gap brand↔nav === gap nav↔actions
        at ANY width, both shrinking together as the viewport narrows (client
        spec DEFINITIVE: equal side distances, always). */
@@ -71,6 +81,13 @@ const links = [
   }
   .menu > * {
     pointer-events: auto;
+  }
+  .menu--hidden {
+    translate: 0 -110%; /* clears the islands AND their shadows */
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu { transition: none; } /* the behavior stays, the motion goes */
   }
 
   /* ── Island base lives in global.css (shared primitive — the footer uses
@@ -183,9 +200,22 @@ const links = [
   }
 
   /* ── Fluid rebuild points (spec 33:3496 + client refinement) ── */
-  @media (max-width: 946px) {
-    /* Content floors + min gaps no longer fit (16+239.57+4+473+4+194+16 ≈ 947)
-       — nav is replaced by the burger island. Grid → flex for burger states. */
+  @media (max-width: 955px) and (min-width: 941px) {
+    /* Client 2026-07-26: «жать до тех пор, пока не исчезает место» — before
+       giving up to the burger, the menu's own 16px outer padding compresses
+       to 8: islands content floor is 239.57+4+483+4+194 = 924.57, so 8px
+       sides carry it down to 940.57. */
+    .menu {
+      padding: var(--sp-2);
+    }
+  }
+  @media (max-width: 940px) {
+    /* Content floors + min gaps + compressed 8px padding no longer fit
+       (924.57 + 16 = 940.57) — nav is replaced by the burger island.
+       Recomputed 2026-07-26 for the real menu (Home · Channels · Features ·
+       Compare · Contact, nav island 483). The rest of the site keeps its own
+       ≤946 degrade — only the menu depends on this measure.
+       Grid → flex for burger states. */
     .menu {
       display: flex;
     }
@@ -211,9 +241,12 @@ const links = [
       margin-left: auto;
     }
   }
-  @media (max-width: 536px) {
-    /* En+CTA no longer fit (537px = Figma 33:3295, the exact just-fits width
-       of brand + En/CTA + burger) — the tagline SURVIVES this rebuild. */
+  @media (max-width: 541px) {
+    /* En+CTA no longer fit — the tagline SURVIVES this rebuild.
+       Measured 2026-07-26: the row needs 16+239.5+4+194.2+4+64+16 = 537.7,
+       so 538 is the true floor; 537–541 ate into the right padding (14px
+       instead of 16 — caught by the dense sweep). Figma's 33:3295 said 537,
+       one pixel short of what the built widths actually measure. */
     .menu__actions {
       display: none;
     }
@@ -229,3 +262,31 @@ const links = [
     }
   }
 </style>
+
+<script>
+  // Hide-on-scroll (client 2026-07-26): the menu slides away while reading
+  // down and comes back on the SLIGHTEST scroll-up. A 12px down-accumulator
+  // ignores trackpad jitter; the up direction reacts immediately. Never
+  // hides inside the first 120px — the hero always keeps its menu.
+  const menu = document.querySelector<HTMLElement>('.menu');
+  if (menu) {
+    let lastY = window.scrollY;
+    let downAcc = 0;
+    window.addEventListener(
+      'scroll',
+      () => {
+        const y = window.scrollY;
+        const dy = y - lastY;
+        lastY = y;
+        if (dy > 0) {
+          downAcc += dy;
+          if (downAcc > 12 && y > 120) menu.classList.add('menu--hidden');
+        } else if (dy < 0) {
+          downAcc = 0;
+          menu.classList.remove('menu--hidden');
+        }
+      },
+      { passive: true }
+    );
+  }
+</script>

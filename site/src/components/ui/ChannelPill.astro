@@ -60,4 +60,24 @@ const { icon, category, name, iconWidth, iconHeight, variant = 'dark' } = Astro.
     line-height: 1.3;
     color: var(--text-hi);
   }
+
+  /* Compact mode ≤560px (constellation cloud layout): the pill owns its own
+     shrink so any consumer gets it for free. Category label (10px) drops —
+     redundant once pills are stacked close together in the cloud — the disc
+     steps down one Figma size (40 → 32), and the right-hand padding steps
+     down one token (--sp-4 → --sp-3). Vertical/left padding stay at --sp-1 —
+     already the smallest step on the spacing scale, nothing to tighten
+     further. Name line stays --fs-ui (14px) — locked floor, never shrinks. */
+  @media (max-width: 560px) {
+    .pill {
+      padding: var(--sp-1) var(--sp-3) var(--sp-1) var(--sp-1);
+    }
+    .pill__disc {
+      width: var(--sp-8);
+      height: var(--sp-8);
+    }
+    .pill__cat {
+      display: none;
+    }
+  }
 </style>

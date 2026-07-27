@@ -8,6 +8,8 @@ import { Image } from 'astro:assets';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
+import InsightsVisual from '../decor/InsightsVisual.astro';
+import AiRepliesVisual from '../decor/AiRepliesVisual.astro';
 import logoMark from '../../assets/brand/logo-mark.svg';
 import avatar1 from '../../assets/avatars/avatar-1.png';
 import avatar2 from '../../assets/avatars/avatar-2.png';
@@ -22,7 +24,7 @@ const cards = [
     footIcon: 'tabler/messages',
     foot1: 'One inbox. Every conversation.',
     foot2: 'Stay in sync. Respond faster.',
-    dim: false,
+    visual: 'orbit',
   },
   {
     icon: 'tabler/sparkles',
@@ -32,7 +34,7 @@ const cards = [
     footIcon: 'tabler/bulb',
     foot1: 'See patterns.',
     foot2: 'Make smarter decisions.',
-    dim: true,
+    visual: 'insights',
   },
   {
     icon: 'tabler/robot-face',
@@ -42,7 +44,7 @@ const cards = [
     footIcon: 'tabler/send-2',
     foot1: 'Less manual work.',
     foot2: 'Better responses.',
-    dim: true,
+    visual: 'ai',
   },
 ];
 
@@ -62,7 +64,7 @@ const avatars = [avatar1, avatar2, avatar3];
 
     <ul class="features__grid" role="list">
       {cards.map((card) => (
-        <li class:list={['card', { 'card--dim': card.dim }]}>
+        <li class="card">
           <div class="card__head">
             <span class="card__tile"><Icon name={card.icon} size={24} /></span>
             <div class="card__titles">
@@ -71,9 +73,22 @@ const avatars = [avatar1, avatar2, avatar3];
             </div>
           </div>
           <p class="card__body">{card.body}</p>
+          {/* Flowed reservation for the bottom-anchored orbit: guarantees the
+              copy can never reach the bubble zone — a card with tall text
+              grows past 562 instead (client-caught 2026-07-26). */}
+          <div class="card__orbit-room" aria-hidden="true"></div>
           <div class="card__fade" aria-hidden="true"></div>
-          {/* Orbit visual (25:1086): rings + triple-glow + connector lines +
-              center app tile + channel bubbles. Purely decorative. */}
+          {/* Per-card visual in the shared stage slot (bottom-anchored .orbit
+              box). Card 1: the orbit (25:1086). Cards 2/3: their own
+              illustrations (78:659 / 78:1410, client-drawn 2026-07-26) —
+              full brightness, the old 20% dim is out of the design. */}
+          {card.visual === 'insights' && (
+            <div class="orbit orbit--fit" aria-hidden="true"><InsightsVisual /></div>
+          )}
+          {card.visual === 'ai' && (
+            <div class="orbit orbit--fit" aria-hidden="true"><AiRepliesVisual /></div>
+          )}
+          {card.visual === 'orbit' && (
           <div class="orbit" aria-hidden="true">
             <span class="orbit__ring orbit__ring--300"><Icon name="decor/orbit-ring-300" size={300} /></span>
             <span class="orbit__ring orbit__ring--220"><Icon name="decor/orbit-ring-220" size={220} /></span>
@@ -97,6 +112,7 @@ const avatars = [avatar1, avatar2, avatar3];
             <span class="orbit__dot orbit__dot--c"><Icon name="decor/orbit-dot" size={15} /></span>
             <span class="orbit__dot orbit__dot--c-core"><Icon name="decor/orbit-dot-core" size={6} /></span>
           </div>
+          )}
           <div class="card__foot">
             <span class="card__pill"><Icon name={card.footIcon} size={24} /></span>
             <p class="card__foot-text">
@@ -176,7 +192,10 @@ const avatars = [avatar1, avatar2, avatar3];
     gap: var(--sp-6);
     flex: 1;
     min-width: 0;
-    height: 562px; /* Figma 25:1109 fixed frame — no height token */
+    /* Figma 25:1109 frame is 562 fixed; min- (not height) so a card whose
+       text wraps taller GROWS instead of printing over the bottom-anchored
+       orbit (947–1100 regression, client-caught 2026-07-26). */
+    min-height: 562px;
     padding: var(--sp-8) var(--sp-8) var(--sp-6); /* pt32 px32 pb24 */
     background: var(--surface-card);
     border: 1px solid var(--border-card);
@@ -222,7 +241,9 @@ const avatars = [avatar1, avatar2, avatar3];
   }
   .card__fade {
     position: absolute;
-    inset: 180px 18px auto 7px; /* Figma 25:1712: x7 y180 w391 */
+    /* Bottom-anchored with the orbit (562 − 331 − 51 = Figma y180, 25:1712) —
+       the fade always hugs the orbit's top edge, whatever the card height. */
+    inset: auto 18px 331px 7px;
     height: 51px;
     z-index: 1;
     background: var(--grad-card-fade);
@@ -239,16 +260,43 @@ const avatars = [avatar1, avatar2, avatar3];
      illustration up by the text-height delta). */
   .orbit {
     position: absolute;
-    top: 215px; /* Figma 25:1086 y216 from the card edge, minus the 1px border
-                   (absolute offsets resolve from the padding box) */
+    /* Anchored from the BOTTOM: at the Figma height (562) this resolves to
+       the exact Figma y216 (562 − 101 − 246 = 215 from the padding box), and
+       when the card grows with wrapping text the orbit rides DOWN with the
+       bottom edge instead of colliding with the copy. */
+    top: auto;
+    bottom: 101px;
     left: var(--sp-8);
     right: var(--sp-8);
     height: 246px;
     z-index: 0;
   }
-  .card--dim .orbit {
-    opacity: 0.2; /* Figma: instance visuals at 20% */
+  /* The rail-based visuals (cards 2/3) keep the Figma 352 stage width and
+     center it — on the stacked full-width cards a stretched stage pulled the
+     rails apart from the flow cluster. Card 1's orbit is all-centered and
+     stretches gracefully, so it keeps the base .orbit box. */
+  .orbit--fit {
+    left: 50%;
+    right: auto;
+    width: 352px; /* the Figma stage — kept whole, then scaled if it can't fit */
+    translate: -50% 0;
+    /* Phones: the 352 stage is wider than the card's content box, and the
+       card clips it (dense sweep 2026-07-26 caught this at 340/380). Scale
+       the WHOLE visual instead of letting it be cut — rails and flow stay in
+       register. Bands, not fluid: transform can't read its own parent width. */
+    transform: scale(var(--vis-k, 1));
+    transform-origin: 50% 50%;
   }
+  /* Card 1's orbit needs the same treatment below ~340 (its 300px ring
+     outgrows the card's content box) — one set of bands for all three. */
+  .orbit {
+    transform: scale(var(--vis-k, 1));
+    transform-origin: 50% 50%;
+  }
+  @media (max-width: 560px) { .orbit { --vis-k: 0.9; } }
+  @media (max-width: 480px) { .orbit { --vis-k: 0.78; } }
+  @media (max-width: 400px) { .orbit { --vis-k: 0.66; } }
+  @media (max-width: 360px) { .orbit { --vis-k: 0.6; } }
   /* :where() keeps specificity at (0,1,0) so the per-element
      position overrides below can win. */
   .orbit > :where(span) {
@@ -342,6 +390,18 @@ const avatars = [avatar1, avatar2, avatar3];
   .orbit > .orbit__dot--c,
   .orbit > .orbit__dot--c-core { left: calc(50% + 71px); top: calc(50% + 28px); }
   .orbit__dot--c-core :global(img) { width: 6.2px; height: 6.2px; }
+
+  /* Body bottom → foot chain: 24 + room + 24 + foot 66 + pad 24. The topmost
+     solid orbit part is the messenger bubble poking 28px ABOVE the stage —
+     375px above the card bottom. room ≥ 236 keeps the copy exactly as clear
+     of it as the Figma state itself is (~1px at 1440 — the design is tight
+     by intent); taller copy grows the card instead of touching the art.
+     At the Figma 562 the flow total stays ≤562 → min-height wins, exact
+     design state. */
+  .card__orbit-room {
+    flex: 1 0 auto;
+    min-height: 236px;
+  }
 
   /* ─── Card footer (25:1068) ────────────────────────────────── */
   .card__foot {
@@ -441,27 +501,21 @@ const avatars = [avatar1, avatar2, avatar3];
     margin-right: -12px; /* Figma overlap — no negative spacing token */
   }
 
-  /* ── Adaptive (QA audit 2026-07-08; no mobile Figma frames yet — the
-     desktop composition degrades by best practice: stack, don't squeeze) ── */
-  @media (max-width: 946px) {
-    /* Header row: title + lead side-by-side no longer breathe — stack. */
-    .features__head {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .features__lead {
-      width: auto;
-      max-width: 549px; /* hero copy column width — same reading measure */
-    }
-    /* Cards: 3-up flex row squeezed words into vertical rubble on phones —
-       stack full-width (562px card height + inner orbit survive intact). */
+  /* ── Adaptive (QA audit 2026-07-08, re-tuned 2026-07-26; no mobile Figma
+     frames yet — the desktop composition degrades by best practice:
+     stack, don't squeeze) ── */
+  @media (max-width: 1199px) {
+    /* Cards below 345px wrap their copy into the orbit zone (audit: −37…−90px
+       at 947–1100) — 3-up only survives at ≥1200; below, the cards stack
+       full-width, same state the ≤946 zone already shipped with. */
     .features__grid {
       flex-direction: column;
     }
   }
-  @media (max-width: 900px) {
-    /* CTA band: intro and meta collided (overlapping text on 810/390 shots)
-       — stack; meta spreads under the copy. */
+  @media (max-width: 1150px) {
+    /* CTA band: meta is ~634px incompressible (trust + avatars + button) —
+       below ~1150 the intro copy is squeezed under its min-content and paints
+       OVER the meta (client screenshot 2026-07-26) — stack. */
     .cta {
       flex-direction: column;
       align-items: flex-start;
@@ -471,6 +525,17 @@ const avatars = [avatar1, avatar2, avatar3];
       flex-wrap: wrap;
       justify-content: space-between;
       row-gap: var(--sp-4);
+    }
+  }
+  @media (max-width: 946px) {
+    /* Header row: title + lead side-by-side no longer breathe — stack. */
+    .features__head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .features__lead {
+      width: auto;
+      max-width: 549px; /* hero copy column width — same reading measure */
     }
   }
   @media (max-width: 560px) {

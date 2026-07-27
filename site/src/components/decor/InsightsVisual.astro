@@ -1,0 +1,193 @@
+---
+// «Advanced Insights» card visual (Figma 78:659, stage 352×246) — channel
+// discs flow through the app tile into three insight mini-cards. Curves and
+// dot glows are FILES (src/icons/decor/**, DESIGN.md §0); the glow stack +
+// app tile repeat the orbit idiom (§6) with the same tokens. Purely
+// decorative — the parent hides it from AT.
+// Deviation from canvas: labels are 13px (--fs-chip) not Figma's 12 — the
+// caption floor (client 2026-07-21) overrides the canvas.
+import Icon from '../ui/Icon.astro';
+import logoMark from '../../assets/brand/logo-mark.svg';
+
+// The client's exact colored glyphs (violet/pink/green — NOT repo tabler:
+// currentColor inside an <img> paints black, which read as «no icons»,
+// client-caught 2026-07-26). Sizes are each glyph's natural box.
+const slots = [
+  { icon: 'decor/insight-trends', w: 12, h: 10, label: 'Trends' },
+  { icon: 'decor/insight-alert', w: 14.7, h: 12.9, label: 'Recurring issues' },
+  { icon: 'decor/insight-bulb', w: 13.3, h: 13.3, label: 'Opportunities' },
+];
+const discs = [
+  { icon: 'logos/instagram' },
+  { icon: 'logos/facebook' },
+  { icon: 'logos/google-g' },
+  { icon: 'logos/amazon' },
+];
+// Figma dot boxes are 8×8; the glow asset is 15×15 → anchor at box − 3.5.
+const dots = [
+  [60, 17], [83, 85], [41, 119], [67, 165], [98, 169],
+  [225, 119], [241, 151],
+].map(([x, y]) => ({ x: x - 3.5, y: y - 3.5 }));
+---
+
+<div class="iv">
+  <!-- Central cluster (curves + dots + glow + tile) lives in ONE fixed
+       352×246 frame centered in the stage — px coords inside it are exact at
+       every card width. Fixed px on a fluid stage let the glow drift off the
+       tile (client-caught 2026-07-26). Rails stay edge-anchored outside. -->
+  <div class="iv__flow">
+  <!-- flow curves (left bundle converges, right bundle fans out) -->
+  <span class="iv__c" style="left:44px; top:18.5px;"><Icon name="decor/insight-curve-a" width={132} height={105} /></span>
+  <span class="iv__c" style="left:44px; top:69.5px;"><Icon name="decor/insight-curve-b" width={132} height={54} /></span>
+  <span class="iv__c iv__c--flip" style="left:44px; top:123px;"><Icon name="decor/insight-curve-c" width={132} height={104} /></span>
+  <span class="iv__c iv__c--flip" style="left:44px; top:123px;"><Icon name="decor/insight-curve-d" width={132} height={53} /></span>
+  <span class="iv__c" style="left:44px; top:122.5px;"><Icon name="decor/flow-line" width={132} height={1} /></span>
+  <span class="iv__c iv__c--mirror" style="left:198px; top:38.5px;"><Icon name="decor/insight-curve-out" width={66} height={85} /></span>
+  <span class="iv__c iv__c--turn" style="left:198px; top:123px;"><Icon name="decor/insight-curve-out" width={66} height={85} /></span>
+  <span class="iv__c" style="left:176px; top:122.5px;"><Icon name="decor/flow-line" width={132} height={1} /></span>
+
+  <!-- data dots riding the lines -->
+  {dots.map((d) => (
+    <span class="iv__dot" style={`left:${d.x}px; top:${d.y}px;`}><Icon name="decor/orbit-dot-glow" size={15} /></span>
+  ))}
+  <span class="iv__dot" style="left:239.5px; top:44.5px;"><Icon name="decor/flow-dot-soft" size={15} /></span>
+
+  <!-- glow stack + app tile (orbit idiom, same tokens) -->
+  <span class="iv__glow" style="filter: blur(var(--glow-blur-wide));"></span>
+  <span class="iv__glow" style="filter: blur(var(--glow-blur-mid));"></span>
+  <span class="iv__glow" style="filter: blur(var(--glow-blur-tight));"></span>
+  <span class="iv__app"><img src={logoMark.src} width="45" height="40" alt="" /></span>
+  </div>
+
+  <!-- left rail: channel discs + the «+12» tail -->
+  <div class="iv__rail">
+    {discs.map((d) => (
+      <span class="iv__disc"><Icon name={d.icon} size={24} /></span>
+    ))}
+    <span class="iv__disc iv__disc--more">+12</span>
+  </div>
+
+  <!-- right rail: insight mini-cards -->
+  <div class="iv__slots">
+    {slots.map((s) => (
+      <span class="iv__slot">
+        <span class="iv__slot-icon"><Icon name={s.icon} width={s.w} height={s.h} /></span>
+        <span class="iv__slot-label">{s.label}</span>
+      </span>
+    ))}
+  </div>
+</div>
+
+<style>
+  .iv {
+    position: absolute;
+    inset: 0;
+  }
+  .iv > * {
+    position: absolute;
+  }
+  .iv__flow {
+    left: 50%;
+    top: 0;
+    width: 352px; /* the Figma stage — inner px coords stay exact */
+    height: 246px;
+    translate: -50% 0;
+  }
+  .iv__flow > * {
+    position: absolute;
+  }
+  .iv__c :global(img),
+  .iv__dot :global(img) {
+    display: block;
+  }
+  /* Mirrors happen IN PLACE (default center origin) — the Figma boxes already
+     sit at their final coords; the bottom half is the top half flipped. */
+  .iv__c--flip { transform: scaleY(-1); }
+  .iv__c--mirror { transform: scaleX(-1); }
+  .iv__c--turn { transform: scale(-1, -1); }
+
+  /* glow stack (76px r25 squares, card scale — DESIGN.md §6) */
+  .iv__glow {
+    left: 138px;
+    top: 85px;
+    width: 76px;
+    height: 76px;
+    border-radius: 25px; /* Figma glow square — no token */
+    background: var(--violet);
+  }
+  .iv__app {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    width: 72px;
+    height: 72px;
+    background: var(--black);
+    border: 1.25px solid var(--border-soft);
+    border-radius: var(--r-app);
+    box-shadow: var(--shadow-app-tile);
+  }
+  .iv__app img { width: 44.571px; height: 40px; }
+
+  /* left rail */
+  .iv__rail {
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .iv__disc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--surface-bubble);
+    border-radius: var(--r-pill);
+  }
+  .iv__disc--more {
+    font-size: var(--fs-ui);
+    line-height: var(--lh-body);
+    color: var(--text-hi);
+  }
+
+  /* right rail: mini-cards */
+  .iv__slots {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    width: 94px;
+  }
+  .iv__slot {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: var(--sp-2);
+    background: var(--surface-fade);
+    border: 1px solid var(--border-card);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-mini-card);
+  }
+  .iv__slot-icon {
+    display: flex;
+    padding: var(--sp-1);
+    background: var(--surface-bubble);
+    border-radius: var(--r-pill);
+  }
+  .iv__slot-label {
+    /* 12px — client 2026-07-26: «сделай всё-таки 12» — a settled exception
+       to the 13px caption floor, like the 10px pill-label (DESIGN.md §3). */
+    font-size: 12px;
+    line-height: 1.1;
+    color: var(--text-hi);
+  }
+</style>

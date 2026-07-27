@@ -635,21 +635,53 @@ const links = [
     const viewOf = (name: string) =>
       drawer.querySelector<HTMLElement>(`[data-nav-view="${name}"]`);
 
-    const setView = (name: 'menu' | 'contact') => {
+    const setView = (name: 'menu' | 'contact', animate = true) => {
       const target = viewOf(name);
       if (!views || !target) return;
-      // animate the panel's own height from the current view to the next one
+      const toContact = name === 'contact';
+      const apply = () => {
+        drawer.classList.toggle('is-contact', toContact);
+        viewOf('menu')?.setAttribute('aria-hidden', String(!toContact));
+        viewOf('contact')?.setAttribute('aria-hidden', String(toContact));
+      };
+      // Opening: nothing is on screen yet, so there is nothing to animate.
+      // Land at the final width AND height at once — transitions off for the
+      // switch, back on before the panel itself fades in.
+      if (!animate) {
+        const prev = drawer.style.transition;
+        drawer.style.transition = 'none';
+        views.style.height = '';
+        apply();
+        void drawer.offsetWidth;
+        drawer.style.transition = prev;
+        return;
+      }
+      // The panel changes WIDTH with the view (320 ⇄ 420) and the incoming
+      // view is TALLER at the narrow width than at the wide one. Measuring it
+      // where it still stands animated the panel to that taller height, which
+      // then visibly settled smaller (client-caught 2026-07-27: «появилась,
+      // стала сначала большой, потом меньше»). So measure it at the width the
+      // panel is going to HAVE: transitions off, class on, read, class back —
+      // all inside one task, so not a frame of it is ever painted.
+      const prevTransition = drawer.style.transition;
+      drawer.style.transition = 'none';
+      apply();
+      void drawer.offsetWidth;
+      const to = target.scrollHeight;
+      drawer.classList.toggle('is-contact', !toContact);
+      void drawer.offsetWidth;
+      drawer.style.transition = prevTransition;
+
+      // …then the real, animated switch, from the height it has right now.
       views.style.height = `${views.offsetHeight}px`;
-      drawer.classList.toggle('is-contact', name === 'contact');
-      viewOf('menu')?.setAttribute('aria-hidden', String(name !== 'menu'));
-      viewOf('contact')?.setAttribute('aria-hidden', String(name !== 'contact'));
+      apply();
       requestAnimationFrame(() => {
-        views.style.height = `${target.scrollHeight}px`;
+        views.style.height = `${to}px`;
       });
       views.addEventListener(
         'transitionend',
         () => {
-          if (drawer.classList.contains('is-contact') === (name === 'contact')) {
+          if (drawer.classList.contains('is-contact') === toContact) {
             views.style.height = '';
           }
         },
@@ -687,8 +719,11 @@ const links = [
         setOpen(false);
         return;
       }
-      setView('contact');
-      if (!header.classList.contains('is-open')) setOpen(true);
+      // Animate the switch only INSIDE an open panel; on the way in the view
+      // is simply already set (see setView's !animate branch).
+      const wasOpen = header.classList.contains('is-open');
+      setView('contact', wasOpen);
+      if (!wasOpen) setOpen(true);
     });
 
     burger.addEventListener('click', () => {

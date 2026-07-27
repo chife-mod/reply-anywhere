@@ -200,18 +200,12 @@ const links = [
   }
 
   /* ── Fluid rebuild points (spec 33:3496 + client refinement) ── */
-  @media (max-width: 955px) and (min-width: 941px) {
-    /* Client 2026-07-26: «жать до тех пор, пока не исчезает место» — before
-       giving up to the burger, the menu's own 16px outer padding compresses
-       to 8: islands content floor is 239.57+4+483+4+194 = 924.57, so 8px
-       sides carry it down to 940.57. */
-    .menu {
-      padding: var(--sp-2);
-    }
-  }
-  @media (max-width: 940px) {
-    /* Content floors + min gaps + compressed 8px padding no longer fit
-       (924.57 + 16 = 940.57) — nav is replaced by the burger island.
+  @media (max-width: 955px) {
+    /* The outer padding NEVER springs (client-caught 2026-07-26): an earlier
+       revision squeezed 16→8 for the last 15px before the burger and then
+       restored 16 when the burger appeared — the menu visibly jumped. One
+       threshold, one padding: full nav above 956, burger below, 16px always.
+       Content floors + min gaps: 16+239.57+4+483+4+194+16 = 956.57.
        Recomputed 2026-07-26 for the real menu (Home · Channels · Features ·
        Compare · Contact, nav island 483). The rest of the site keeps its own
        ≤946 degrade — only the menu depends on this measure.

@@ -8,7 +8,7 @@ import SectionHeading from '../ui/SectionHeading.astro';
 import ChannelPill from '../ui/ChannelPill.astro';
 
 interface Pill {
-  x: number; // Figma absolute position inside the 1440×650 frame
+  x: number; // absolute position inside the 1440×650 stage
   y: number;
   icon: string;
   category: string;
@@ -16,37 +16,36 @@ interface Pill {
   iconWidth?: number; // non-square logos keep their Figma aspect
   iconHeight?: number;
   violet?: boolean; // rgba(171,13,255,.2) fill variant
-  fx: number; // fluid-scatter (947–1439px) % position — self-compensating, see --fx CSS
-  fy: number; // fluid-scatter (947–1439px) px from stage top
 }
 
-// Layout rule (client 2026-07-21: «раскидать теги, чтобы гарантированно не
-// налазили» — the body+chips now share the stage with the pills): the centre
-// column (x 340–1100 on the 1440 stage) belongs to the headline/body/chips,
-// so pills live on the TOP ARC (y ≤ 230, above the headline at 283) or on the
-// SIDE WINGS (fully left of x≈340 / right of x≥1110). Narrow viewports clip
-// the wings symmetrically; whatever stays visible is top-arc only — safe on
-// desktop, tablet and phone alike. Original Figma scatter (20:377…20:682)
-// superseded by this client rev.
-// fx/fy (947–1439px fluid-scatter mode, see MODE B in the stage CSS below):
-// three staggered rows above the heading (top:283) — row fy 36 / 116 / 196.
+// Layout rules, in order of authority:
+// 1. The centre column (x 340–1100) belongs to the headline/body/chips below
+//    y230 — pills only live on the TOP ARC (above the headline at 283) or on
+//    the SIDE WINGS (left of ~340 / right of ~1110). Client 2026-07-21.
+// 2. The FIRST WAVE (the three dark pills) is what the viewer sees first, so
+//    it is a deliberate CENTRED ROW, not scatter — «слишком рандомно»,
+//    client 2026-07-26. Row 1 = dark, centred on the stage axis (720) at
+//    x-centres 460 / 720 / 980; row 2 = the violet wave right beneath it;
+//    the remaining violets hold the wings. x below is the LEFT edge, i.e.
+//    centre − measured width/2 (widths: 174/181/192 · 169/156/147/187).
 const pills: Pill[] = [
-  // top arc
-  { x: 198, y: 161, icon: 'logos/google-g', category: 'Company Reviews', name: 'Google Reviews', fx: 2, fy: 116 },
-  { x: 442, y: 97, icon: 'logos/google-maps', category: 'Location Reviews', name: 'Google Maps', iconWidth: 17, iconHeight: 24, violet: true, fx: 28, fy: 36 },
-  { x: 726, y: 60, icon: 'logos/instagram', category: 'Direct Messages', name: 'Instagram DMs', violet: true, fx: 52, fy: 36 },
-  { x: 554, y: 182, icon: 'logos/messenger', category: 'Direct Messages', name: 'Messenger', violet: true, fx: 30, fy: 116 },
-  { x: 826, y: 187, icon: 'logos/amazon', category: 'Product Reviews', name: 'Amazon Reviews', fx: 58, fy: 116 },
-  { x: 1120, y: 150, icon: 'logos/tiktok', category: 'Social Comments', name: 'TikTok Comments', iconWidth: 21, iconHeight: 24, violet: true, fx: 76, fy: 36 },
-  { x: 85, y: 225, icon: 'logos/ebay', category: 'Marketplace Reviews', name: 'eBay', iconWidth: 30, iconHeight: 12, violet: true, fx: 6, fy: 36 },
-  // left wing
-  { x: 171, y: 361, icon: 'logos/whatsapp', category: 'Direct Messages', name: 'WhatsApp', violet: true, fx: 12, fy: 196 },
-  { x: 90, y: 452, icon: 'logos/instagram', category: 'Social Comments', name: 'Instagram Comments', violet: true, fx: 40, fy: 196 },
-  { x: 150, y: 545, icon: 'logos/etsy', category: 'Marketplace Reviews', name: 'Etsy', violet: true, fx: 68, fy: 196 },
-  // right wing
-  { x: 1130, y: 370, icon: 'logos/appstore', category: 'App Reviews', name: 'App Store Reviews', iconWidth: 24, iconHeight: 21, fx: 88, fy: 116 },
-  { x: 1115, y: 470, icon: 'logos/trustpilot', category: 'Company Reviews', name: 'Trustpilot', iconWidth: 24, iconHeight: 23, violet: true, fx: 96, fy: 36 },
-  { x: 1120, y: 560, icon: 'logos/facebook', category: 'Social Comments', name: 'Facebook Comments', violet: true, fx: 92, fy: 196 },
+  // ── wave 1: the opening row, centred under the menu ──
+  { x: 373, y: 95, icon: 'logos/google-g', category: 'Company Reviews', name: 'Google Reviews' },
+  { x: 630, y: 95, icon: 'logos/amazon', category: 'Product Reviews', name: 'Amazon Reviews' },
+  { x: 884, y: 95, icon: 'logos/appstore', category: 'App Reviews', name: 'App Store Reviews', iconWidth: 24, iconHeight: 21 },
+  // ── wave 2, row beneath it ──
+  { x: 146, y: 185, icon: 'logos/ebay', category: 'Marketplace Reviews', name: 'eBay', iconWidth: 30, iconHeight: 12, violet: true },
+  { x: 492, y: 185, icon: 'logos/google-maps', category: 'Location Reviews', name: 'Google Maps', iconWidth: 17, iconHeight: 24, violet: true },
+  { x: 797, y: 185, icon: 'logos/messenger', category: 'Direct Messages', name: 'Messenger', violet: true },
+  { x: 1117, y: 185, icon: 'logos/tiktok', category: 'Social Comments', name: 'TikTok Comments', iconWidth: 21, iconHeight: 24, violet: true },
+  // ── wave 2, left wing ──
+  { x: 171, y: 361, icon: 'logos/whatsapp', category: 'Direct Messages', name: 'WhatsApp', violet: true },
+  { x: 90, y: 452, icon: 'logos/instagram', category: 'Social Comments', name: 'Instagram Comments', violet: true },
+  { x: 150, y: 545, icon: 'logos/etsy', category: 'Marketplace Reviews', name: 'Etsy', violet: true },
+  // ── wave 2, right wing ──
+  { x: 1146, y: 361, icon: 'logos/instagram', category: 'Direct Messages', name: 'Instagram DMs', violet: true },
+  { x: 1116, y: 452, icon: 'logos/trustpilot', category: 'Company Reviews', name: 'Trustpilot', iconWidth: 24, iconHeight: 23, violet: true },
+  { x: 1120, y: 545, icon: 'logos/facebook', category: 'Social Comments', name: 'Facebook Comments', violet: true },
 ];
 ---
 
@@ -58,15 +57,19 @@ const pills: Pill[] = [
         accent="and social customer service"
       />
     </div>
-    <ul class="constellation__pills" role="list">
-      {
-        pills.map((p) => (
+    {/* One list per wave: the scatter positions each <li> absolutely so the
+        split changes nothing there, but in cloud mode it gives the dark trio
+        its own centred row with the violet wave beneath (client 2026-07-26:
+        «три чёрных по центру, а фиолетовые дальше»). */}
+    {[1, 2].map((wave) => (
+      <ul class={`constellation__pills constellation__pills--w${wave}`} role="list">
+        {pills.filter((p) => (p.violet ? 2 : 1) === wave).map((p) => (
           <li
             class:list={['constellation__spot', { 'constellation__spot--violet': p.violet }]}
-            style={`--x: ${p.x}px; --y: ${p.y}px; --fx: ${p.fx}; --fy: ${p.fy}px;`}
+            style={`--x: ${p.x}px; --y: ${p.y}px;`}
             data-constellation-pill
             data-scene-el="pill"
-            data-wave={p.violet ? '2' : '1'}
+            data-wave={wave}
           >
             <ChannelPill
               icon={p.icon}
@@ -77,9 +80,9 @@ const pills: Pill[] = [
               variant={p.violet ? 'social' : 'dark'}
             />
           </li>
-        ))
-      }
-    </ul>
+        ))}
+      </ul>
+    ))}
   </div>
 </section>
 
@@ -118,59 +121,61 @@ const pills: Pill[] = [
   /* Disc size + violet fill now live in the ChannelPill kit (disc 40px default,
      variant="social" → var(--surface-pill-social)) — no scoped overrides. */
 
-  /* MODE B — 947–1439px, "fluid scatter": the fixed 1440 stage clips pills on
-     narrower desktops/tablets, so the stage goes fluid-width and pills place
-     by percent (--fx/--fy, defined per-pill above) instead of Figma px. The
-     child's translateX(-fx%) is a self-compensating edge guard: at fx=0 the
-     pill's own left edge hugs the viewport edge, at fx=100 its right edge
-     does — a pill can never clip off-stage regardless of stage width. This
-     transform MUST live on the li's child, not the li itself — GSAP already
-     animates `transform: scale(...)` on .constellation__spot for the fly-in,
-     and a second transform source on the same element would stomp it. */
-  @media (min-width: 947px) and (max-width: 1439px) {
-    .constellation__stage {
-      width: 100%;
-    }
-    .constellation__spot {
-      left: calc(var(--fx) * 1%);
-      top: var(--fy);
-    }
-    .constellation__spot > :global(*) {
-      transform: translateX(calc(var(--fx) * -1%));
-    }
-  }
+  /* TWO states only (client 2026-07-26: «как обычно на десктопе, второе —
+     теги снизу»). The old middle state (fluid percent scatter, 947–1439) is
+     gone: the Figma stage survives down to 1301 on its own — the outermost
+     pills sit at x85 and x1130+180, and the stage only loses ~70px per side
+     at 1301, so nothing clips. Below 1301 the cloud takes over. */
 
-  /* MODE C — ≤946px, "cloud": pills stop tracking Figma/percent coordinates
-     altogether and become a centered flex-wrap cloud ABOVE the heading; the
-     heading drops into static flow below it. The scene script measures
-     heading positions at runtime (--pi-shift) — it re-reads the DOM each
-     time, so body/chips follow the relocated heading automatically and
-     don't need touching here. */
-  @media (max-width: 946px) {
+  /* MODE B — ≤1300px, "cloud" (client 2026-07-26: перестраивать на 1300,
+     «заголовок и текст вверх, теги под ними»): pills stop tracking Figma /
+     percent coordinates and become a centered flex-wrap cloud. Reading order
+     is headline → body/chips → tags, so the heading sits at the TOP of the
+     stage and the cloud is pushed to the BOTTOM (margin-top:auto); the gap
+     between them is where PlatformIntro's body+chips land — the scene script
+     re-measures the heading each time (--pi-shift), so they follow it here
+     without any change to the script. */
+  @media (max-width: 1300px) {
     .constellation__stage {
       width: 100%;
-      height: auto;
+      height: auto; /* content height — the pinned section centres it */
       min-height: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--sp-8);
-      padding: 120px var(--menu-pad) var(--sp-6); /* top clears the fixed menu in the pinned scene */
+      /* The pinned section centres this box in 100vh, but the fixed menu owns
+         the top 96px — reserving it here keeps the centring optically true and
+         stops the headline sliding under the menu on short screens. */
+      padding: 96px var(--menu-pad) 0;
     }
     .constellation__heading {
       position: static;
       left: auto;
       transform: none;
-      order: 2;
+      order: 1;
       width: 100%;
     }
     .constellation__pills {
-      order: 1;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: var(--sp-2);
       width: 100%;
+    }
+    /* Wave 1 (the dark trio) is its own centred row; wave 2 flows beneath it,
+       so the opening beat reads as a deliberate line, not a rubble of tags
+       (client 2026-07-26). */
+    .constellation__pills--w1 {
+      order: 2;
+      /* Reserve exactly the height of the overlaid body+chips (measured by
+         the scene script into --intro-h), then one section step of air — the
+         cloud follows the copy instead of hugging the bottom edge, which left
+         a huge hole on tall screens (client-caught 2026-07-26). */
+      margin-top: calc(var(--intro-h, 260px) + clamp(var(--sp-4), 4.4svh, var(--sp-10)));
+    }
+    .constellation__pills--w2 {
+      order: 3;
+      margin-top: var(--sp-2);
     }
     .constellation__spot {
       position: static;
@@ -216,6 +221,34 @@ const pills: Pill[] = [
      persistent constellation headline, so body + chips land under it. */
   .is-scene [data-scene-part='intro'] .platform-intro__inner {
     transform: translateY(var(--pi-shift, 0px));
+  }
+
+  /* Tiny screens: headline + body + chips + 13 tags simply do not fit one
+     pinned 100vh screen at any type size (measured 2026-07-26 at 320×700 —
+     the tag cloud landed on the chips). There the scene UNPINS and reads as
+     a normal scrolling block: the scrub still plays, nothing is clipped,
+     nothing overlaps. The duplicate intro headline stays hidden — the
+     constellation one is the scene's headline (spec §5). */
+  @media (max-width: 430px) and (max-height: 720px) {
+    [data-scene='one-platform'].is-scene {
+      height: auto;
+    }
+    .is-scene [data-scene-part='constellation'],
+    .is-scene [data-scene-part='intro'] {
+      position: static;
+      height: auto;
+      margin-top: 0;
+    }
+    .is-scene [data-scene-part='constellation'] .constellation__stage {
+      height: auto;
+      padding-bottom: 0;
+    }
+    .is-scene [data-scene-part='intro'] .heading {
+      display: none;
+    }
+    .is-scene [data-scene-part='intro'] .platform-intro__inner {
+      transform: none;
+    }
   }
 </style>
 
@@ -296,10 +329,19 @@ const pills: Pill[] = [
     // heading on the same Y, so the body/chips appear under the headline that
     // stays (spec §5–7). Both sections are stuck at the same top → the delta
     // is scroll-independent.
+    const stage = scene.querySelector<HTMLElement>('.constellation__stage');
     const align = () => {
       introInner.style.setProperty('--pi-shift', '0px');
       const delta = headline.getBoundingClientRect().top - introHeading.getBoundingClientRect().top;
       introInner.style.setProperty('--pi-shift', `${delta}px`);
+      // Cloud mode (≤1300) stacks headline → [overlaid body+chips] → tags, so
+      // the tag row must reserve the overlay's real height — measured here
+      // because the overlay lives in a different section (client 2026-07-26:
+      // «уменьшить отступ от тегов до текста»).
+      if (stage) {
+        const h = chipsWrap.getBoundingClientRect().bottom - introHeading.getBoundingClientRect().bottom;
+        stage.style.setProperty('--intro-h', `${Math.max(0, Math.round(h))}px`);
+      }
     };
     align();
     document.fonts?.ready.then(() => {

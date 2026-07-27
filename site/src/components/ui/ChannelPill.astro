@@ -80,4 +80,45 @@ const { icon, category, name, iconWidth, iconHeight, variant = 'dark' } = Astro.
       display: none;
     }
   }
+  /* Phones: all 13 tags now share the pinned screen with the headline, body
+     and chips (scene rebuilt 2026-07-26) — at the ≤560 size they needed 7
+     rows and ran into the copy. One step tighter: 24px disc, the caption
+     floor (13) for the name, minimal padding. Fits in 4 rows at 390. */
+  @media (max-width: 480px) {
+    .pill {
+      gap: var(--sp-1);
+      padding: 2px var(--sp-2) 2px 2px; /* 2px = the disc's optical inset */
+    }
+    .pill__disc {
+      width: var(--sp-6);
+      height: var(--sp-6);
+    }
+    .pill__disc :global(img) {
+      width: 16px;
+      height: 16px;
+    }
+    .pill__name {
+      font-size: var(--fs-chip);
+    }
+  }
+  /* Small phones / short screens: 13 named tags cannot share a 700px screen
+     with the headline, body and chips whatever the type size — so the tag
+     becomes its DISC alone (the hero-orbit idiom). All 13 channels stay
+     visible in two rows; their names are what the copy right above says. */
+  @media (max-width: 430px), (max-height: 720px) and (max-width: 560px) {
+    .pill {
+      padding: 2px;
+    }
+    .pill__text {
+      display: none;
+    }
+    .pill__disc {
+      width: var(--sp-8);
+      height: var(--sp-8);
+    }
+    .pill__disc :global(img) {
+      width: 20px;
+      height: 20px;
+    }
+  }
 </style>

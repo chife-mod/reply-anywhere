@@ -760,19 +760,18 @@ const sparks = [
      so its 613px canvas + 87px-blur glow washed the whole screen violet.
      Two moves: the CTA sits BESIDE the copy (buys back a row of height) and
      the orbit is smaller and pulled up. ── */
+  /* The hero CTA exists only when the MENU has no button of its own — the two
+     were duplicating each other on one screen (client 2026-07-26 rev 3).
+     542 is exactly where .menu__actions (En + «Book a demo») drops out, so the
+     two rules hand over without a gap: menu button above 542, hero button
+     below it. The freed space goes into air over the headline — the gap from
+     the menu's visible edge was 16px while headline→body is 24; now 32. */
+  @media (min-width: 542px) and (max-width: 946px) {
+    .hero__cta { display: none; }
+    .hero { padding-top: 112px; }
+  }
   @media (min-width: 653px) and (max-width: 946px) {
-    .hero__copy {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: end;
-      column-gap: var(--sp-8);
-      max-width: none;
-    }
-    .hero__heading { grid-column: 1; grid-row: 1; }
-    /* Same row as the copy, bottom-aligned with the last line of the sub */
-    .hero__cta { grid-column: 2; grid-row: 1; align-self: end; }
     .hero__sub { max-width: 46ch; }
-    .hero__chips { grid-column: 1 / -1; grid-row: 2; }
     .orbit {
       --orbit-m: 0.78;
       margin-top: 0;

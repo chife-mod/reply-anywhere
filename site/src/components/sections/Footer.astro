@@ -105,23 +105,32 @@ const year = 2026; // build-time constant — no client-side date drift
   .footer {
     position: relative;
     isolation: isolate;
-    overflow: clip; /* the glow never widens the page */
+    /* X only: the glow must never widen the page, but it may bleed UP into
+       the section above — the hairline border and the hard clip cut it into
+       a visible bar (client 2026-07-26: «уберём палку, пусть переходит
+       плавно; кусочек таблицы на свечении — не страшно»). */
+    overflow-x: clip;
+    overflow-y: visible;
     padding: var(--sp-20) var(--margin-desktop) var(--sp-10);
-    border-top: 1px solid var(--border-line);
   }
   /* One soft violet wash behind the brand — the site's signature glow, at its
      quietest (pre-blurred square idiom, DESIGN.md §6). */
+  /* A soft radial wash that starts ABOVE the footer edge and fades in every
+     direction — no rectangle, no seam. radial-gradient instead of a blurred
+     square: a blur is clipped by its own box, a gradient is not. */
   .footer__glow {
     position: absolute;
     z-index: -1;
-    left: max(var(--margin-desktop), 6%);
-    top: -60px;
-    width: 320px;
-    height: 320px;
-    border-radius: 100px;
-    background: var(--violet);
-    opacity: 0.14;
-    filter: blur(calc(var(--glow-hero-mid) / 2));
+    left: max(var(--margin-desktop), 2%);
+    top: -220px;
+    width: min(760px, 70%);
+    height: 620px;
+    background: radial-gradient(
+      50% 50% at 50% 50%,
+      rgba(171, 13, 255, 0.22) 0%,
+      rgba(171, 13, 255, 0.1) 45%,
+      rgba(171, 13, 255, 0) 72%
+    );
     pointer-events: none;
   }
   .footer__inner {

@@ -24,8 +24,16 @@ const Tag = `h${level}` as 'h1' | 'h2';
     font-size: var(--fs-h2);
     line-height: var(--lh-h2);
     font-weight: var(--fw-regular);
-    color: var(--text-body);
+    /* Full white, not the 80% body tint (client 2026-07-27: «сейчас они
+       какие-то серые»). Headings are the one type that never dims — the
+       lede under them keeps --text-body and the contrast between the two
+       is what carries the hierarchy. */
+    color: var(--text-hi);
     letter-spacing: normal;
+    /* Split the heading into even lines instead of filling the first one and
+       orphaning a word («…done / for», client-caught 2026-07-26). Each side
+       of the <br> balances on its own. */
+    text-wrap: balance;
   }
   .heading--center { text-align: center; }
   .heading--left { text-align: left; }

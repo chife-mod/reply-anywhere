@@ -13,6 +13,7 @@
 //   ≤536       En+CTA + tagline dropped: logo + wordmark (centered) + burger
 // Burger is a hook only (data-nav-burger) — the drawer lands in Phase D.
 import Button from '../ui/Button.astro';
+import ContactContent from '../ui/ContactContent.astro';
 import logoMark from '../../assets/brand/logo-mark.svg';
 import wordmark from '../../assets/brand/wordmark.svg';
 
@@ -21,14 +22,21 @@ import wordmark from '../../assets/brand/wordmark.svg';
 // leads somewhere that exists today: Channels → the «One platform» scene
 // (the channel orbit + pills), Contact → the footer. The footer mirrors
 // this set.
+// No active-state dot: without scroll-spy it would sit on «Home» forever and
+// lie the moment you scroll (client 2026-07-26 — «мы её нигде не развиваем»).
 const links = [
-  { label: 'Home', href: '/', active: true },
+  { label: 'Home', href: '/' },
   { label: 'Channels', href: '#channels' },
   { label: 'Features', href: '#features' },
   { label: 'Compare', href: '#compare' },
   { label: 'Contact', href: '#contact' },
 ];
 ---
+
+{/* Outside <header> on purpose: inside it the scrim sits in the menu's own
+    stacking context, and its backdrop-filter then has nothing to blur — the
+    page is painted in a sibling layer, not underneath it. */}
+<div class="menu__scrim" data-nav-scrim aria-hidden="true"></div>
 
 <header class="menu">
   <div class="menu__brand">
@@ -42,17 +50,62 @@ const links = [
   </div>
 
   <nav class="island menu__nav" aria-label="Main">
-    {links.map(({ label, href, active }) => (
-      <a class="menu__item" href={href} aria-current={active ? 'page' : undefined}>{label}</a>
+    {links.map(({ label, href }) => (
+      <a class="menu__item" href={href}>{label}</a>
     ))}
   </nav>
 
   <div class="island menu__actions">
-    <button class="menu__lang" type="button" aria-label="Switch language">En</button>
+    {/* ONE language on screen — the current one; tapping swaps it (client
+        2026-07-26: «не нравится постоянно видеть два языка»). Becomes a link
+        to /ua/ once the Ukrainian copy exists. */}
+    <button class="menu__lang" type="button" data-lang-toggle aria-label="Switch language to UA">EN</button>
     <Button href="#demo" label="Book a demo" class="menu__cta" />
   </div>
 
-  <button class="island menu__burger" type="button" aria-label="Open menu" aria-expanded="false" data-nav-burger>
+  {/* Mobile drawer (client 2026-07-27): the panel is ONE MORE ISLAND that
+      lands 4px BELOW the row — the islands above are never touched, covered
+      or re-surfaced, the page behind dims and blurs. Supersedes the 2026-07-26
+      sketch where the burger island grew into a panel: that one had to cancel
+      the brand islands' own surface to stop it doubling, reserve 64px of dead
+      space for the row and measure the island pair in JS. Links set large like
+      a heading, a quiet footer line at the bottom. */}
+  <div class="menu__drawer island" id="menu-drawer" data-nav-drawer hidden>
+    {/* Two views in ONE panel: tapping «Contact» slides the menu out to the
+        left and the contact block in from the right while the panel itself
+        just grows downward — no second panel, no re-open (client 2026-07-26). */}
+    <button class="menu__drawer-close" type="button" aria-label="Close" data-nav-close>
+      <span></span><span></span>
+    </button>
+    <div class="menu__views" data-nav-views>
+      <div class="menu__view menu__view--menu" data-nav-view="menu">
+        <nav class="menu__drawer-nav" aria-label="Mobile">
+          {links.map(({ label, href }) => (
+            <a class="menu__drawer-item" href={href}>{label}</a>
+          ))}
+        </nav>
+        {/* EN and the CTA live HERE only where their own island is gone
+            (≤541) — the row above keeps both at every wider width, so there
+            is never a visible pair. The foot itself is hidden above that. */}
+        <div class="menu__drawer-foot">
+          <div class="menu__drawer-meta">
+            <Button href="#demo" label="Request a free demo" class="menu__drawer-cta" />
+            <button class="menu__lang" type="button" data-lang-toggle aria-label="Switch language to UA">EN</button>
+          </div>
+          <p class="menu__drawer-note">Product of SemanticForce</p>
+        </div>
+      </div>
+
+      <div class="menu__view menu__view--contact" data-nav-view="contact" aria-hidden="true">
+        <button class="menu__back" type="button" data-nav-back>
+          <span class="menu__back-arrow" aria-hidden="true"></span>Menu
+        </button>
+        <ContactContent titleId="menu-contact-title" />
+      </div>
+    </div>
+  </div>
+
+  <button class="island menu__burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-drawer" data-nav-burger>
     <span class="menu__burger-line"></span>
     <span class="menu__burger-line"></span>
   </button>
@@ -102,6 +155,9 @@ const links = [
     gap: var(--sp-1);
     flex-shrink: 0;
   }
+  /* The panel lands BELOW the row (2026-07-27), so no island above it ever
+     needs to hide, go transparent or be measured — every one of them simply
+     stays exactly as it is, open or closed. */
   .menu__logo {
     justify-content: center;
     padding: var(--sp-3) var(--sp-4);
@@ -151,17 +207,6 @@ const links = [
   .menu__item:hover {
     color: var(--text-body);
   }
-  .menu__item[aria-current]::after {
-    content: '';
-    position: absolute;
-    bottom: var(--sp-1);
-    left: 50%;
-    translate: -50% 0;
-    width: 6px; /* Figma ellipse 6×6 — no token */
-    height: 6px;
-    border-radius: var(--r-pill);
-    background: var(--violet);
-  }
 
   /* ── Right island: language + CTA ───────────────────────────── */
   .menu__actions {
@@ -178,7 +223,9 @@ const links = [
     line-height: 1;
     text-transform: uppercase;
     color: var(--text-hi);
+    transition: color var(--dur-fast) var(--ease-out);
   }
+  .menu__lang:hover { color: var(--violet-light); }
   /* (no .menu__cta height override — the 48px height is Button's own, for
      every button on the site; client 2026-07-21 «одна кнопка, один размер») */
 
@@ -197,6 +244,266 @@ const links = [
     width: var(--sp-6);
     height: 2px; /* Figma stroke weight — no token */
     background: var(--text-hi);
+    transition:
+      translate var(--dur-normal) var(--ease-out),
+      rotate var(--dur-normal) var(--ease-out);
+  }
+  /* two lines → cross (the gap is 6, so each travels half of 8) */
+  .menu.is-open .menu__burger-line:first-child {
+    translate: 0 4px;
+    rotate: 45deg;
+  }
+  .menu.is-open .menu__burger-line:last-child {
+    translate: 0 -4px;
+    rotate: -45deg;
+  }
+
+  /* ── Mobile drawer ─────────────────────────────────────────── */
+  .menu__drawer {
+    position: absolute;
+    /* Straight under the island row, at the row's OWN 4px island gap: the
+       panel reads as one more island in the same cluster, not a new layer.
+       16 (pad) + 64 (island height) + 4 (gap). */
+    top: calc(var(--menu-pad) + var(--sp-16) + var(--sp-1));
+    right: var(--menu-pad);
+    height: auto; /* the row's islands are h64 — the panel grows with content */
+    align-items: stretch; /* .island centres its children; the panel must not */
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--sp-10);
+    /* TWO widths, one tile (client 2026-07-27): the menu hangs just wider
+       than the two islands it drops from (194 En/CTA + 4 + 64 burger = 262),
+       and the panel EXPANDS ON ITS OWN when «Contact» opens — the form needs
+       the room the five links never did. One 420 for both read as a half-empty
+       tile in the menu state. The right edge always stays on the islands'
+       right edge; the panel grows LEFT. */
+    width: min(320px, calc(100vw - 2 * var(--menu-pad)));
+    /* Never taller than the space left under the row — a long menu (landscape
+       phone) scrolls inside the panel instead of running off screen. */
+    max-height: calc(100dvh - 2 * var(--menu-pad) - var(--sp-16) - var(--sp-1));
+    overflow-y: auto;
+    padding: var(--sp-6) var(--sp-6) var(--sp-8);
+    /* drops down out of the burger's own corner */
+    transform-origin: 100% 0;
+    translate: 0 -8px;
+    scale: 0.98;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      width var(--dur-normal) var(--ease-out),
+      translate var(--dur-normal) var(--ease-out),
+      scale var(--dur-normal) var(--ease-out),
+      opacity var(--dur-fast) var(--ease-out),
+      visibility 0s linear var(--dur-normal);
+  }
+  .menu.is-open .menu__drawer {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  /* Scoped to the widths where the tile has its own width at all — below 700
+     it already spans the full row, so there is nothing to expand into. Inside
+     the media query so it cannot out-specify that full-width rule. */
+  @media (min-width: 700px) {
+    .menu__drawer.is-contact {
+      width: min(420px, calc(100vw - 2 * var(--menu-pad)));
+    }
+  }
+  .menu__drawer[hidden] {
+    display: flex; /* [hidden] is the no-JS state guard, not a layout switch */
+  }
+  /* Both views share one cell; only one is on screen at a time. The panel's
+     own height is animated by the script (see setView). */
+  /* Only where the burger is gone — there it is the panel's only way out.
+     Everywhere else the burger stays put above and turns into the cross, so
+     the control never moves away from the finger that opened the panel. */
+  .menu__drawer-close {
+    position: absolute;
+    z-index: 1; /* above the panel's content — the head was eating the clicks */
+    top: var(--sp-4);
+    right: var(--sp-4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--sp-10);
+    height: var(--sp-10);
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+  .menu__drawer-close span {
+    position: absolute;
+    width: var(--sp-6);
+    height: 2px;
+    background: var(--text-hi);
+  }
+  .menu__drawer-close span:first-child { rotate: 45deg; }
+  .menu__drawer-close span:last-child { rotate: -45deg; }
+  @media (min-width: 956px) {
+    .menu__drawer-close { display: flex; }
+    /* No menu list on desktop — the panel is the contact view only. */
+    .menu__view--menu { display: none; }
+  }
+
+  .menu__views {
+    position: relative;
+    display: grid;
+    grid-template-areas: 'view';
+    overflow: hidden;
+  }
+  /* Only the view ON SCREEN sizes the panel. Sharing one grid cell made the
+     row as tall as the TALLER view, so the five links dragged the whole
+     contact form's height behind them — invisible while the panel filled the
+     screen anyway, glaring now that it is a tile of its own. The outgoing
+     view is lifted out of flow for the slide; the script animates the
+     difference (setView). */
+  .menu__drawer:not(.is-contact) .menu__view--contact,
+  .menu__drawer.is-contact .menu__view--menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  .menu__view {
+    grid-area: view;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-10);
+    transition:
+      translate var(--dur-normal) var(--ease-out),
+      opacity var(--dur-fast) var(--ease-out),
+      visibility 0s linear var(--dur-normal);
+  }
+  .menu__view--contact {
+    gap: var(--sp-6);
+    translate: 100% 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .menu__drawer.is-contact .menu__view--menu {
+    translate: -100% 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .menu__drawer.is-contact .menu__view--contact {
+    translate: 0 0;
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  /* Same for the menu coming BACK: without it the base rule's 250ms
+     visibility delay keeps the incoming view invisible for the whole slide
+     and it pops in at the end (measured 2026-07-27 — the «← Menu» return
+     was arriving blank). */
+  .menu__drawer:not(.is-contact) .menu__view--menu {
+    transition-delay: 0s;
+  }
+  .menu__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    align-self: flex-start;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    color: var(--text-dim);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .menu__back:hover { color: var(--text-hi); }
+  .menu__back-arrow {
+    width: 8px;
+    height: 8px;
+    border-left: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    rotate: 45deg;
+  }
+
+  .menu__drawer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+  .menu__drawer-item {
+    font-size: var(--fs-h2); /* heading-scale, per the client's sketch */
+    line-height: var(--lh-h2);
+    font-weight: var(--fw-regular);
+    color: var(--text-hi);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .menu__drawer-item:hover {
+    color: var(--violet-light);
+  }
+  /* The row above carries EN and the CTA at every width where its island
+     exists; the foot is that island's stand-in and appears ONLY where it is
+     gone (≤541, below) — never a visible pair. Above that the panel is its
+     links and nothing else. */
+  .menu__drawer-foot {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-4);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--border-soft);
+  }
+  .menu__drawer-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-6); /* same EN↔CTA distance the island keeps */
+  }
+  .menu__drawer-note {
+    font-size: var(--fs-chip);
+    color: var(--text-dim);
+  }
+
+  /* The page behind dims and blurs (client 2026-07-26) */
+  .menu__scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 99; /* under .menu (100), over everything else */
+    pointer-events: none;
+    background: rgba(6, 7, 16, 0.55);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--dur-normal) var(--ease-out),
+      visibility 0s linear var(--dur-normal);
+  }
+  body.nav-open .menu__scrim {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* click-outside closes the drawer */
+    transition-delay: 0s;
+  }
+  /* Below 700 the panel spans the FULL width of the row above — right margin
+     to left margin, edge-aligned with the logo island (client 2026-07-26).
+     Above it the panel keeps its own width and the page stays visible beside
+     it. */
+  @media (max-width: 699px) {
+    .menu__drawer {
+      left: var(--menu-pad);
+      width: auto;
+      padding-left: var(--sp-4); /* logo island's own inset → links sit under the mark */
+      padding-right: var(--sp-4);
+    }
+    .menu__drawer-item {
+      font-size: var(--fs-h1); /* more room → the display size the sketch asks for */
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu__drawer,
+    .menu__burger-line,
+    .menu__scrim {
+      transition-duration: 0.01ms;
+    }
   }
 
   /* ── Fluid rebuild points (spec 33:3496 + client refinement) ── */
@@ -244,7 +551,17 @@ const links = [
     .menu__actions {
       display: none;
     }
+    /* …so the panel takes both over for exactly these widths. */
+    .menu__drawer-foot {
+      display: flex;
+    }
   }
+  /* Must come after the base .menu__back rule — equal specificity, later
+     wins. On desktop there is no menu view to go back to. */
+  @media (min-width: 956px) {
+    .menu__back { display: none; }
+  }
+
   @media (max-width: 339px) {
     /* Client 2026-07-02: the tagline stays visible on mobile until the burger
        is pressed within <4px of the brand block. Collision point:
@@ -262,6 +579,139 @@ const links = [
   // down and comes back on the SLIGHTEST scroll-up. A 12px down-accumulator
   // ignores trackpad jitter; the up direction reacts immediately. Never
   // hides inside the first 120px — the hero always keeps its menu.
+  // ── Language toggle ──────────────────────────────────────────────────
+  // Visual only until the Ukrainian copy exists; then these become links to
+  // / and /uk/ and this handler goes away.
+  // One visible language, tapping swaps it. Both instances (island + mobile
+  // panel) show the same state.
+  document.addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('[data-lang-toggle]')) return;
+    const next = document.querySelector<HTMLElement>('[data-lang-toggle]')?.textContent?.trim() === 'EN' ? 'UA' : 'EN';
+    document.querySelectorAll<HTMLElement>('[data-lang-toggle]').forEach((b) => {
+      b.textContent = next;
+      b.setAttribute('aria-label', `Switch language to ${next === 'EN' ? 'UA' : 'EN'}`);
+    });
+  });
+
+  // ── Mobile drawer ────────────────────────────────────────────────────
+  // The burger island opens into the panel; Esc, a scrim click or following
+  // a link closes it. Body scroll is locked while open.
+  const burger = document.querySelector<HTMLButtonElement>('[data-nav-burger]');
+  const drawer = document.querySelector<HTMLElement>('[data-nav-drawer]');
+  const scrim = document.querySelector<HTMLElement>('[data-nav-scrim]');
+  const header = document.querySelector<HTMLElement>('.menu');
+
+  if (burger && drawer && scrim && header) {
+    drawer.removeAttribute('hidden'); // JS is here — CSS owns visibility now
+    const setOpen = (open: boolean) => {
+      if (open && getComputedStyle(burger).display === 'none') {
+        drawer.classList.add('is-contact'); // desktop: contact view only
+      }
+      // Nothing above the panel changes when it opens, so there is nothing to
+      // measure or freeze here any more (panel-below rework 2026-07-27).
+      header.classList.toggle('is-open', open);
+      document.body.classList.toggle('nav-open', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if (open) drawer.querySelector<HTMLAnchorElement>('a')?.focus({ preventScroll: true });
+      else {
+        burger.focus({ preventScroll: true });
+        // Every close returns the panel to its menu view — otherwise the next
+        // open lands on whatever was last on screen (client-caught 2026-07-27:
+        // contacts opened on the wide layout, closed, window narrowed, and the
+        // burger then opened straight into contacts). Reset AFTER the fade, so
+        // the swap itself is never visible.
+        drawer.addEventListener('transitionend', resetView, { once: true });
+      }
+    };
+
+    // ── view switch: menu ⇄ contact, inside the same panel ──
+    const views = drawer.querySelector<HTMLElement>('[data-nav-views]');
+    const viewOf = (name: string) =>
+      drawer.querySelector<HTMLElement>(`[data-nav-view="${name}"]`);
+
+    const setView = (name: 'menu' | 'contact') => {
+      const target = viewOf(name);
+      if (!views || !target) return;
+      // animate the panel's own height from the current view to the next one
+      views.style.height = `${views.offsetHeight}px`;
+      drawer.classList.toggle('is-contact', name === 'contact');
+      viewOf('menu')?.setAttribute('aria-hidden', String(name !== 'menu'));
+      viewOf('contact')?.setAttribute('aria-hidden', String(name !== 'contact'));
+      requestAnimationFrame(() => {
+        views.style.height = `${target.scrollHeight}px`;
+      });
+      views.addEventListener(
+        'transitionend',
+        () => {
+          if (drawer.classList.contains('is-contact') === (name === 'contact')) {
+            views.style.height = '';
+          }
+        },
+        { once: true }
+      );
+    };
+    // Snap (not slide) back to the menu view — used by setOpen once the panel
+    // has faded out, where an animated switch would be a visible flicker.
+    const resetView = () => {
+      if (header.classList.contains('is-open')) return; // reopened mid-fade
+      drawer.classList.remove('is-contact');
+      viewOf('menu')?.setAttribute('aria-hidden', 'false');
+      viewOf('contact')?.setAttribute('aria-hidden', 'true');
+      if (views) views.style.height = '';
+    };
+
+    views?.style.setProperty('transition', `height var(--dur-normal) var(--ease-out)`);
+
+    // ONE panel for everything (client 2026-07-26: «всегда всё справа»):
+    // every Contact / demo link anywhere on the page opens this panel in the
+    // contact view; inside the panel the same link just switches the view.
+    document.addEventListener('click', (e) => {
+      const el = e.target as HTMLElement;
+      if (el.closest('[data-nav-back]')) { setView('menu'); return; }
+      if (el.closest('[data-nav-close]')) { setOpen(false); return; }
+      const link = el.closest<HTMLAnchorElement>('a[href="#contact"], a[href="#demo"]');
+      if (!link) return;
+      e.preventDefault();
+      // The entry point TOGGLES (client 2026-07-27): a second click on the
+      // same «Contact» that opened the panel closes it again, exactly like
+      // clicking the scrim. Links INSIDE the panel are excluded — there
+      // «Contact» is the mobile menu's way into this very view.
+      const insidePanel = !!el.closest('[data-nav-drawer]');
+      if (!insidePanel && header.classList.contains('is-open') && drawer.classList.contains('is-contact')) {
+        setOpen(false);
+        return;
+      }
+      setView('contact');
+      if (!header.classList.contains('is-open')) setOpen(true);
+    });
+
+    burger.addEventListener('click', () => {
+      // No setView('menu') here any more — setOpen's own reset covers EVERY
+      // way out (burger, ×, scrim, Esc, a resize that hides the burger).
+      setOpen(burger.getAttribute('aria-expanded') !== 'true');
+    });
+    scrim.addEventListener('click', () => setOpen(false));
+    drawer.addEventListener('click', (e) => {
+      const a = (e.target as HTMLElement).closest('a');
+      // «Contact» switches views (handled above) and the contact block's own
+      // links are external — only nav links close the panel.
+      if (a && a.closest('[data-nav-view="menu"]') && a.getAttribute('href') !== '#contact') {
+        setOpen(false);
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && header.classList.contains('is-open')) setOpen(false);
+    });
+    // A width change that hides the burger must not leave the drawer open.
+    window.addEventListener('resize', () => {
+      if (getComputedStyle(burger).display === 'none' && header.classList.contains('is-open')) {
+        setOpen(false);
+      }
+    });
+  }
+
   const menu = document.querySelector<HTMLElement>('.menu');
   if (menu) {
     let lastY = window.scrollY;
@@ -272,6 +722,7 @@ const links = [
         const y = window.scrollY;
         const dy = y - lastY;
         lastY = y;
+        if (menu.classList.contains('is-open')) return; // never hide an open drawer
         if (dy > 0) {
           downAcc += dy;
           if (downAcc > 12 && y > 120) menu.classList.add('menu--hidden');

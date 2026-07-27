@@ -88,10 +88,17 @@ const sparks = [
           one workspace.
         </p>
       </div>
+      {/* One hover target for both halves — the gap between them belongs to
+          the same hit area (client 2026-07-26). On hover the white arrow
+          flies out up-right and a violet one arrives from down-left. */}
       <div class="hero__cta">
         <Button href="#demo" label="Request a free demo " />
         <Button href="#demo" variant="icon">
-          <Icon name="tabler/arrow-up-right" size={24} alt="Request a free demo" />
+          <span class="hero__arrow" aria-hidden="true">
+            <Icon name="tabler/arrow-up-right" size={24} class="hero__arrow-out" />
+            <Icon name="tabler/arrow-up-right-violet" size={24} class="hero__arrow-in" />
+          </span>
+          <span class="sr-only">Request a free demo</span>
         </Button>
       </div>
       <ul class="hero__chips" role="list">
@@ -484,8 +491,11 @@ const sparks = [
   @media (max-height: 694px) { .orbit { --orbit-kh: 0.862; } }
   @media (max-height: 654px) { .orbit { --orbit-kh: 0.793; } }
   @media (max-height: 614px) { .orbit { --orbit-kh: 0.733; } }
-  @media (max-width: 1099px) { .orbit { --orbit-kw: 0.88; } }
-  @media (max-width: 999px)  { .orbit { --orbit-kw: 0.78; } }
+  /* Gentle: the artwork stays essentially full size and pays with a wider
+     bleed instead (client 2026-07-26: «на 968 она не должна быть такой
+     маленькой») — the cap above went 123 → 205px for the same reason. */
+  @media (max-width: 1099px) { .orbit { --orbit-kw: 0.96; } }
+  @media (max-width: 999px)  { .orbit { --orbit-kw: 0.93; } }
 
   /* ─── Left column (Figma 2:37 · 549w) ───────────────────────── */
   .hero__copy {
@@ -518,7 +528,7 @@ const sparks = [
     line-height: var(--lh-h1);
     font-weight: var(--fw-regular);
     letter-spacing: normal;
-    color: var(--text-body);
+    color: var(--text-hi); /* same rule as SectionHeading — headings never dim */
   }
   .hero__accent-row {
     display: flex;
@@ -562,6 +572,42 @@ const sparks = [
     display: flex;
     gap: var(--sp-1);
   }
+  /* ── CTA pair hover: one target, arrow swap ──────────────────
+     The 4px gap is bridged by the group's own hover, so moving between the
+     halves never drops the state. The arrows travel on a diagonal with an
+     overshooting ease — out to the top-right, in from the bottom-left. */
+  .hero__arrow {
+    position: relative;
+    display: block;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+  }
+  .hero__arrow :global(img) {
+    position: absolute;
+    inset: 0;
+    transition: translate 0.42s cubic-bezier(0.22, 1.2, 0.36, 1);
+  }
+  .hero__arrow :global(.hero__arrow-in) {
+    translate: -140% 140%;
+  }
+  .hero__cta:hover .hero__arrow :global(.hero__arrow-out),
+  .hero__cta:focus-within .hero__arrow :global(.hero__arrow-out) {
+    translate: 140% -140%;
+  }
+  .hero__cta:hover .hero__arrow :global(.hero__arrow-in),
+  .hero__cta:focus-within .hero__arrow :global(.hero__arrow-in) {
+    translate: 0 0;
+  }
+  /* the icon button turns white so the violet arrow reads on it */
+  .hero__cta:hover :global(.btn--icon),
+  .hero__cta:focus-within :global(.btn--icon) {
+    background: var(--text-hi);
+    border-color: var(--text-hi);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__arrow :global(img) { transition-duration: 0.01ms; }
+  }
   .hero__chips {
     display: flex;
     flex-wrap: wrap; /* narrow screens: chips flow to the next line (QA 2026-07-08) */
@@ -591,7 +637,7 @@ const sparks = [
     /* …but the bleed is CAPPED at 123px ≈ 20% of the 613 canvas (client
        2026-07-26: «пусть режется четверть, но не вся иллюстрация»). Past
        that cap the kw bands below take over and shrink it instead. */
-    right: clamp(-123px, calc(100% - 1110px), 82px);
+    right: clamp(-205px, calc(100% - 1110px), 82px);
     width: 613px;
     height: 581px;
     /* vertical centre of the screen (client spec); the min(kh, kw) scale
@@ -742,6 +788,28 @@ const sparks = [
       min-height: auto;
     }
     .orbit {
+      /* Dissolve instead of cut (client 2026-07-26: «убрать обрез, добавить
+         плавный фейд сверху и снизу»): the stage still overruns the hero box
+         top and bottom, but a mask fades it out before the clip edge, so no
+         hard line — the rings just melt into the page. Horizontal untouched. */
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.35) 5%,
+        #000 16%,
+        #000 78%,
+        rgba(0, 0, 0, 0.35) 94%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.35) 5%,
+        #000 16%,
+        #000 78%,
+        rgba(0, 0, 0, 0.35) 94%,
+        transparent 100%
+      );
       position: relative;
       top: auto;
       right: auto;

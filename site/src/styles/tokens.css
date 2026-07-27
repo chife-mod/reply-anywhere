@@ -52,7 +52,11 @@
      exact design size at ≥1440. Hero's svh fold-clamp keeps working — its
      ceiling is var(--fs-h1), so it becomes min(fold, width) automatically. */
   --fs-h1: clamp(32px, calc(19.35px + 1.989vw), 48px);        --lh-h1: 1.05;  /* hero: Regular + SemiBold accent */
-  --fs-h2: clamp(24px, calc(13.82px + 1.818vw), 40px);
+  /* Floor is 32, NOT 24 (client 2026-07-26): a section heading must never
+     shrink below the card title it introduces (--fs-card-title 24) — at the
+     old floor they met and the hierarchy read upside down. 40 at ≥1440,
+     32 at the narrowest phone. */
+  --fs-h2: clamp(32px, calc(29.03px + 0.762vw), 40px);
                         --lh-h2: 1.05;  /* sections: Regular + Bold accent */
   --fs-card-title: 24px;                /* Inter Bold                      */
   --fs-lead: 18px;      --lh-body: 1.4; /* hero sub / section body         */

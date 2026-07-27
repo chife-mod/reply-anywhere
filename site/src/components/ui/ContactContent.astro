@@ -1,0 +1,194 @@
+---
+// The contact block itself — heading, real destinations, compact form. Lives
+// in TWO places and must stay one source: the desktop drawer that unfolds
+// from the brand island, and the mobile menu panel, where «Contact» slides
+// this in from the right (client 2026-07-26). Styling is inherited from the
+// host panel; only the block's own rules live here.
+import Button from './Button.astro';
+
+interface Props {
+  titleId: string; // the host panel labels itself with this
+}
+const { titleId } = Astro.props;
+
+const sitekey = import.meta.env.PUBLIC_TURNSTILE_SITEKEY;
+
+// Real destinations only — the same rule the footer follows.
+const channels = [
+  { label: 'hello@replyanywhere.ai', href: 'mailto:hello@replyanywhere.ai' },
+  { label: 'semanticforce.ai', href: 'https://semanticforce.ai', external: true },
+];
+---
+
+<header class="contact__head">
+  <h2 class="contact__title" id={titleId}>
+    Hello from<br /><strong>Reply Anywhere</strong>
+  </h2>
+  <p class="contact__lede">
+    Tell us which channels you answer on today — we'll show the workspace on
+    your own reviews and messages, and reply within one business day.
+  </p>
+  <ul class="contact__channels" role="list">
+    {channels.map((c) => (
+      <li>
+        <a href={c.href} target={c.external ? '_blank' : undefined} rel={c.external ? 'noopener' : undefined}>
+          {c.label}{c.external && <span aria-hidden="true"> ↗</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</header>
+
+<form class="contact__form" method="POST" action="/api/demo" novalidate data-contact-form>
+  <div class="contact__row">
+    <label class="contact__field">
+      <span>Name</span>
+      <input name="name" type="text" autocomplete="name" placeholder="Your name" />
+    </label>
+    <label class="contact__field">
+      <span>Work email <i aria-hidden="true">*</i></span>
+      <input name="email" type="email" autocomplete="email" placeholder="you@company.com" required />
+    </label>
+  </div>
+  <label class="contact__field">
+    <span>Message</span>
+    <textarea name="message" rows="3" placeholder="Which channels do you answer on?"></textarea>
+  </label>
+  {sitekey && <div class="cf-turnstile" data-sitekey={sitekey}></div>}
+  <div class="contact__actions">
+    <Button label="Send message" type="submit" />
+    <p class="contact__status" role="status" aria-live="polite"></p>
+  </div>
+</form>
+
+<style is:global>
+  /* Global, not scoped: the block renders inside two different host panels
+     (ContactDrawer and the Nav drawer) and must look identical in both. */
+  .contact__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-5);
+  }
+  .contact__title {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    font-weight: var(--fw-regular);
+    color: var(--text-hi); /* headings never dim — same rule as SectionHeading */
+  }
+  .contact__title strong {
+    font-weight: var(--fw-bold);
+    color: var(--violet);
+  }
+  .contact__lede {
+    font-size: var(--fs-card-sub);
+    line-height: var(--lh-body);
+    color: var(--text-dim);
+  }
+  .contact__channels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .contact__channels a {
+    font-size: var(--fs-ui);
+    font-weight: var(--fw-medium);
+    color: var(--text-hi);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .contact__channels a:hover { color: var(--violet-light); }
+
+  .contact__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--border-soft);
+  }
+  .contact__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-4);
+  }
+  .contact__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    font-size: var(--fs-chip);
+    color: var(--text-dim);
+  }
+  .contact__field i {
+    font-style: normal;
+    color: var(--violet);
+  }
+  .contact__field input,
+  .contact__field textarea {
+    width: 100%;
+    padding: var(--sp-3) var(--sp-4);
+    font: inherit;
+    font-size: var(--fs-ui);
+    color: var(--text-hi);
+    background: var(--surface-tile);
+    border: 1px solid var(--border-line);
+    border-radius: var(--r-md);
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+  .contact__field textarea { resize: vertical; }
+  .contact__field input::placeholder,
+  .contact__field textarea::placeholder { color: var(--text-dim); }
+  .contact__field input:focus-visible,
+  .contact__field textarea:focus-visible {
+    outline: none;
+    border-color: var(--violet);
+  }
+  .contact__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+  }
+  .contact__status {
+    font-size: var(--fs-chip);
+    color: var(--text-dim);
+  }
+  @media (max-width: 560px) {
+    .contact__row { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+
+<script>
+  // One submit handler for EVERY instance of this block (desktop drawer +
+  // mobile panel): JSON POST to the same Worker the demo form uses, inline
+  // status; without JS the form still posts natively.
+  if (!(window as any).__contactFormWired) {
+    (window as any).__contactFormWired = true;
+    document.addEventListener('submit', async (e) => {
+      const form = (e.target as HTMLElement).closest<HTMLFormElement>('[data-contact-form]');
+      if (!form) return;
+      e.preventDefault();
+      const status = form.querySelector<HTMLElement>('.contact__status');
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (!status || !btn) return;
+      btn.disabled = true;
+      status.textContent = 'Sending…';
+      try {
+        const res = await fetch('/api/demo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form).entries())),
+        });
+        status.textContent = res.ok
+          ? 'Thanks — we’ll reply within one business day.'
+          : 'Something went wrong. Please email hello@replyanywhere.ai.';
+        if (res.ok) form.reset();
+      } catch {
+        status.textContent = 'Network error. Please email hello@replyanywhere.ai.';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+</script>

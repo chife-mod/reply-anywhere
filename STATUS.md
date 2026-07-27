@@ -1,67 +1,78 @@
 # Reply Anywhere — STATUS
 
-> Живой указатель «где мы сейчас». Решение по стеку — [`docs/STACK.md`](docs/STACK.md);
-> план до запуска — [`docs/PLAN.md`](docs/PLAN.md) · Спеки анимаций:
-> [`docs/HERO-MOTION-SPEC.md`](docs/HERO-MOTION-SPEC.md), [`docs/SCROLL-SCENE-SPEC.md`](docs/SCROLL-SCENE-SPEC.md)
-> · Планка: [`docs/QUALITY-BAR.md`](docs/QUALITY-BAR.md).
+> Живой указатель «где мы сейчас». Дизайн-канон и журнал решений —
+> [`docs/DESIGN.md`](docs/DESIGN.md) (читать первым перед любой вёрсткой);
+> стек — [`docs/STACK.md`](docs/STACK.md) · спеки анимаций:
+> [`docs/HERO-MOTION-SPEC.md`](docs/HERO-MOTION-SPEC.md),
+> [`docs/SCROLL-SCENE-SPEC.md`](docs/SCROLL-SCENE-SPEC.md) · планка:
+> [`docs/QUALITY-BAR.md`](docs/QUALITY-BAR.md).
 
-**Обновлено:** 2026-07-02, ~01:15 (ночная сессия завершена)
-**Фаза:** **DEMO-READY** ✅ — лонгрид собран, все 6 секций прошли оверлей-QA
-«до нуля отличий», все 4 анимационные системы работают (hero-оркестр: орбиты +
-рельсы/импульсы + typewriter-слово; pinned-сцена «One platform» в 4 бита;
-marquee), финальная интеграционная QA чистая (консоль 0 ошибок, overflow нет,
-фон непрерывен, reduced-motion ок). Прод-билд зелёный (1.87s, 8 страниц).
-**Демо:** локально `cd site && npm run dev` → http://localhost:4321 (превью
-секций: `/preview/hero|menu|…`). Скрин-пруфы: `scratchpad/qa-screens-final/`.
-**Нужны решения Олега (Figma-верные, но подозрительные):** 1) опечатка
-«responces» — она в самом макете (2 места); 2) категория WhatsApp-пилла
-«Less manual work» (у остальных — категории каналов). Править в Figma + коде
-вместе. Публичный URL — по команде (`npm run deploy`, нужен wrangler-auth).
-**Разделение труда:** Олег = дизайн в Figma · Claude = инжиниринг (Figma→код),
-автономные perfection-циклы.
+**Обновлено:** 2026-07-27, вечер
+**Фаза:** сплошной проход по адаптиву + новые блоки. Лонгрид собран,
+иллюстрации карточек реализованы кодом, мобильное меню и контакт-панель
+сделаны. Идёт цикл «Олег смотрит экраны → правки → регресс».
+
+**Локально:** `cd site && npm run dev` → http://localhost:4323 ·
+лаунчер проекта http://localhost:8099
+**Прод (noindex-превью):** https://reply-anywhere.semanticforce.workers.dev
+**Репозиторий:** `chife-mod/reply-anywhere`, ветка `main`
 
 ---
 
-## Где мы
+## ⚠️ НЕ ЗАДЕПЛОЕНО (последний коммит `bff19bb`)
 
-- ✅ **Фундамент построен и проверен** — Astro SSG + CF Workers Static Assets + AI-SEO
-  слой + демо-форма на Worker + типизированный контент. Билд зелёный, тесты эндпоинтов
-  проходят. Детали — `docs/STACK.md`.
-- ⬅ **Сейчас:** ждём Figma-дизайн, чтобы перейти к реализации секций (Phase 2).
+В рабочем дереве накоплен большой пласт правок — собрать, закоммитить,
+задеплоить одним заходом:
 
-## Сделано (Phase 0)
-
-- Astro 6 pure SSG, build 587ms, ~0 KB baseline JS.
-- AI-crawler robots allow-list + JSON-LD + `llms.txt` + sitemap.
-- Демо-форма → API-Worker `/api/demo` (валидация + Turnstile + доставка лида), в одном
-  деплое со статикой (Workers Static Assets).
-- Content Collections (копирайт в `site/data/landing.json`, Zod-типы).
-- CF Web Analytics + Turnstile — код готов, env-gated (ждут ключей).
+| Файл | Что изменено |
+|---|---|
+| `Features.astro` | сетка 3-up ≥1440 → **2×2** (850–1439, CTA = 4-я карточка) → стек ≤849; иллюстрация масштабируется от ширины КАРТОЧКИ (`@container`); лид = ширина карточки; в CTA-карточке портреты+«Trusted by» группой по центру; в полосе портреты слева, подпись справа в 2 строки |
+| `Compare.astro` | голова на той же колоночной сетке (лид = ширина карточки); фикс: RA-колонка съезжала на 96px (унаследованный `top` от sticky) |
+| `Hero.astro` | орбита: потолок вылета 205px, мягкая рампа (0.96/0.93) — «не уменьшать на 968»; маска-растворение сверху/снизу вместо среза; планшетная зона без CTA |
+| `Nav.astro` | **мобильная панель** (растёт из бургера, крестик, крупные пункты, CTA внизу, scrim с блюром); панель = ширина двух плиток, ≤541 — на всю ширину; убрана индикация активного пункта; убрана «пружина» полей |
+| `Footer.astro` | снят разделитель и вертикальный клип; свечение → радиальное (плавный переход) |
+| `SectionHeading.astro` | `text-wrap: balance` (нет висячих слов) |
+| `tokens.css` | `--fs-h2` пол **32** (не мельче card-title 24) |
+| `ContactDrawer.astro` | **новый**: панель слева по ссылке «Contact» — контактный блок + компактная форма на живой `/api/demo` |
+| `index.astro` | подключён `<ContactDrawer />` |
 
 ## Следующее действие
 
-- 🟣 **Олег:** прислать ссылку на Figma-файл/фреймы + ассеты Ajax (скрины, логотипы).
-- 🔵 **Claude:** по ссылке — вытянуть дизайн через Figma MCP и собрать секции в `site/`.
+1. 🔵 **Claude:** полный регресс `cd audit && SHOTS=0 node adaptive-audit.js <run>`
+   (44 ширины) → билд → коммит → `npm run deploy`.
+2. 🟣 **Олег:** продолжить проход по экранам (осталось глазами: Compare и футер
+   в новом состоянии).
 
-## Нужно от клиента
+## Открытые вопросы к Олегу
 
-- **Ссылка на Figma** (desktop + mobile).
-- Скрины продукта от **Ajax** + логотипы (Ajax, Samsung, Volia).
-- Перед деплоем: CF-креды (Turnstile ключи, Web Analytics токен, `LEAD_WEBHOOK_URL`).
+- **Переключатель языка.** Предложение: тумблер `EN · UK` (не дропдаун — для
+  двух языков избыточен); на десктопе в островке, на телефоне — в низ панели.
+  Технически — две ссылки `/` и `/uk/` (Astro i18n), т.е. нужен перевод текстов.
+  Решить: делаем визуальный тумблер сейчас или сразу с реальной локалью.
+- **Data-флаги Compare** ждут Всеволода: gominga «20+ каналов» и их
+  benchmarking, «12 языков», наши 40+/50+/`$`/14-дневный триал.
+- Согласование названий конкурентов на публичном сайте (бриф §16).
 
-## Go-live чеклист (когда вешаем www.replyanywhere.com)
+## Недоделанные блоки (после прохода по адаптиву)
+
+- **Cases ×3** — по брифу, контент от Ajax.
+- **Channels-табы** — секция каналов (сейчас `#channels` ведёт на сцену).
+- **FAQ / stats bar** — из разбора gominga.com.
+- Страницы `#privacy` / `#terms` (в футере ссылки сняты до их появления).
+
+## Инструменты QA (в репозитории)
+
+- `audit/adaptive-audit.js` — 44 ширины (2560→320): обрезание контента, пиллы
+  сцены, наложения, симметрия меню, фолд, оверфлоу таблицы. `SHOTS=0` — без
+  скриншотов. Аргумент 2 — папка прогона, аргумент 3 — свой список ширин.
+- `audit/section-shots.js` — контакт-лист «секции × ширины» + `board.html`.
+- `audit/shoot.js` + `config*.json` — общий скриншот-харнес.
+- Артефакты прогонов в `.gitignore` (скрипты в git, прогоны — нет).
+
+## Go-live чеклист (когда вешаем домен)
 
 - [ ] Домен в CF + `routes` в `wrangler.jsonc`
-- [ ] Деплой командой **`npm run deploy:live`** (снимает noindex-гейт: превью-деплой
-      `npm run deploy` закрыт тройным замком — meta noindex + robots Disallow +
-      X-Robots-Tag; live-билд открывает индексацию и AI-allow-list robots.txt)
-- [ ] Секреты формы: `TURNSTILE_SECRET`, `LEAD_WEBHOOK_URL` + `PUBLIC_TURNSTILE_SITEKEY`,
-      `PUBLIC_CF_ANALYTICS_TOKEN`
-- [ ] Контент-решения из макета: «responces», категория WhatsApp-пилла, контраст
-      подписи «Product of SemanticForce»
-
-## Ссылки
-
-- **Локальное превью:** http://localhost:4321 (`cd site && npm run dev`)
-- **Репозиторий:** `chife-mod/reply-anywhere`
-- **Прод:** появится после первого `npm run deploy` (Worker `reply-anywhere`)
+- [ ] **`npm run deploy:live`** (снимает noindex-гейт превью-деплоя)
+- [ ] Секреты: `TURNSTILE_SECRET`, `LEAD_WEBHOOK_URL`,
+      `PUBLIC_TURNSTILE_SITEKEY`, `PUBLIC_CF_ANALYTICS_TOKEN`
+- [ ] Контент-решения из макета: «responces», категория WhatsApp-пилла

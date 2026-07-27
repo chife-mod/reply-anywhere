@@ -192,18 +192,30 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     max-width: var(--container);
     margin-inline: auto;
   }
+  /* Same head mechanic as Features (client 2026-07-26: «нижняя подпись в
+     соседнем блоке должна вести себя точно так же») — one column grid, the
+     lead always occupying the last column: 416 at three columns (the Figma
+     measure), half the row at two, full width when stacked. */
   .cmp-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: var(--sp-8);
+    display: grid;
+    grid-template-columns: repeat(var(--head-cols, 3), minmax(0, 1fr));
+    gap: var(--sp-4);
+    align-items: end;
+  }
+  .cmp-head :global(.heading) {
+    grid-column: 1 / -2;
   }
   .cmp-lead {
-    width: 416px; /* Figma 24:992 — same measure as features__lead */
-    flex-shrink: 0;
+    grid-column: -2 / -1;
     font-size: var(--fs-lead);
     line-height: var(--lh-body);
     color: var(--text-body);
+  }
+  @media (max-width: 1439px) { .cmp-head { --head-cols: 2; } }
+  @media (max-width: 849px) {
+    .cmp-head { --head-cols: 1; }
+    .cmp-head :global(.heading),
+    .cmp-lead { grid-column: 1 / -1; }
   }
 
   /* ── table shell ─────────────────────────────────────────── */
@@ -329,7 +341,12 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
      Kept out of the ≥947 cascade so sticky (a class-vs-element specificity
      fight) is never overridden. */
   @media (max-width: 946px) {
-    thead .ra-col.head-cell { position: relative; }
+    thead .ra-col.head-cell {
+      position: relative;
+      top: auto; /* the sticky rule's top:96 would offset a RELATIVE cell by
+                    96px — the whole RA column dropped a row (client-caught
+                    2026-07-26: «страшное с таблицей») */
+    }
   }
   .vendor-logo.ra span { color: var(--text-hi); }
   .ra-price { color: var(--text-hi); }
@@ -430,11 +447,6 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
   }
 
   @media (max-width: 946px) {
-    .cmp-head {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .cmp-lead { width: auto; max-width: 549px; }
     thead th { position: static; } /* burger zone: no fixed 96px band to dock under */
   }
   @media (max-width: 760px) {

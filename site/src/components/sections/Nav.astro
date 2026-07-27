@@ -39,15 +39,19 @@ const links = [
 <div class="menu__scrim" data-nav-scrim aria-hidden="true"></div>
 
 <header class="menu">
-  <div class="menu__brand">
-    <a class="island menu__logo" href="/" aria-label="Reply Anywhere — home">
+  {/* The WHOLE brand zone is the link — mark and wordmark both, back up to
+      the hero (client 2026-07-27). Two islands still read as two islands;
+      only the click target merges. An anchor, not «/», so it scrolls instead
+      of reloading the page. */}
+  <a class="menu__brand" href="#hero" aria-label="Reply Anywhere — back to top">
+    <span class="island menu__logo">
       <img src={logoMark.src} width="45" height="40" alt="" />
-    </a>
-    <div class="island menu__wordmark">
+    </span>
+    <span class="island menu__wordmark">
       <img src={wordmark.src} width="102" height="33" alt="Reply Anywhere" />
-      <p class="menu__tagline">Product of SemanticForce</p>
-    </div>
-  </div>
+      <span class="menu__tagline">Product of SemanticForce</span>
+    </span>
+  </a>
 
   <nav class="island menu__nav" aria-label="Main">
     {links.map(({ label, href }) => (

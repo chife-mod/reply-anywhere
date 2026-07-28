@@ -78,6 +78,9 @@ const links = [
     {/* Two views in ONE panel: tapping «Contact» slides the menu out to the
         left and the contact block in from the right while the panel itself
         just grows downward — no second panel, no re-open (client 2026-07-26). */}
+    {/* Top-right corner of the panel, on its own — NOT beside the CTA
+        (client 2026-07-27). Only where the En island is gone (≤541). */}
+    <button class="menu__lang menu__lang--drawer" type="button" data-lang-toggle aria-label="Switch language to UA">EN</button>
     <button class="menu__drawer-close" type="button" aria-label="Close" data-nav-close>
       <span></span><span></span>
     </button>
@@ -88,14 +91,11 @@ const links = [
             <a class="menu__drawer-item" href={href}>{label}</a>
           ))}
         </nav>
-        {/* EN and the CTA live HERE only where their own island is gone
-            (≤541) — the row above keeps both at every wider width, so there
-            is never a visible pair. The foot itself is hidden above that. */}
+        {/* The CTA lives HERE only where its own island is gone (≤541) — the
+            row above keeps it at every wider width, so there is never a
+            visible pair. The foot itself is hidden above that. */}
         <div class="menu__drawer-foot">
-          <div class="menu__drawer-meta">
-            <Button href="#demo" label="Request a free demo" class="menu__drawer-cta" />
-            <button class="menu__lang" type="button" data-lang-toggle aria-label="Switch language to UA">EN</button>
-          </div>
+          <Button href="#demo" label="Request a free demo" class="menu__drawer-cta" />
           <p class="menu__drawer-note">Product of SemanticForce</p>
         </div>
       </div>
@@ -282,10 +282,14 @@ const links = [
        tile in the menu state. The right edge always stays on the islands'
        right edge; the panel grows LEFT. */
     width: min(320px, calc(100vw - 2 * var(--menu-pad)));
-    /* Never taller than the space left under the row — a long menu (landscape
-       phone) scrolls inside the panel instead of running off screen. */
+    /* Never taller than the space left under the row — a long menu, or the
+       contact form on a phone, scrolls INSIDE the panel instead of running
+       off screen. `contain` keeps that scroll from chaining out to the page
+       once the panel hits its end (client-caught 2026-07-27: the form would
+       not scroll at all, the site behind moved instead). */
     max-height: calc(100dvh - 2 * var(--menu-pad) - var(--sp-16) - var(--sp-1));
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: var(--sp-6) var(--sp-6) var(--sp-8);
     /* drops down out of the burger's own corner */
     transform-origin: 100% 0;
@@ -356,7 +360,15 @@ const links = [
     position: relative;
     display: grid;
     grid-template-areas: 'view';
-    overflow: hidden;
+    /* x hidden: the two views slide sideways past each other and must be
+       clipped. y auto: THIS is the panel's scroller. As a flex item under the
+       panel's max-height it shrinks (a scroll container's min-height:auto is
+       0) — with `hidden` it shrank and silently CUT the contact form off, so
+       «Send message» was unreachable and the drag went to the page behind
+       instead (client-caught 2026-07-27). Scrolling here also leaves the
+       panel's own corners — the language toggle, the × — pinned in place. */
+    overflow: hidden auto;
+    overscroll-behavior: contain;
   }
   /* Only the view ON SCREEN sizes the panel. Sharing one grid cell made the
      row as tall as the TALLER view, so the five links dragged the whole
@@ -455,10 +467,15 @@ const links = [
     padding-top: var(--sp-6);
     border-top: 1px solid var(--border-soft);
   }
-  .menu__drawer-meta {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-6); /* same EN↔CTA distance the island keeps */
+  /* Sits in the panel's own top-right corner, level with the first menu item
+     — the burger is directly above it and the × is hidden at these widths, so
+     the corner is free (client 2026-07-27). Shown only ≤541, with the foot. */
+  .menu__lang--drawer {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    top: var(--sp-6);
+    right: var(--sp-4);
   }
   .menu__drawer-note {
     font-size: var(--fs-chip);
@@ -555,9 +572,13 @@ const links = [
     .menu__actions {
       display: none;
     }
-    /* …so the panel takes both over for exactly these widths. */
+    /* …so the panel takes both over for exactly these widths: the CTA in the
+       foot, the language in the top-right corner. */
     .menu__drawer-foot {
       display: flex;
+    }
+    .menu__lang--drawer {
+      display: block;
     }
   }
   /* Must come after the base .menu__back rule — equal specificity, later
@@ -605,8 +626,43 @@ const links = [
   const scrim = document.querySelector<HTMLElement>('[data-nav-scrim]');
   const header = document.querySelector<HTMLElement>('.menu');
 
+  // Hide-on-scroll state, shared with the lock below: restoring the scroll
+  // position on unlock must not read as a scroll-down and hide the menu.
+  let lastY = window.scrollY;
+  let downAcc = 0;
+
   if (burger && drawer && scrim && header) {
     drawer.removeAttribute('hidden'); // JS is here — CSS owns visibility now
+
+    // iOS Safari ignores `overflow: hidden` on the body. The page kept
+    // scrolling behind the panel AND swallowed the panel's own scroll, so the
+    // contact form's Send button could not be reached at all (client-caught
+    // 2026-07-27). Pinning the body is the only lock that holds there; the
+    // position is given back on the way out.
+    let lockedY = 0;
+    const lockScroll = (lock: boolean) => {
+      const body = document.body;
+      if (lock) {
+        lockedY = window.scrollY;
+        body.style.position = 'fixed';
+        body.style.top = `-${lockedY}px`;
+        body.style.left = '0';
+        body.style.right = '0';
+        body.style.overflow = 'hidden';
+        return;
+      }
+      body.style.position = '';
+      body.style.top = '';
+      body.style.left = '';
+      body.style.right = '';
+      body.style.overflow = '';
+      // instant: html carries scroll-behavior: smooth, and giving the
+      // position back must not be an animation the user watches.
+      window.scrollTo({ top: lockedY, behavior: 'instant' });
+      lastY = lockedY; // …and the spy must not read it as a jump downward
+      downAcc = 0;
+    };
+
     const setOpen = (open: boolean) => {
       if (open && getComputedStyle(burger).display === 'none') {
         drawer.classList.add('is-contact'); // desktop: contact view only
@@ -615,7 +671,7 @@ const links = [
       // measure or freeze here any more (panel-below rework 2026-07-27).
       header.classList.toggle('is-open', open);
       document.body.classList.toggle('nav-open', open);
-      document.body.style.overflow = open ? 'hidden' : '';
+      lockScroll(open);
       burger.setAttribute('aria-expanded', String(open));
       burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       if (open) drawer.querySelector<HTMLAnchorElement>('a')?.focus({ preventScroll: true });
@@ -726,10 +782,24 @@ const links = [
       if (!wasOpen) setOpen(true);
     });
 
+    // No setView('menu') on close any more — setOpen's own reset covers EVERY
+    // way out (burger, ×, scrim, Esc, a resize that hides the burger).
+    const toggleBurger = () => setOpen(burger.getAttribute('aria-expanded') !== 'true');
+    // A tap that lands while the page is still gliding is spent stopping the
+    // momentum and never becomes a click — the burger took TWO taps to open
+    // (client-caught 2026-07-27). The pointer event does arrive, so act on
+    // that and suppress the compatibility click it would otherwise produce.
+    let fromPointer = false;
+    burger.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return; // mouse keeps the ordinary click path
+      e.preventDefault();
+      fromPointer = true;
+      setTimeout(() => { fromPointer = false; }, 400); // in case the click still lands
+      toggleBurger();
+    });
     burger.addEventListener('click', () => {
-      // No setView('menu') here any more — setOpen's own reset covers EVERY
-      // way out (burger, ×, scrim, Esc, a resize that hides the burger).
-      setOpen(burger.getAttribute('aria-expanded') !== 'true');
+      if (fromPointer) { fromPointer = false; return; }
+      toggleBurger();
     });
     scrim.addEventListener('click', () => setOpen(false));
     drawer.addEventListener('click', (e) => {
@@ -753,8 +823,6 @@ const links = [
 
   const menu = document.querySelector<HTMLElement>('.menu');
   if (menu) {
-    let lastY = window.scrollY;
-    let downAcc = 0;
     window.addEventListener(
       'scroll',
       () => {

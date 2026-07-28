@@ -683,7 +683,12 @@ const links = [
       downAcc = 0;
     };
 
-    const setOpen = (open: boolean) => {
+    // viaKeyboard: focus is only MOVED for keyboard users. Safari paints the
+    // :focus-visible ring on a programmatic focus too, so on a phone opening
+    // the panel drew a violet underline under «Home» and closing it left a
+    // violet outline round the burger (client-caught 2026-07-27). A finger
+    // never asked for a focus ring.
+    const setOpen = (open: boolean, viaKeyboard = false) => {
       if (open && getComputedStyle(burger).display === 'none') {
         drawer.classList.add('is-contact'); // desktop: contact view only
       }
@@ -694,9 +699,12 @@ const links = [
       lockScroll(open);
       burger.setAttribute('aria-expanded', String(open));
       burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      if (open) drawer.querySelector<HTMLAnchorElement>('a')?.focus({ preventScroll: true });
-      else {
-        burger.focus({ preventScroll: true });
+      if (open) {
+        if (viaKeyboard) drawer.querySelector<HTMLAnchorElement>('a')?.focus({ preventScroll: true });
+      } else {
+        // Only pull focus back out if it is actually IN there — which it can
+        // only be if a keyboard put it there.
+        if (drawer.contains(document.activeElement)) burger.focus({ preventScroll: true });
         // Every close returns the panel to its menu view — otherwise the next
         // open lands on whatever was last on screen (client-caught 2026-07-27:
         // contacts opened on the wide layout, closed, window narrowed, and the
@@ -781,8 +789,9 @@ const links = [
     // contact view; inside the panel the same link just switches the view.
     document.addEventListener('click', (e) => {
       const el = e.target as HTMLElement;
+      const byKey = (e as MouseEvent).detail === 0; // Enter/Space, not a pointer
       if (el.closest('[data-nav-back]')) { setView('menu'); return; }
-      if (el.closest('[data-nav-close]')) { setOpen(false); return; }
+      if (el.closest('[data-nav-close]')) { setOpen(false, byKey); return; }
       const link = el.closest<HTMLAnchorElement>('a[href="#contact"], a[href="#demo"]');
       if (!link) return;
       e.preventDefault();
@@ -792,19 +801,20 @@ const links = [
       // «Contact» is the mobile menu's way into this very view.
       const insidePanel = !!el.closest('[data-nav-drawer]');
       if (!insidePanel && header.classList.contains('is-open') && drawer.classList.contains('is-contact')) {
-        setOpen(false);
+        setOpen(false, byKey);
         return;
       }
       // Animate the switch only INSIDE an open panel; on the way in the view
       // is simply already set (see setView's !animate branch).
       const wasOpen = header.classList.contains('is-open');
       setView('contact', wasOpen);
-      if (!wasOpen) setOpen(true);
+      if (!wasOpen) setOpen(true, byKey);
     });
 
     // No setView('menu') on close any more — setOpen's own reset covers EVERY
     // way out (burger, ×, scrim, Esc, a resize that hides the burger).
-    const toggleBurger = () => setOpen(burger.getAttribute('aria-expanded') !== 'true');
+    const toggleBurger = (viaKeyboard = false) =>
+      setOpen(burger.getAttribute('aria-expanded') !== 'true', viaKeyboard);
     // A tap that lands while the page is still gliding is spent stopping the
     // momentum and never becomes a click — the burger took TWO taps to open
     // (client-caught 2026-07-27). The pointer event does arrive, so act on
@@ -815,11 +825,11 @@ const links = [
       e.preventDefault();
       fromPointer = true;
       setTimeout(() => { fromPointer = false; }, 400); // in case the click still lands
-      toggleBurger();
+      toggleBurger(false);
     });
-    burger.addEventListener('click', () => {
+    burger.addEventListener('click', (e) => {
       if (fromPointer) { fromPointer = false; return; }
-      toggleBurger();
+      toggleBurger(e.detail === 0); // detail 0 ⇒ Enter/Space, not a pointer
     });
     scrim.addEventListener('click', () => setOpen(false));
     drawer.addEventListener('click', (e) => {
@@ -831,7 +841,7 @@ const links = [
       }
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && header.classList.contains('is-open')) setOpen(false);
+      if (e.key === 'Escape' && header.classList.contains('is-open')) setOpen(false, true);
     });
     // A width change that hides the burger must not leave the drawer open.
     window.addEventListener('resize', () => {

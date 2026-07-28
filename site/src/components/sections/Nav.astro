@@ -501,13 +501,16 @@ const links = [
     inset: 0;
     z-index: 99; /* under .menu (100), over everything else */
     pointer-events: none;
-    /* 0.55/6px let the page's own violet CTAs burn straight through — at the
-       foot of the page a whole «Request a free demo» slab read as something
-       sticking out of the panel (client-caught 2026-07-27). Darker and softer:
-       the page goes away instead of competing with the menu. */
-    background: rgba(6, 7, 16, 0.78);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
+    /* The page behind goes AWAY — dark and colourless. Blur and opacity alone
+       were not enough: the CTA band's magenta is a wide, saturated field, and
+       it kept reading as a stripe under the panel even at 0.78/14px
+       (client-caught 2026-07-27, twice). Draining the saturation is what
+       actually kills it — colour is what made it look like part of the menu,
+       not brightness. Reproduced at 390×844 with the band parked right below
+       the panel: magenta at 0.55/6px, a haze at 0.78/14px, gone here. */
+    background: rgba(6, 7, 16, 0.82);
+    -webkit-backdrop-filter: blur(16px) saturate(0.25) brightness(0.55);
+    backdrop-filter: blur(16px) saturate(0.25) brightness(0.55);
     opacity: 0;
     visibility: hidden;
     transition:

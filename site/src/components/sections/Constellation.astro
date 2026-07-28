@@ -195,21 +195,26 @@ const pills: Pill[] = [
        pills-clear beat is gone — the scene assembles and releases; the track
        shrinks proportionally so the wheel pace per beat stays the same and
        the screen lets go ~40vh sooner). Timeline starts the moment the scene
-       peeks in from below — the WHOLE track is live scrub. */
-    height: 220vh; /* 100vh pre-pin reveal + 120vh pinned */
+       peeks in from below — the WHOLE track is live scrub.
+       svh, NOT vh (client-caught 2026-07-27 on a phone: «тапаю вниз — меня
+       зашпуливает на One Platform»). On iOS every show/hide of the address
+       bar changes vh, so this track — the tallest box on the page — kept
+       resizing under the reader and threw the scroll position a whole screen.
+       svh is the one height that does not move while the toolbars do. */
+    height: 220svh; /* 100svh pre-pin reveal + 120svh pinned */
   }
   .is-scene [data-scene-part='constellation'] {
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: 100svh;
     align-items: center;
   }
   .is-scene [data-scene-part='intro'] {
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: 100svh;
     min-height: 0;
-    margin-top: -100vh; /* overlay on the constellation inside the same pin */
+    margin-top: -100svh; /* overlay on the constellation inside the same pin */
     overflow: clip;
   }
   /* The Constellation headline IS the scene headline (it stays, spec §5).
@@ -303,6 +308,11 @@ const pills: Pill[] = [
     if (!intro || !headline || !accent || !body || !chipsWrap || !introHeading || !introInner || pills.length === 0) return;
 
     gsap.registerPlugin(ScrollTrigger);
+    // The other half of the svh fix above: a mobile address bar sliding in or
+    // out is NOT a resize worth recomputing the scene for. Without this every
+    // one of them refreshes the trigger mid-read and moves the page under the
+    // reader (client-caught 2026-07-27).
+    ScrollTrigger.config({ ignoreMobileResize: true });
 
     // Headline word split: part 1 = plain text nodes, part 2 = violet accent.
     const line1: HTMLElement[] = [];

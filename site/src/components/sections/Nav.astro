@@ -363,15 +363,17 @@ const links = [
     position: relative;
     display: grid;
     grid-template-areas: 'view';
-    /* x hidden: the two views slide sideways past each other and must be
-       clipped. y auto: THIS is the panel's scroller. As a flex item under the
-       panel's max-height it shrinks (a scroll container's min-height:auto is
-       0) — with `hidden` it shrank and silently CUT the contact form off, so
-       «Send message» was unreachable and the drag went to the page behind
-       instead (client-caught 2026-07-27). Scrolling here also leaves the
-       panel's own corners — the language toggle, the × — pinned in place. */
-    overflow: hidden auto;
-    overscroll-behavior: contain;
+    /* Clipped in BOTH axes: the views slide sideways past each other, and the
+       one off screen is absolutely positioned in here — left scrollable it
+       hung a whole contact-form's worth of empty scroll under the menu's CTA
+       (client-caught 2026-07-27: «под кнопкой большущий скролл»). Clipping
+       stops that overflow reaching the panel, so the menu view never scrolls.
+       flex-shrink 0 for the other half of it: as a flex item under the
+       panel's max-height this would otherwise shrink — a scroll container's
+       min-height:auto is 0 — and silently CUT the contact form off. It keeps
+       its height; the PANEL scrolls when there is more than fits. */
+    overflow: hidden;
+    flex-shrink: 0;
   }
   /* Only the view ON SCREEN sizes the panel. Sharing one grid cell made the
      row as tall as the TALLER view, so the five links dragged the whole
@@ -499,9 +501,13 @@ const links = [
     inset: 0;
     z-index: 99; /* under .menu (100), over everything else */
     pointer-events: none;
-    background: rgba(6, 7, 16, 0.55);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
+    /* 0.55/6px let the page's own violet CTAs burn straight through — at the
+       foot of the page a whole «Request a free demo» slab read as something
+       sticking out of the panel (client-caught 2026-07-27). Darker and softer:
+       the page goes away instead of competing with the menu. */
+    background: rgba(6, 7, 16, 0.78);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
     opacity: 0;
     visibility: hidden;
     transition:
@@ -833,7 +839,12 @@ const links = [
   }
 
   const menu = document.querySelector<HTMLElement>('.menu');
-  if (menu) {
+  // Hide-on-scroll is a POINTER behaviour only (client 2026-07-27). On touch
+  // it fought the reader: the menu was away exactly when a thumb reached for
+  // it, and the tap that brought it back could not also open it — two taps,
+  // every time. The islands are small; leaving them up costs nothing there.
+  const coarse = window.matchMedia('(hover: none)').matches;
+  if (menu && !coarse) {
     window.addEventListener(
       'scroll',
       () => {

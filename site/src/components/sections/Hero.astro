@@ -95,9 +95,11 @@ const sparks = [
       <div class="hero__cta">
         <Button href="#demo" label="Request a free demo " />
         <Button href="#demo" variant="icon">
+          {/* Same arrow twice: one leaves, one arrives. Nothing about the
+              square changes on hover — only the travel (client 2026-07-27). */}
           <span class="hero__arrow" aria-hidden="true">
             <Icon name="tabler/arrow-up-right" size={24} class="hero__arrow-out" />
-            <Icon name="tabler/arrow-up-right-violet" size={24} class="hero__arrow-in" />
+            <Icon name="tabler/arrow-up-right" size={24} class="hero__arrow-in" />
           </span>
           <span class="sr-only">Request a free demo</span>
         </Button>
@@ -600,12 +602,11 @@ const sparks = [
   .hero__cta:focus-within .hero__arrow :global(.hero__arrow-in) {
     translate: 0 0;
   }
-  /* the icon button turns white so the violet arrow reads on it */
-  .hero__cta:hover :global(.btn--icon),
-  .hero__cta:focus-within :global(.btn--icon) {
-    background: var(--text-hi);
-    border-color: var(--text-hi);
-  }
+  /* The square keeps its surface and its violet outline through the whole
+     interaction — no fill, no border change (client 2026-07-27: «он не
+     должен заливаться цветом… просто происходит анимация»). Both halves
+     still brighten together on hover, from THE button's own rule, because
+     they are one control. */
   @media (prefers-reduced-motion: reduce) {
     .hero__arrow :global(img) { transition-duration: 0.01ms; }
   }

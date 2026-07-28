@@ -412,17 +412,7 @@ const isMark = (c: Cell): c is MarkCell => 'mark' in c;
     height: 28px;
   }
 
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
+  /* .sr-only lives in global.css — one utility for the whole site. */
 
   /* ── bottom rounding of RA column ────────────────────────── */
   tbody tr.feat:last-of-type td.ra-col {

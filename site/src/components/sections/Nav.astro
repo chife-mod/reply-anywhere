@@ -243,6 +243,9 @@ const links = [
     padding: 0;
     border: none;
     cursor: pointer;
+    /* No double-tap-zoom wait on touch: the burger answers the moment it is
+       pressed (client 2026-07-27, momentum-scroll taps). */
+    touch-action: manipulation;
   }
   .menu__burger-line {
     width: var(--sp-6);
@@ -467,15 +470,23 @@ const links = [
     padding-top: var(--sp-6);
     border-top: 1px solid var(--border-soft);
   }
-  /* Sits in the panel's own top-right corner, level with the first menu item
-     — the burger is directly above it and the × is hidden at these widths, so
-     the corner is free (client 2026-07-27). Shown only ≤541, with the foot. */
+  /* Panel's own top-right corner, ON THE BURGER'S AXIS: the box is the
+     burger's width and sits flush to the panel's right edge, which is the
+     burger's right edge too — so «EN» centres exactly under the cross above
+     it (client 2026-07-27). Shown only ≤541, with the foot. */
   .menu__lang--drawer {
     display: none;
     position: absolute;
     z-index: 1;
     top: var(--sp-6);
-    right: var(--sp-4);
+    right: 0;
+    width: var(--sp-16);
+    justify-content: center;
+  }
+  /* …and only over the menu. The contact view has no language of its own
+     (client 2026-07-27) — one thing at a time on that screen. */
+  .menu__drawer.is-contact .menu__lang--drawer {
+    display: none;
   }
   .menu__drawer-note {
     font-size: var(--fs-chip);
@@ -578,7 +589,7 @@ const links = [
       display: flex;
     }
     .menu__lang--drawer {
-      display: block;
+      display: flex; /* centres «EN» in the burger-wide box above */
     }
   }
   /* Must come after the base .menu__back rule — equal specificity, later
@@ -839,6 +850,25 @@ const links = [
         }
       },
       { passive: true }
+    );
+
+    // Touching the screen while the page is still gliding brings the menu
+    // back AT ONCE — no 250ms slide to sit through, so the tap that stopped
+    // the momentum leaves the burger already where the finger expects it
+    // (client 2026-07-27: «когда я хочу нажать в момент скролла на меню, оно
+    // должно открываться»). Capture, so it runs before anything else can.
+    window.addEventListener(
+      'pointerdown',
+      (e) => {
+        if ((e as PointerEvent).pointerType === 'mouse') return;
+        downAcc = 0;
+        if (!menu.classList.contains('menu--hidden')) return;
+        menu.style.transition = 'none';
+        menu.classList.remove('menu--hidden');
+        void menu.offsetHeight; // land it before the transition comes back
+        menu.style.transition = '';
+      },
+      { passive: true, capture: true }
     );
   }
 </script>
